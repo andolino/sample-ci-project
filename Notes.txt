@@ -1,0 +1,4 @@
+user: user1
+pw: 123456
+
+every table has a comment for flagging
