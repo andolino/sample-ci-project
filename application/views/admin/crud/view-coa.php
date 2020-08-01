@@ -23,8 +23,10 @@
 					<th>ACCOUNT SUB TITLE</th>
 					<th>ACCOUNT CODE</th>
 					<th>ACCOUNT MAIN DESCRIPTION</th>
+					<th>ACTION</th>
 				</tr>
 				<?php foreach ($coaData as $row): ?>
+					<?php if ($row->id!=''): ?>
 					<tr 
 						class="<?php 
 							if($row->class_desc != ''){
@@ -32,14 +34,32 @@
 							} else if($row->group_desc != ''){
 								echo ' sub-tit';
 							}
-						?>"
-					>
+						?>">
 						<td><?php echo strtoupper($row->class_desc); ?></td>
 						<td><?php echo strtoupper($row->group_desc); ?></td>
 						<td class="text-center"><?php echo $row->code; ?></td>
 						<td><?php echo strtoupper($row->main_desc); ?></td>
+						<td class="text-center">
+							<!-- EDIT -->
+							<?php if ($row->class_desc !=''): ?>
+							<?php elseif($row->group_desc!=''): ?>
+								<a href="javascript:void(0);" onclick="editGroupCodeCoa(this)" data-gcode="<?php echo $row->group_code; ?>"><i class="fas fa-edit" data-toogle="tooltip" data-placement="right" title="Edit"></i></a>
+							<?php elseif($row->main_desc!=''): ?>
+								<a href="javascript:void(0);" onclick="editMainCodeCoa(this)" data-mcode="<?php echo $row->main_code; ?>"><i class="fas fa-edit" data-toogle="tooltip" data-placement="right" title="Edit"></i></a> 
+							<?php endif; ?>
+
+							<!-- DELETE -->
+							<?php if ($row->class_desc !=''): ?>
+							<?php elseif($row->group_desc!=''): ?>
+								<a href="javascript:void(0);" onclick="deleteData(this)" data-fld="group_code" data-tbl="account_groups" data-code="<?php echo $row->group_code; ?>"><i class="fas fa-trash" data-toogle="tooltip" data-placement="right" title="Delete"></i></a>
+							<?php elseif($row->main_desc!=''): ?>
+								<a href="javascript:void(0);" onclick="deleteData(this)" data-fld="main_code" data-tbl="account_main" data-code="<?php echo $row->main_code; ?>"><i class="fas fa-trash" data-toogle="tooltip" data-placement="right" title="Delete"></i></a> 
+							<?php endif; ?>
+						</td>
 					</tr>
+					<?php endif; ?>
 				<?php endforeach; ?>
+
 			</table>
 		</div>
 

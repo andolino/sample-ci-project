@@ -12,7 +12,7 @@
 			  <div class="row">
 			  	<?php if ($loanComputation->is_posted == 1): ?>
 		  		<div class="col pr-0">
-			      <button type="button" class="btn btn-default btn-lg font-12 rounded-0 border" id="saveLoansComp"> Print</button>
+			      <button type="button" class="btn btn-default btn-lg font-12 rounded-0 border" id="print-loan-comp"> Print</button>
 			    </div>
 			  	<?php else: ?>
 			    <div class="col pr-0">
@@ -32,7 +32,7 @@
 			    </div>
 			  	<?php endif; ?>
 			    <div class="col pr-0 pl-0">
-			      <button type="button" class="btn btn-default btn-lg font-12 rounded-0 border" id="loadPage" data-badge-head="ADD MEMBER" data-link="add-constituent" data-ind="" data-cls="cont-add-member"> CoMaker</button>
+			      <button type="button" class="btn btn-default btn-lg font-12 rounded-0 border" data-m-id="<?php echo !empty($membersData) ? $membersData->members_id : ''; ?>" id="add-comaker"> CoMaker</button>
 			    </div>
 			    
 			  </div>
@@ -74,7 +74,7 @@
 					  <div class="form-group row">
 					    <label for="monthly_salary" class="col-sm-5 pr-0 col-form-label col-form-label-sm font-12">Monthly Salary:</label>
 					    <div class="col-sm-7">
-					      <input type="text" class="form-control form-control-sm font-12 text-right" id="monthly_salary" value="<?php echo !empty($membersData) ? number_format($membersData->monthly_salary, 2) : ''; ?>" name="monthly_salary" required>
+					      <input type="text" class="form-control form-control-sm font-12 text-right" id="monthly_salary" value="<?php echo !empty($loanComputation) ? number_format($loanComputation->amnt_of_loan, 2) : ''; ?>" name="monthly_salary" required>
 					    </div>
 					  </div>
 					  <div class="form-group row">
@@ -120,15 +120,15 @@
 					<!-- end -->
 					<div class="col-12">
 						<div class="form-group row">
-					    <label for="ref_no" class="col-sm-6 pr-0 col-form-label col-form-label-sm font-12">Ref No.:</label>
+					    <label for="prev_ref_no" class="col-sm-6 pr-0 col-form-label col-form-label-sm font-12">Ref No.:</label>
 					    <div class="col-sm-6 pl-0">
-					      <input type="text" class="form-control form-control-sm font-12" id="ref_no" name="ref_no">
+					      <input type="text" class="form-control form-control-sm font-12 ref_no_evt" data-mem="<?php echo $members_id; ?>" id="prev_ref_no" name="prev_ref_no" value="<?php echo !empty($renewed_refno) ? $renewed_refno : ''; ?>">
 					    </div>
 					  </div>
 					  <div class="form-group row">
 					    <label for="total_loan_amnt" class="col-sm-6 pr-0 col-form-label col-form-label-sm font-12">Total Loan Amount:</label>
 					    <div class="col-sm-6 pl-0">
-					      <input type="text" class="form-control form-control-sm font-12 text-right" id="total_loan_amnt" name="total_loan_amnt">
+					      <input type="text" class="form-control form-control-sm font-12 text-right" id="total_loan_amnt" name="total_loan_amnt" readonly>
 					    </div>
 					  </div>
 					  <div class="form-group row">
@@ -146,7 +146,7 @@
 					  <div class="form-group row">
 					    <label for="mo_amortization" class="col-sm-6 pr-0 col-form-label col-form-label-sm font-12">Monthly Amortization:</label>
 					    <div class="col-sm-6 pl-0">
-					      <input type="text" class="form-control form-control-sm font-12" id="mo_amortization" name="mo_amortization">
+					      <input type="text" class="form-control form-control-sm font-12 text-right" id="mo_amortization" name="mo_amortization">
 					    </div>
 					  </div>
 					</div>
@@ -159,36 +159,49 @@
 						</div>
 					</div>
 					<!-- end -->
+					<!-- <pre> -->
+						<?php //print_r($datePaidPrevLoanSchedID); ?>
+						<?php //print_r($totalBalance); ?>
+						<?php //print_r($totalPaidOnPrevLoan); ?>
+						<?php //print_r($prevOR); ?>
+						<?php //print_r($prevOR); ?>
+					<!-- </pre> -->
 					<div class="col-12">
 						<div class="form-group row">
 					    <label for="prev_loan_per_pay_start" class="col-sm-4 pr-0 col-form-label col-form-label-sm font-12">Period Start:</label>
 					    <div class="col-sm-8 pl-0">
-					      <input type="date" class="form-control form-control-sm font-12" id="prev_loan_per_pay_start" name="prev_loan_per_pay_start">
+					      <input type="text" class="form-control form-control-sm font-12" id="prev_loan_per_pay_start" name="prev_loan_per_pay_start" value="<?php echo !empty($datePaidPrevLoanSchedID) ? $datePaidPrevLoanSchedID[0] : ''; ?>" readonly>
 					    </div>
 					  </div>
 					  <div class="form-group row">
 					    <label for="prev_loan_per_pay_end" class="col-sm-4 pr-0 col-form-label col-form-label-sm font-12">Period End:</label>
 					    <div class="col-sm-8 pl-0">
-					      <input type="date" class="form-control form-control-sm font-12" id="prev_loan_per_pay_end" name="prev_loan_per_pay_end">
+					      <input type="text" class="form-control form-control-sm font-12" id="prev_loan_per_pay_end" name="prev_loan_per_pay_end" value="<?php echo !empty($datePaidPrevLoanSchedID) ? end($datePaidPrevLoanSchedID) : ''; ?>" readonly>
 					    </div>
 					  </div>
 					  <div class="form-group row">
 					    <label for="prev_loan_orno" class="col-sm-4 pr-0 col-form-label col-form-label-sm font-12">OR No.:</label>
 					    <div class="col-sm-8 pl-0">
-					      <input type="text" class="form-control form-control-sm font-12" id="prev_loan_orno" name="prev_loan_orno">
+					      <input type="text" class="form-control form-control-sm font-12" id="prev_loan_orno" name="prev_loan_orno" value="<?php echo !empty($prevOR) ? $prevOR : ''; ?>">
 					    </div>
 					  </div>
 					  <div class="form-group row">
 					    <label for="prev_loan_tot_amnt" class="col-sm-4 pr-0 col-form-label col-form-label-sm font-12">Total Amount:</label>
 					    <div class="col-sm-8 pl-0">
-					      <input type="text" class="form-control form-control-sm font-12" id="prev_loan_tot_amnt" name="prev_loan_tot_amnt">
+					      <input type="text" class="form-control form-control-sm font-12" id="prev_loan_tot_amnt" name="prev_loan_tot_amnt" value="<?php echo !empty($totalBalance) ? number_format($totalBalance, 2) : ''; ?>" readonly>
 					    </div>
 					  </div>
 					  <div class="form-group row">
 					    <label for="prev_loan_tot_pymnts" class="col-sm-4 pr-0 col-form-label col-form-label-sm font-12">Total Payments:</label>
 					    <div class="col-sm-8 pl-0">
-					      <input type="text" class="form-control form-control-sm font-12" id="prev_loan_tot_pymnts" name="prev_loan_tot_pymnts">
+					      <input type="text" class="form-control form-control-sm font-12 isNum" id="prev_loan_tot_pymnts" name="prev_loan_tot_pymnts" value="<?php echo !empty($totalPaidOnPrevLoan) ? number_format($totalPaidOnPrevLoan, 2) : ''; ?>" readonly>
 					    </div>
+					  </div>
+					  <div class="row">
+					  	<div class="offset-lg-7">
+					  		<input type="hidden" name="loanSchedID" value="<?php echo !empty($schedID) ? $schedID : ''; ?>">
+					  		<button type="button" class="btn btn-sm btn-default rounded-0 font-12 mb-3" id="btnPickDateAndComp">Pick Date & Compute</button>
+					  	</div>
 					  </div>
 					</div>
 
@@ -209,10 +222,10 @@
 						<div class="form-group row">
 					    <label for="type_of_loan" class="col-sm-2 pr-0 col-form-label col-form-label-sm font-12">Type of Loan:</label>
 					    <div class="col-sm-10 pl-0">
-					      <select class="custom-select custom-select-sm" id="type_of_loan" name="type_of_loan" required>
+					      <select class="custom-select custom-select-sm" id="type_of_loan" name="" required>
 								  <option selected value="" hidden>-NONE-</option>
 								  <?php foreach ($loanTypes as $row): ?>
-								  	<option value="<?php echo $row->loan_types_id; ?>" <?php echo $row->loan_types_id == $loanComputation->loan_types_id ? 'selected' : ''; ?>><?php echo $row->type; ?></option>
+								  	<option value="<?php echo $row->loan_code_id; ?>" <?php echo $row->loan_code_id == $loan_code_id->loan_code_id ? 'selected' : ''; ?>><?php echo $row->loan_type_name; ?></option>
 								  <?php endforeach; ?>
 								</select>
 					    </div>
@@ -238,7 +251,7 @@
 					  <div class="form-group row">
 					    <label for="loancomp_ref_no" class="col-sm-2 pr-0 col-form-label col-form-label-sm font-12">Ref No.:</label>
 					    <div class="col-sm-2 pl-0">
-					      <input type="text" class="form-control form-control-sm font-12" id="loancomp_ref_no" name="loancomp_ref_no" value="<?php echo $loanComputation->ref_no; ?>">
+					      <input type="text" class="form-control form-control-sm font-12" id="loancomp_ref_no" name="loancomp_ref_no" value="<?php echo $loanComputation->ref_no; ?>" required>
 					    </div>
 					    <label for="is_posted" class="col-sm-2 offset-sm-2 pr-0 col-form-label col-form-label-sm font-12">Posted:</label>
 					    <div class="col-sm-4 pl-0">
@@ -264,10 +277,10 @@
 								    <label for="no_mos_applied" class="col-sm-6 pr-0 col-form-label col-form-label-sm font-12">No. of Months Applied:</label>
 								    <div class="col-sm-6 pl-0">
 								      <select class="custom-select custom-select-sm" id="no_mos_applied" name="no_mos_applied" required>
-											  <option selected value="" hidden>-NONE-</option>
-											  <?php foreach ($loanSettings as $row): ?>
-											  	<option value="<?php echo $row->loan_settings_id; ?>"><?php echo $row->number_of_month; ?></option>
-											  <?php endforeach; ?>
+											  <!-- <option selected value="" hidden>-NONE-</option>
+											  <?php //foreach ($loanSettings as $row): ?>
+											  	<option value="<?php //echo $row->loan_settings_id; ?>"><?php //echo $row->number_of_month; ?></option>
+											  <?php //endforeach; ?> -->
 											</select>
 								    </div>
 								  </div>
@@ -349,9 +362,9 @@
 								    </div>
 								  </div>
 								  <div class="form-group row">
-								    <label for="previouse_loan" class="col-sm-5 pr-0 col-form-label col-form-label-sm font-12">Previous Loan:</label>
+								    <label for="previous_loan" class="col-sm-5 pr-0 col-form-label col-form-label-sm font-12">Previous Loan:</label>
 								    <div class="col-sm-7 pl-0">
-								      <input type="text" class="form-control form-control-sm font-12 text-right" id="previouse_loan" name="previouse_loan" readonly="">
+								      <input type="text" class="form-control form-control-sm font-12 text-right" id="previous_loan" name="previous_loan" readonly="">
 								    </div>
 								  </div>
 								  <div class="form-group row">
@@ -450,13 +463,13 @@
 								  <div class="form-group row">
 								    <label for="blb_principal" class="col-sm-5 pr-0 col-form-label col-form-label-sm font-12">Principal:</label>
 								    <div class="col-sm-7 pl-0">
-								      <input type="text" class="form-control form-control-sm font-12 text-right" id="blb_principal" name="blb_principal">
+								      <input type="text" class="form-control form-control-sm font-12 text-right isNum" id="blb_principal" name="blb_principal">
 								    </div>
 								  </div>
 								  <div class="form-group row">
 								    <label for="blb_interest" class="col-sm-5 pr-0 col-form-label col-form-label-sm font-12">Interest:</label>
 								    <div class="col-sm-7 pl-0">
-								      <input type="text" class="form-control form-control-sm font-12 text-right" id="blb_interest" name="blb_interest">
+								      <input type="text" class="form-control form-control-sm font-12 text-right isNum" id="blb_interest" name="blb_interest">
 								    </div>
 								  </div>
 								  <div class="form-group row">
@@ -468,7 +481,7 @@
 								  <div class="form-group row">
 								    <label for="blb_total" class="col-sm-5 pr-0 col-form-label col-form-label-sm font-12">Total:</label>
 								    <div class="col-sm-7 pl-0">
-								      <input type="text" class="form-control form-control-sm font-12 text-right" id="blb_total" name="blb_total">
+								      <input type="text" class="form-control form-control-sm font-12 text-right" id="blb_total" name="blb_total" readonly>
 								    </div>
 								  </div>
 								  
@@ -488,6 +501,7 @@
 <script type="text/javascript">
 
 	$(document).ready(function() {
+		$('#type_of_loan').trigger('change');
 		setTimeout(function(){
 			$('select[name="no_mos_applied"]').val('<?php echo $loanComputation->loan_settings_id; ?>').trigger('change');
 		}, 1000);

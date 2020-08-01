@@ -68,6 +68,10 @@
 						<input type="text" class="form-control form-control-sm isNum" id="monthly_salary" name="monthly_salary" value="<?php echo number_format($membersData->monthly_salary, 2); ?>" placeholder="...">
 					</div>
 					<div class="col-3 mt-2">
+						<label for="salary_grade" class="font-12">Salary Grade</label>
+						<input type="text" class="form-control form-control-sm isNum" id="salary_grade" name="salary_grade" value="<?php echo $membersData->salary_grade; ?>" placeholder="...">
+					</div>
+					<div class="col-3 pl-0 mt-2">
 						<label for="designation" class="font-12">Designation</label>
 						<input type="text" class="form-control form-control-sm" id="designation" name="designation" value="<?php echo $membersData->designation; ?>" placeholder="...">
 					</div>
@@ -84,7 +88,7 @@
 						<label for="date_of_effectivity" class="font-12">Date of Effectivity</label>
 						<input type="date" class="form-control form-control-sm" id="date_of_effectivity" name="date_of_effectivity" value="<?php echo $membersData->date_of_effectivity; ?>" placeholder="...">
 					</div>
-					<div class="col-3 mt-2 pl-0">
+					<div class="col-3 mt-2">
 						<label for="member_type_id" class="font-12">Member Type</label>
 						<select class="custom-select custom-select-sm" id="member_type_id" name="member_type_id">
 						  <option selected hidden value="">-SELECT-</option>
@@ -93,7 +97,7 @@
 						  <?php endforeach; ?>
 						</select>
 					</div>
-					<div class="col-3 mt-2">
+					<div class="col-3 pl-0 mt-2">
 						<label for="bank_account" class="font-12">Bank Account</label>
 						<input type="text" class="form-control form-control-sm" id="bank_account" name="bank_account" value="<?php echo $membersData->bank_account; ?>" placeholder="Ex. 'BPI - 012345678'">
 					</div>

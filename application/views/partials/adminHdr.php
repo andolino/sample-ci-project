@@ -14,9 +14,10 @@
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/custom.css?random=<?php echo mt_rand(); ?>">
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/animate.css">
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/dataTables.bootstrap4.min.css">
-	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/daterangepicker.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/select2.css">
 
 
 	<!-- Font Awesome JS -->

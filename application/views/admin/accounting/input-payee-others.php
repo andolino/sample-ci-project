@@ -1,0 +1,2 @@
+<label for="ref_no" class="font-12">Payee.</label>
+<input type="text" value="<?php echo !empty($has_update) ? $has_update : ''; ?>" class="form-control form-control-sm font-12 rounded-0" id="payee" name="payee" placeholder="...">
