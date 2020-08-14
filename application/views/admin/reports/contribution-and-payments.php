@@ -97,7 +97,7 @@
 						<td class="text-center"><?php echo $row->monthly_salary!='' ? number_format($row->monthly_salary, 2) : ''; ?></td>
 						<td class="text-center"><?php echo $row->deduction!='' ? number_format($row->deduction, 2) : ''; ?></td>
 						<td class="text-center"><?php echo $row->adjusted_amnt!='' ? number_format($row->adjusted_amnt, 2) : ''; ?></td>
-						<td class="text-center"><?php echo $row->total_cont!='' ? number_format($row->total_cont, 2) : ''; ?></td>
+						<td class="text-center"><?php echo $row->total_cont!='' ? $row->total_cont/*number_format($row->total_cont, 2)*/ : ''; ?></td>
 						<td class="text-center"><?php echo $row->ref_no; ?></td>
 						<td class="text-center"><?php echo $row->collection_period; ?></td>
 						<td class="text-center"><?php echo $row->gpln>0?number_format($row->gpln, 2):''; ?></td>
@@ -125,3 +125,4 @@
 
 </body>
 </html>
+

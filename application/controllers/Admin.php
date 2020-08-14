@@ -155,6 +155,7 @@ class Admin extends MY_Controller {
 	}
 
 	public function saveContribution(){
+		$rate = $this->db->get('contribution_rate')->row();
 		$fieldToSave=array();
 		$fieldToSave['members_id']=$this->input->post('members_id');
 		$fieldToSave['total']=str_replace(',', '', $this->input->post('total'));

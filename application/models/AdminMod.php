@@ -949,6 +949,7 @@ class AdminMod extends CI_Model {
 															left join cpfidb.loan_computation lc on lc.members_id = m.members_id
 															left join cpfidb.v_balance vb on vb.loan_computation_id = lc.loan_computation_id
 															left join cpfidb.departments d on d.departments_id = om.departments_id
+															WHERE cont.date_applied between '$sd' AND '$ed'
 															group by lc.ref_no
 															union
 															select
@@ -987,6 +988,7 @@ class AdminMod extends CI_Model {
 															left join cpfidb.loan_computation lc on lc.members_id = m.members_id
 															left join cpfidb.v_balance vb on vb.loan_computation_id = lc.loan_computation_id
 															left join cpfidb.departments d on d.departments_id = om.departments_id
+															WHERE cont.date_applied between '$sd' AND '$ed'
 															group by lc.ref_no
 															union
 															select
@@ -1075,6 +1077,7 @@ class AdminMod extends CI_Model {
 															left join cpfidb.loan_computation lc on lc.members_id = m.members_id
 															left join cpfidb.v_balance vb on vb.loan_computation_id = lc.loan_computation_id
 															left join cpfidb.departments d on d.departments_id = om.departments_id
+															WHERE cont.date_applied between '$sd' AND '$ed'
 															group by lc.ref_no
 															union
 															select
@@ -1216,11 +1219,12 @@ class AdminMod extends CI_Model {
 															left join cpfidb.loan_computation lc on lc.members_id = m.members_id
 															left join cpfidb.v_balance vb on vb.loan_computation_id = lc.loan_computation_id
 															left join cpfidb.departments d on d.departments_id = om.departments_id
+															WHERE cont.date_applied between '$sd' AND '$ed'
 															group by om.office_management_id
 															order by
 																	1,
 																	3,
-																	4) x WHERE x.place = '$type' AND x.date_applied between '$sd' AND '$ed' OR x.date_applied is null")->result();
+																	4) x WHERE x.place = '$type' OR x.date_applied is null")->result();
 	}
 
 	public function getOfficialReceipt($id){
