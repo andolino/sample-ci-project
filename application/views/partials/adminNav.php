@@ -13,41 +13,58 @@
       <li>
         <a href="<?php echo base_url(); ?>" class="font-12"><i class="fas fa-users"></i> ABOUT US</a>
       </li>
+			<?php if($userPriv->level == 0): ?>
       <li>
         <a href="<?php echo base_url(); ?>member-list"><i class="fas fa-tasks"></i> MEMBER LIST</a>
       </li>
-      <li class="none">
-        <a href="<?php echo base_url(); ?>loans-control"><i class="fas fa-user-cog"></i> LOANS</a>
+			<?php endif; ?> 
+      <?php if($userPriv->level == 0 || $userPriv->level == 1): ?>
+				<li class="active">
+						<a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fas fa-hand-holding-usd"></i> LOANS</a>
+						<ul class="collapse list-unstyled" id="homeSubmenu">
+								<li>
+										<a href="<?php echo base_url(); ?>loan-by-member">LOAN BY MEMBER</a>
+								</li>
+								<li>
+										<a href="<?php echo base_url(); ?>loan-request">LOAN REQUEST</a>
+								</li>
+								<li>
+										<a href="<?php echo base_url(); ?>loan-list">LOANS LIST</a>
+								</li>
+								<li>
+										<a href="<?php echo base_url(); ?>loans-application">LOAN APPLICATION</a>
+								</li>
+								<!-- <li>
+										<a href="#">COLLECTION</a>
+								</li> -->
+								<!-- <li>
+										<a href="<?php //echo base_url(); ?>claim-benefit">BENEFIT CLAIMS</a>
+								</li>
+								<li>
+										<a href="<?php //echo base_url(); ?>official-receipt">COLLECTION</a>
+								</li>
+								<li>
+										<a href="<?php //echo base_url(); ?>cash-gift">CASH GIFT</a>
+								</li> -->
+						</ul>
+				</li>
+			<?php endif; ?> 
+			<?php if($userPriv->level == 0 || $userPriv->level == 2): ?>
+			<li>
+        <a href="<?php echo base_url(); ?>official-receipt"><i class="fas fa-user-cog"></i> COLLECTION</a>
       </li>
-      <li class="none">
-        <a href="<?php echo base_url(); ?>control-token"><i class="fas fa-user-cog"></i> ACCESSS CONTROL</a>
+			<?php endif; ?> 
+			<?php if($userPriv->level == 0 || $userPriv->level == 3): ?>
+			<li>
+        <a href="<?php echo base_url(); ?>claim-benefit"><i class="fas fa-user-cog"></i> BENEFIT CLAIMS</a>
       </li>
-      <li class="active">
-          <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fas fa-hand-holding-usd"></i> LOANS</a>
-          <ul class="collapse list-unstyled" id="homeSubmenu">
-              <li>
-                  <a href="<?php echo base_url(); ?>loan-by-member">LOAN BY MEMBER</a>
-              </li>
-              <li>
-                  <a href="<?php echo base_url(); ?>loan-list">LOANS LIST</a>
-              </li>
-              <li>
-                  <a href="<?php echo base_url(); ?>loans-application">LOAN APPLICATION</a>
-              </li>
-              <!-- <li>
-                  <a href="#">COLLECTION</a>
-              </li> -->
-              <li>
-                  <a href="<?php echo base_url(); ?>claim-benefit">BENEFIT CLAIMS</a>
-              </li>
-              <li>
-                  <a href="<?php echo base_url(); ?>official-receipt">COLLECTION</a>
-              </li>
-              <li>
-                  <a href="<?php echo base_url(); ?>cash-gift">CASH GIFT</a>
-              </li>
-          </ul>
+			<?php endif; ?> 
+			<?php if($userPriv->level == 0 || $userPriv->level == 1): ?>
+			<li>
+        <a href="<?php echo base_url(); ?>cash-gift"><i class="fas fa-user-cog"></i> CASH GIFT</a>
       </li>
+			<?php endif; ?> 
+			<?php if($userPriv->level == 0 || $userPriv->level == 4): ?>
       <li>
         <a href="#acctgSubMenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fas fa-book-open"></i> ACCOUNTING</a>
         <ul class="collapse list-unstyled" id="acctgSubMenu">
@@ -97,6 +114,7 @@
             </li>
         </ul>
       </li>
+			<?php endif; ?> 
   </ul>
 
 </nav>

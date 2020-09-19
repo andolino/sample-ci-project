@@ -99,6 +99,10 @@
 						<label for="contact_no" class="font-12">Contact #:</label>
 						<input type="text" class="form-control form-control-sm" id="contact_no" name="contact_no" placeholder="">
 					</div>
+					<div class="col-3 mt-2 pl-0">
+						<label for="email" class="font-12">Email:</label>
+						<input type="text" class="form-control form-control-sm" id="email" name="email" placeholder="">
+					</div>
 					<!-- heading -->
 					<!-- <div class="col-12 mb-3 mt-4">
 						<div class="navbar mb-0">

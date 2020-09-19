@@ -224,7 +224,6 @@ $(document).ready(function() {
               animateSingleOut('.cont-card-add', 'fadeOutRight');
             }
           });
-          
           }, function(){
             console.log('Fail');
       });

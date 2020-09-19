@@ -31,6 +31,17 @@ class AdminMod extends CI_Model {
 																				'loan_types_id', 'is_deleted');
 	var $tblLoanByMemberOrder = array('loan_computation_id' => 'desc');
 
+	//LOAN BY REQUEST
+	var $tblLoanByRequest = 'v_loans_by_request';
+	var $tblLoanByRequestCollumn = array('loan_request_id', 'members_id', 'is_deleted', 'entry_date', 'users_id', 'description', 'first_name', 'last_name', 'middle_name', 'loan_code', 'status');
+	var $tblLoanByRequestOrder = array('loan_request_id' => 'desc');
+	
+	//LOAN REQUEST ATTCHMNT
+	var $tblLoanAttchmntRequest = 'portal_uploads';
+	var $tblLoanAttchmntRequestCollumn = array('portal_uploads_id', 'file_name', 'transaction_date', );
+	var $tblLoanAttchmntRequestOrder = array('portal_uploads_id' => 'desc');
+	
+
 	//CO-MAKER
 	var $tblLoanByCoMaker = 'co_maker';
 	var $tblLoanByCoMakerCollumn = array('co_maker_id', 'members_id', 'co_maker_members_id', 'last_name', 'first_name', 'is_deleted', 'entry_date');
@@ -337,6 +348,117 @@ class AdminMod extends CI_Model {
 
 	public function count_filter_loan_by_member(){
 		$this->_que_tbl_loan_by_member();
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+	
+
+	//LOAN BY REQUEST
+	private function _que_tbl_loan_by_request(){
+		$this->db->from($this->tblLoanByRequest);
+		$this->db->where('is_deleted', '0');
+		if ($this->input->post('id')) {
+			$this->db->where('members_id', $this->input->post('id'));
+		}
+		$i = 0;
+		foreach ($this->tblLoanByRequestCollumn as $item) {
+			if (!empty($_POST['search']['value'])) {
+				if ($i === 0) {
+					$this->db->like($item, strtolower($_POST['search']['value']));
+					if ($this->input->post('id')) {
+						$this->db->where('members_id', $this->input->post('id'));
+					}
+				}else{
+					$this->db->or_like($item, strtolower($_POST['search']['value']));
+					if ($this->input->post('id')) {
+						$this->db->where('members_id', $this->input->post('id'));
+					}
+				}
+			}
+			$column[$i] = $item;
+			$i++;
+		}
+
+		if (isset($_POST['order'])) {
+			$this->db->where('is_deleted', '0');
+			$this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+		}elseif($this->tblLoanByRequestOrder){
+			$this->db->where('is_deleted', '0');
+			$order = $this->tblLoanByRequestOrder;
+			$this->db->order_by(key($order), $order[key($order)]);
+		}
+		$this->db->order_by('loan_request_id', 'DESC');
+	}
+
+	public function get_output_loan_by_request(){
+		$this->_que_tbl_loan_by_request();
+		if (!empty($_POST['length']))
+		$this->db->limit(($_POST['length'] < 0 ? 0 : $_POST['length']), $_POST['start']);
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	public function count_all_loan_by_request(){
+		$this->db->where('is_deleted', '0');
+		$this->db->from($this->tblLoanByRequest);
+		return $this->db->count_all_results();
+	}
+
+	public function count_filter_loan_by_request(){
+		$this->_que_tbl_loan_by_request();
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+	
+	//LOAN REQUEST ATTCHMNT
+	private function _que_tbl_loan_attmnt_request(){
+		$this->db->from($this->tblLoanAttchmntRequest);
+		if ($this->input->post('id')) {
+			$this->db->where('loan_request_id', $this->input->post('id'));
+		}
+		$i = 0;
+		foreach ($this->tblLoanAttchmntRequestCollumn as $item) {
+			if (!empty($_POST['search']['value'])) {
+				if ($i === 0) {
+					$this->db->like($item, strtolower($_POST['search']['value']));
+					if ($this->input->post('id')) {
+						$this->db->where('loan_request_id', $this->input->post('id'));
+					}
+				}else{
+					$this->db->or_like($item, strtolower($_POST['search']['value']));
+					if ($this->input->post('id')) {
+						$this->db->where('loan_request_id', $this->input->post('id'));
+					}
+				}
+			}
+			$column[$i] = $item;
+			$i++;
+		}
+
+		if (isset($_POST['order'])) {
+			$this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+		}elseif($this->tblLoanAttchmntRequestOrder) {
+			$order = $this->tblLoanAttchmntRequestOrder;
+			$this->db->order_by(key($order), $order[key($order)]);
+		}
+		$this->db->order_by('portal_uploads_id', 'DESC');
+	}
+
+	public function get_output_loan_attmnt_request(){
+		$this->_que_tbl_loan_attmnt_request();
+		if (!empty($_POST['length']))
+		$this->db->limit(($_POST['length'] < 0 ? 0 : $_POST['length']), $_POST['start']);
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	public function count_all_loan_attmnt_request(){
+		$this->db->from($this->tblLoanAttchmntRequest);
+		return $this->db->count_all_results();
+	}
+
+	public function count_filter_loan_attmnt_request(){
+		$this->_que_tbl_loan_attmnt_request();
 		$query = $this->db->get();
 		return $query->num_rows();
 	}

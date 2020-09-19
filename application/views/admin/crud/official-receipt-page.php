@@ -9,9 +9,11 @@
  			</div>	
 		</div> -->
 		<div class="row">
-			<div class="col-7 pb-3">
+			<div class="col-12 pb-3">
 				<!-- <button type="button" class="btn btn-default btn-lg font-12 rounded-0 border" id="btn-cash-gift" data-field="ADD"><i class="fas fa-plus"></i> Add Per Member</button> -->
 				<button type="button" class="btn btn-default btn-lg font-12 rounded-0 border" id="btn-or-per-region" data-field="GENERATE"><i class="fas fa-plus"></i> Add Per Region</button>
+				<button type="button" class="btn btn-default btn-md rounded-0 font-12" id="add-contribution-by-type"><i class="fas fa-user-plus"></i> Add Contribution</button>
+				<button type="button" class="btn btn-default btn-md rounded-0 font-12" id="add-payments-by-type"><i class="fas fa-user-plus"></i> Add Loan Payments</button>
         <a href="javascript:void(0);" class="btn btn-default btn-lg font-12 rounded-0 border" id="showBtnPrintByRegion"><i class="fas fa-print"></i> Print Contribution And Payments</a>
 				<!-- <button type="button" class="btn btn-purple btn-md rounded-0 font-12" id="printCashGiftDocs"><i class="fas fa-print"></i> Print Docx</button> -->
 			</div>

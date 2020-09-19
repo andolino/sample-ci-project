@@ -8,13 +8,25 @@ class MY_Controller extends CI_Controller{
 
 	public function adminContainer($data, $param = array(), $return = FALSE){
 		if(!$this->session->userdata('users_id')){
-		  redirect('login');
+			redirect('login');
 		}
-        $param['go_logout'] = 'logout';
+		$param['go_logout'] = 'logout';
+		$users = $this->db->get_where('users', array('users_id' => $this->session->users_id))->row();
+		$param['userPriv']  = $users;
 		$this->load->view('partials/adminHdr', $param);
 		$this->load->view('partials/adminNav', $param);
 		$this->load->view($data, $param, $return);
 		$this->load->view('partials/adminFtr');	
+	}
+    
+	public function portalContainer($data, $param = array(), $return = FALSE){
+		if(!$this->session->userdata('members_id')){
+			redirect('portal-login');
+		}
+		$this->load->view('partials/portalHdr', $param);
+		// $this->load->view('partials/adminNav', $param);
+		$this->load->view($data, $param, $return);
+		$this->load->view('partials/portalFtr');	
 	}
 
 	function encdec( $string, $action) {
@@ -136,9 +148,13 @@ class MY_Controller extends CI_Controller{
         $out .= ' AND ' . $this->convertIntegerToWords((is_string($nums[1]) ? (int) $nums[1] : $nums[1])) .' CENTAVO/S';
         }
         return ucwords($out);
-    }
-
-
-    
+		}
+		function generateKey($length) {
+			$key = '';
+			for($i = 0; $i < $length; $i ++) {
+					$key .= chr(mt_rand(33, 126));
+			}
+			return $key;
+		}
 
 }

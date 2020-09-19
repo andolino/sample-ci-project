@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 14, 2020 at 08:18 AM
+-- Generation Time: Sep 19, 2020 at 09:34 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.2.31
 
@@ -495,7 +495,7 @@ CREATE TABLE `identifiers` (
 --
 
 INSERT INTO `identifiers` (`identifiers_id`, `members_id`) VALUES
-(1, '00000006');
+(1, '00000009');
 
 -- --------------------------------------------------------
 
@@ -803,6 +803,47 @@ CREATE TABLE `loan_receipt_temp` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `loan_request`
+--
+
+CREATE TABLE `loan_request` (
+  `loan_request_id` int(11) NOT NULL,
+  `members_id` varchar(11) NOT NULL,
+  `is_deleted` tinyint(1) DEFAULT 0,
+  `entry_date` date DEFAULT NULL,
+  `users_id` int(11) NOT NULL,
+  `description` text DEFAULT NULL,
+  `loan_code_id` int(11) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 0 COMMENT '0 = pending, 1 = approved, 2 = disapproved',
+  `co_maker_id` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `loan_request`
+--
+
+INSERT INTO `loan_request` (`loan_request_id`, `members_id`, `is_deleted`, `entry_date`, `users_id`, `description`, `loan_code_id`, `status`, `co_maker_id`) VALUES
+(10, '00000009', 0, '2020-09-18', 0, 'TEST', 1, 0, '00000001,00000002'),
+(11, '00000009', 0, '2020-09-18', 0, 'TEST', 2, 0, '00000004,00000006'),
+(12, '00000009', 0, '2020-09-18', 0, '', 0, 0, '00000002,00000004');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `loan_req_msg`
+--
+
+CREATE TABLE `loan_req_msg` (
+  `loan_req_msg_id` int(11) NOT NULL,
+  `loan_request_id` int(11) NOT NULL,
+  `msg` text DEFAULT NULL,
+  `transaction_date` date DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `loan_schedule`
 --
 
@@ -1047,20 +1088,27 @@ CREATE TABLE `members` (
   `contact_no` varchar(50) DEFAULT NULL,
   `retired_date` date DEFAULT NULL,
   `benefit_type` int(11) DEFAULT NULL,
-  `salary_grade` int(11) DEFAULT NULL
+  `salary_grade` int(11) DEFAULT NULL,
+  `username` text DEFAULT NULL,
+  `password` text DEFAULT NULL,
+  `password_txt` text DEFAULT NULL,
+  `email` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `members`
 --
 
-INSERT INTO `members` (`members_id`, `last_name`, `first_name`, `middle_name`, `entry_date`, `is_deleted`, `id_no`, `dob`, `address`, `civil_status_id`, `monthly_salary`, `designation`, `office_management_id`, `date_of_effectivity`, `member_type_id`, `users_id`, `bank_account`, `contact_no`, `retired_date`, `benefit_type`, `salary_grade`) VALUES
-('00000001', 'baisac', 'andolino', 'gallardo', '2020-06-05', 0, '000934', '1990-11-06', 'Makati', 1, '90132.00', 'Developer', 1, '2018-03-08', 1, 1, 'BPI -09239442', '09773656715', '2030-02-28', 1, NULL),
-('00000002', 'dela cruz', 'alvins', 'antonio', '2020-04-12', 0, '000584', '1992-02-03', 'Marikina', 1, '53248.00', 'System Analyst', 1, '2020-02-01', 1, 1, 'BDO - 023494458', '09424924594', NULL, NULL, NULL),
-('00000003', 'mora', 'peter', 'billones', '2020-05-31', 0, '002422', '1978-02-02', 'Makati', 1, '30000.00', 'Developer', 5, '2020-03-02', 1, 1, '', '', NULL, NULL, NULL),
-('00000004', 'casera', 'queenie', 'paniamogan', '2020-04-10', 0, '0027339', '1995-07-08', 'Matinao', 1, '30000.00', 'Accounting', 1, '2020-04-23', 1, 1, 'BDO - 092938400', '09992304209', NULL, NULL, NULL),
-('00000005', 'honteveros', 'dondon', 'G', '2020-05-02', 0, '00293', '1990-11-06', 'Makati Cit', 1, '30000.00', 'Developer', 1, '2020-05-06', 1, 1, 'BDO - 2020304059', '7509934', NULL, NULL, NULL),
-('00000006', 'dela cruz', 'juan', '', '2020-05-19', 0, '2123123', '2020-05-06', 'makati', 1, '25000.00', 'Developer', 1, '2020-05-29', 1, 1, 'BDO -20295224', '09238425753', NULL, NULL, NULL);
+INSERT INTO `members` (`members_id`, `last_name`, `first_name`, `middle_name`, `entry_date`, `is_deleted`, `id_no`, `dob`, `address`, `civil_status_id`, `monthly_salary`, `designation`, `office_management_id`, `date_of_effectivity`, `member_type_id`, `users_id`, `bank_account`, `contact_no`, `retired_date`, `benefit_type`, `salary_grade`, `username`, `password`, `password_txt`, `email`) VALUES
+('00000001', 'baisac', 'andolino', 'gallardo', '2020-06-05', 0, '000934', '1990-11-06', 'Makati', 1, '90132.00', 'Developer', 1, '2018-03-08', 1, 1, 'BPI -09239442', '09773656715', '2030-02-28', 1, NULL, NULL, NULL, NULL, NULL),
+('00000002', 'dela cruz', 'alvins', 'antonio', '2020-04-12', 0, '000584', '1992-02-03', 'Marikina', 1, '53248.00', 'System Analyst', 1, '2020-02-01', 1, 1, 'BDO - 023494458', '09424924594', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('00000003', 'mora', 'peter', 'billones', '2020-05-31', 0, '002422', '1978-02-02', 'Makati', 1, '30000.00', 'Developer', 5, '2020-03-02', 1, 1, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('00000004', 'casera', 'queenie', 'paniamogan', '2020-04-10', 0, '0027339', '1995-07-08', 'Matinao', 1, '30000.00', 'Accounting', 1, '2020-04-23', 1, 1, 'BDO - 092938400', '09992304209', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('00000005', 'honteveros', 'dondon', 'G', '2020-05-02', 0, '00293', '1990-11-06', 'Makati Cit', 1, '30000.00', 'Developer', 1, '2020-05-06', 1, 1, 'BDO - 2020304059', '7509934', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('00000006', 'dela cruz', 'juan', '', '2020-05-19', 0, '2123123', '2020-05-06', 'makati', 1, '25000.00', 'Developer', 1, '2020-05-29', 1, 1, 'BDO -20295224', '09238425753', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('00000007', 'as32', 'dasdas32', 'asdas', '2020-08-15', 0, '12312332', '2020-08-27', 'asdas32', 2, '0.00', 'asdasd', 6, '2020-08-18', 1, 1, '1231231232', '123123123', NULL, NULL, 1212232, NULL, NULL, NULL, NULL),
+('00000008', 'Bolima', 'Bianca', 'Tecson', '2020-09-12', 0, '55125', '1994-08-28', 'Salcedo st corner malugay street Makati City', 1, '25000.00', 'TEst', 1, '2020-09-23', 1, 1, 'BDO - 0004245242', '09457158996', NULL, NULL, 2, 'bbolima', '$2y$10$CLyGB5klrm3z3spr7ty88ORMmrE5lZZBuXKo1DR18Lt6dB4CFDdqm', '5f5d1e3c430b3', 'dondonpentavia@gmail.com'),
+('00000009', 'gamora', 'wolf', 'G', '2020-09-17', 0, '5125125', '1990-08-16', 'Salcedo st corner malugay street Makati City', 1, '25000.00', 'Web Developer', 1, '2020-09-24', 1, NULL, 'BDO - 0004245242', '9773656715', NULL, NULL, 4, 'wgamora', '$2y$10$EItcPQqpPu6PprjLvNXGr.1z1mwluiiZ4Ry0clEo5JE7cqlDV8mpe', '123456', 'dpentavia@gmail.com');
 
 --
 -- Triggers `members`
@@ -1165,6 +1213,32 @@ INSERT INTO `official_receipt` (`official_receipt_id`, `departments_id`, `amount
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `portal_uploads`
+--
+
+CREATE TABLE `portal_uploads` (
+  `portal_uploads_id` int(11) NOT NULL,
+  `loan_request_id` int(11) NOT NULL,
+  `image_name` text DEFAULT NULL,
+  `image_path` text DEFAULT NULL,
+  `file_name` text DEFAULT NULL,
+  `file_path` text DEFAULT NULL,
+  `transaction_date` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `portal_uploads`
+--
+
+INSERT INTO `portal_uploads` (`portal_uploads_id`, `loan_request_id`, `image_name`, `image_path`, `file_name`, `file_path`, `transaction_date`) VALUES
+(20, 11, NULL, NULL, '1.jpg', NULL, '2020-09-18'),
+(21, 11, NULL, NULL, '2.jpg', NULL, '2020-09-18'),
+(22, 11, NULL, NULL, '3.jpg', NULL, '2020-09-18'),
+(23, 12, NULL, NULL, 'IMG-88645e100075f646cc71b0e5992f40b6-V.jpg', NULL, '2020-09-18');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `relationship_type`
 --
 
@@ -1235,7 +1309,9 @@ INSERT INTO `uploads` (`uploads_id`, `members_id`, `image_name`, `image_path`, `
 (1, '00000001', 'tobi__the_masked_ninja_from_akatsuki_by_beu2v_dbtmcz6-fullview6.jpg', 'C:/xampp/htdocs/cpfi/assets/image/uploads/', NULL, NULL, '2020-04-23'),
 (2, '00000002', '84217667_548898739065440_6328985649004661540_n4.jpg', 'C:/xampp/htdocs/cpfi/assets/image/uploads/', NULL, NULL, '2020-04-09'),
 (3, '00000003', 'Capture2.PNG', 'C:/xampp/htdocs/cpfi/assets/image/uploads/', NULL, NULL, '2020-04-09'),
-(4, '00000004', '89260743_2658694764411607_948672185790002051_n3.jpg', 'C:/xampp/htdocs/cpfi/assets/image/uploads/', NULL, NULL, '2020-04-10');
+(4, '00000004', '89260743_2658694764411607_948672185790002051_n3.jpg', 'C:/xampp/htdocs/cpfi/assets/image/uploads/', NULL, NULL, '2020-04-10'),
+(5, '00000007', 'color-2174065_1280.png', 'X:/Localhost/htdocs/template/assets/image/uploads/', NULL, NULL, '2020-08-15'),
+(6, '00000009', 'corsair.jpg', 'X:/Localhost/htdocs/cpfi/assets/image/uploads/', NULL, NULL, '2020-09-16');
 
 -- --------------------------------------------------------
 
@@ -1266,10 +1342,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`users_id`, `screen_name`, `username`, `password`, `txt_password`, `trans_date`, `trans_desc`, `is_deleted`, `last_name`, `first_name`, `middle_name`, `level`, `email`, `designation`, `fp_time`) VALUES
-(1, 'Admin', 'user1', '$2y$10$aVa.Fw4FOoXgDiLcKqLse.zb1ZFrQ2VZf3uG5eDdYe6Nqp9EIfjLK', '123456', '2020-03-23', 'add', 0, 'Pentavia', 'Dondon', 'Hammet', 0, 'dondonpentavia@gmail.com', 'Developer', '1596212804'),
+(1, 'Admins', 'user1', '$2y$10$RdmlOAPf.LPNqb8AvqE9leqPnasEOAmAERZtYXpNEdH4jUdcptemG', '1234567', '2020-08-15', 'add', 0, 'Pentavia', 'Dondon', 'Hammet', 0, 'dondonpentavia@gmail.com', 'Developer', '1596212804'),
 (5, 'Dondon', 'user2', '$2y$10$GetAQ4qm7q8.d0YSYLWteeG1E3bFu7m0u94oENHugwmnOrGk060ja', '123456', '2020-04-25', NULL, 1, 'Baisac', 'Andolino', 'Gallardo', 4, 'baisac.andolino@gmail.com', 'Programmer', NULL),
 (6, 'Robin', 'user3', '$2y$10$Y01UZfLD/j.GAFpOK0HQ.eYffCKQNZKHEV94MIz5y/CHxMBs498fG', '123456', '2020-04-25', NULL, 0, 'Cardo', 'Dalisay', 'Mendoza', 2, 'robinpadilla@gmail.com', 'Staff', NULL),
-(7, 'Mardyon', 'user4', '$2y$10$6373IZTPGcWskK/pY3gBWOrW7C5SCzxURVc7XjIWjpc5icQv.ZDqy', '12345678', '2020-04-29', NULL, 0, 'Congzon', 'Mardyon', 'G', 0, 'mardyon@gmail.com', 'Programmer', NULL);
+(7, 'Mardyon', 'user4', '$2y$10$6373IZTPGcWskK/pY3gBWOrW7C5SCzxURVc7XjIWjpc5icQv.ZDqy', '12345678', '2020-04-29', NULL, 1, 'Congzon', 'Mardyon', 'G', 0, 'mardyon@gmail.com', 'Programmer', NULL),
+(8, 'Peter', 'peteAdmin', '$2y$10$D/gp043WINZDAHrdSQOryu8gUfGbYBlv/fDMdkthgmJs3BoTAyKM6', '!@#QWEASDZXC', '2020-08-15', NULL, 0, 'Mora', 'Peter', 'BIllones', 0, 'peterbillonesmora@gmail.com', 'TEST', NULL);
 
 -- --------------------------------------------------------
 
@@ -1585,6 +1662,26 @@ CREATE TABLE `v_loans_by_member` (
 ,`is_posted` tinyint(1)
 ,`is_deleted` tinyint(1)
 ,`is_approved_txt` varchar(10)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `v_loans_by_request`
+-- (See below for the actual view)
+--
+CREATE TABLE `v_loans_by_request` (
+`loan_request_id` int(11)
+,`members_id` varchar(11)
+,`is_deleted` tinyint(1)
+,`entry_date` date
+,`users_id` int(11)
+,`description` text
+,`first_name` text
+,`last_name` text
+,`middle_name` text
+,`loan_code` text
+,`status` tinyint(1)
 );
 
 -- --------------------------------------------------------
@@ -1916,6 +2013,15 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- --------------------------------------------------------
 
 --
+-- Structure for view `v_loans_by_request`
+--
+DROP TABLE IF EXISTS `v_loans_by_request`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_loans_by_request`  AS  select `lr`.`loan_request_id` AS `loan_request_id`,`lr`.`members_id` AS `members_id`,`lr`.`is_deleted` AS `is_deleted`,`lr`.`entry_date` AS `entry_date`,`lr`.`users_id` AS `users_id`,`lr`.`description` AS `description`,`lm`.`first_name` AS `first_name`,`lm`.`last_name` AS `last_name`,`lm`.`middle_name` AS `middle_name`,`lc`.`loan_code` AS `loan_code`,`lr`.`status` AS `status` from ((`loan_request` `lr` left join `members` `lm` on(`lm`.`members_id` = `lr`.`members_id`)) left join `loan_code` `lc` on(`lc`.`loan_code_id` = `lr`.`loan_code_id`)) ;
+
+-- --------------------------------------------------------
+
+--
 -- Structure for view `v_loans_list`
 --
 DROP TABLE IF EXISTS `v_loans_list`;
@@ -2146,6 +2252,20 @@ ALTER TABLE `loan_receipt_temp`
   ADD KEY `loan_lschedtmp_ibfk_1` (`loan_schedule_id`);
 
 --
+-- Indexes for table `loan_request`
+--
+ALTER TABLE `loan_request`
+  ADD PRIMARY KEY (`loan_request_id`),
+  ADD KEY `loan_memlrq_ibfk_1` (`members_id`);
+
+--
+-- Indexes for table `loan_req_msg`
+--
+ALTER TABLE `loan_req_msg`
+  ADD PRIMARY KEY (`loan_req_msg_id`),
+  ADD KEY `loan_request` (`loan_request_id`);
+
+--
 -- Indexes for table `loan_schedule`
 --
 ALTER TABLE `loan_schedule`
@@ -2194,6 +2314,13 @@ ALTER TABLE `office_management`
 ALTER TABLE `official_receipt`
   ADD PRIMARY KEY (`official_receipt_id`),
   ADD KEY `depts_id_ibfk_1` (`departments_id`);
+
+--
+-- Indexes for table `portal_uploads`
+--
+ALTER TABLE `portal_uploads`
+  ADD PRIMARY KEY (`portal_uploads_id`),
+  ADD KEY `loan_request` (`loan_request_id`);
 
 --
 -- Indexes for table `relationship_type`
@@ -2351,6 +2478,18 @@ ALTER TABLE `loan_receipt_temp`
   MODIFY `loan_receipt_temp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
+-- AUTO_INCREMENT for table `loan_request`
+--
+ALTER TABLE `loan_request`
+  MODIFY `loan_request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `loan_req_msg`
+--
+ALTER TABLE `loan_req_msg`
+  MODIFY `loan_req_msg_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `loan_schedule`
 --
 ALTER TABLE `loan_schedule`
@@ -2387,6 +2526,12 @@ ALTER TABLE `official_receipt`
   MODIFY `official_receipt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
+-- AUTO_INCREMENT for table `portal_uploads`
+--
+ALTER TABLE `portal_uploads`
+  MODIFY `portal_uploads_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
 -- AUTO_INCREMENT for table `relationship_type`
 --
 ALTER TABLE `relationship_type`
@@ -2402,13 +2547,13 @@ ALTER TABLE `signatory`
 -- AUTO_INCREMENT for table `uploads`
 --
 ALTER TABLE `uploads`
-  MODIFY `uploads_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `uploads_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `users_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `users_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables
@@ -2493,6 +2638,18 @@ ALTER TABLE `loan_receipt_temp`
   ADD CONSTRAINT `loan_lschedtmp_ibfk_1` FOREIGN KEY (`loan_schedule_id`) REFERENCES `loan_schedule` (`loan_schedule_id`);
 
 --
+-- Constraints for table `loan_request`
+--
+ALTER TABLE `loan_request`
+  ADD CONSTRAINT `loan_memlrq_ibfk_1` FOREIGN KEY (`members_id`) REFERENCES `members` (`members_id`);
+
+--
+-- Constraints for table `loan_req_msg`
+--
+ALTER TABLE `loan_req_msg`
+  ADD CONSTRAINT `uploads_lrqmsgibfk_1` FOREIGN KEY (`loan_request_id`) REFERENCES `loan_request` (`loan_request_id`);
+
+--
 -- Constraints for table `loan_schedule`
 --
 ALTER TABLE `loan_schedule`
@@ -2524,6 +2681,12 @@ ALTER TABLE `office_management`
 --
 ALTER TABLE `official_receipt`
   ADD CONSTRAINT `depts_id_ibfk_1` FOREIGN KEY (`departments_id`) REFERENCES `departments` (`departments_id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `portal_uploads`
+--
+ALTER TABLE `portal_uploads`
+  ADD CONSTRAINT `uploads_lrqibfk_1` FOREIGN KEY (`loan_request_id`) REFERENCES `loan_request` (`loan_request_id`);
 
 --
 -- Constraints for table `uploads`

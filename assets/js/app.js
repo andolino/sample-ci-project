@@ -11,6 +11,7 @@ var tbl_member = [];
 var tbl_settings = [];
 var tbl_loans_list = [];
 var tbl_loans_by_member = [];
+var tbl_loans_by_request = [];
 var tbl_co_maker = [];
 var tbl_users = [];
 var tbl_signatory = [];
@@ -324,6 +325,7 @@ $(document).ready(function() {
       initLoanSettingsDataTables();
       initLoanListDataTables();
       initLoanListByMemberDataTables();
+      initLoanListByRequestDataTables();
       initBenefitClaimMembersDataTables();
       initContributions();
 
@@ -346,6 +348,7 @@ $(document).ready(function() {
   initLoanSettingsDataTables();
   initLoanListDataTables();
   initLoanListByMemberDataTables();
+  initLoanListByRequestDataTables();
   initBenefitClaimMembersDataTables();
   initCdjEntry();
   initPacsEntry();
@@ -1724,6 +1727,41 @@ $(document).ready(function() {
     });
 
   });  
+  
+  $(document).on('click', '#btn-show-ln-req-attmnt', function(e) {
+    e.preventDefault();
+    var id   = $(this).attr('data-id');
+    $.get('show-loan-req-attachments', { 'id':id }, function(data, textStatus) {
+      $('.loans-cont-add').html(data);
+      $('.title-loans-form').html('ATTACHMENTS');
+      animateSingleIn('.loans-card-add', 'fadeInRight');
+    });
+
+  }); 
+  
+  $(document).on('click', '#btn-comment-ln-request', function(e) {
+    e.preventDefault();
+    var id   = $(this).attr('data-id');
+    $.get('get-msg-frm', { 'id':id }, function(data, textStatus) {
+      $('.loans-cont-add').html(data);
+      $('.title-loans-form').html('FEEDBACK MESSAGE');
+      animateSingleIn('.loans-card-add', 'fadeInRight');
+    });
+
+  });  
+
+  $(document).on('submit', '#frm-send-feedback-msg', function(e) {
+    e.preventDefault();
+    $.ajax({
+      type: "POST",
+      url: "save-msg-feedback-admin",
+      data: $(this).serialize(),
+      success: function (res) {
+        $('.list-msg-fdbk').html(res);
+      }
+    });
+
+  });  
 
   //================================================> LGU
   $(document).on('click', '#chk-const-list-tbl-all', function(e) {
@@ -2681,6 +2719,46 @@ function initLoanListByMemberDataTables(){
         "data"                 : { 
                                 "id" : $("#tbl-loans-by-member").attr('data-id')
                               }
+    },
+    'createdRow'            : function(row, data, dataIndex) {
+      var dataRowAttrIndex = ['data-loan-settings'];
+      var dataRowAttrValue = [0];
+        for (var i = 0; i < dataRowAttrIndex.length; i++) {
+          myObjKeyLguConst[dataRowAttrIndex[i]] = data[dataRowAttrValue[i]];
+        }
+        $(row).attr(myObjKeyLguConst);
+    }
+  });
+}
+
+function initLoanListByRequestDataTables(){
+  var myObjKeyLguConst = {};
+  tbl_loans_by_request  = $("#tbl-loans-by-request").DataTable({
+    searchHighlight : true,
+    lengthMenu      : [[5, 10, 20, 30, 50, -1], [5, 10, 20, 30, 50, 'All']],
+    language: {
+        search                 : '_INPUT_',
+        searchPlaceholder      : 'Search...',
+        lengthMenu             : '_MENU_'       
+    },
+    columnDefs                 : [
+      { 
+        orderable            : false, 
+        targets              : [0,1,2,3,4,5,6] 
+      },
+      { 
+        className            : 'text-right', 
+        targets              : [5,6] 
+      }
+    ],
+    "serverSide"               : true,
+    "processing"               : true,
+    "ajax"                     : {
+        "url"                  : 'server-loans-by-request',
+        "type"                 : 'POST',
+        // "data"                 : { 
+        //                         "id" : $("#tbl-loans-by-request").attr('data-id')
+        //                       }
     },
     'createdRow'            : function(row, data, dataIndex) {
       var dataRowAttrIndex = ['data-loan-settings'];

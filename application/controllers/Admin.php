@@ -141,6 +141,12 @@ class Admin extends MY_Controller {
 		$params['loanByMemberPage']	= $this->load->view('admin/crud/v-loans-by-member', $params, TRUE);
 		$this->adminContainer('admin/loan-by-member', $params);	
 	}
+	
+	public function loan_request_by_member(){
+		$params['heading'] 		 			= 'LOAN BY REQUEST';
+		$params['loanByMemberPage']	= $this->load->view('admin/crud/v-loan-request', $params, TRUE);
+		$this->adminContainer('admin/loan-by-member', $params);	
+	}
 
 	public function loanList(){
 		$params['heading'] 		 	= 'LOANS LIST';
@@ -632,6 +638,12 @@ class Admin extends MY_Controller {
 		// }
 		$this->load->view('admin/crud/frm-add-payments', $params);
 	}
+	
+	public function show_loan_request_attachments(){
+		$loan_request_id           = $this->input->get('id');
+		$params['attachments'] = $this->db->get_where('portal_uploads', array('loan_request_id' => $loan_request_id))->result();	
+		$this->load->view('admin/crud/show-loan-req-attachments', $params);
+	}
 
 	public function savePostPayment(){
 
@@ -1018,7 +1030,7 @@ class Admin extends MY_Controller {
 			$hashed_id = $this->encdec($row->members_id, 'e');
 			$data = array();
 			$no++;
-   		$data[] = '<input type="checkbox" id="chk-const-list-tbl" value="'.$row->members_id.'" name="chk-const-list-tbl">';
+   		// $data[] = '<input type="checkbox" id="chk-const-list-tbl" value="'.$row->members_id.'" name="chk-const-list-tbl">';
    		$data[] = $row->id_no;
    		$data[] = strtoupper($row->last_name);
    		$data[] = strtoupper($row->first_name);
@@ -1641,6 +1653,123 @@ class Admin extends MY_Controller {
 		echo json_encode($output);
 	}
 
+	public function get_message_form(){
+		$params['msg'] = $this->db->get_where('loan_req_msg', array('loan_request_id' => $this->input->get('id')))->result();
+		$params['id'] = $this->input->get('id');
+		$this->load->view('admin/crud/frm-feedback-msg', $params);
+	}
+	
+	public function get_message_simultaneous(){
+		$params['msg'] = $this->db->get_where('loan_req_msg', array('loan_request_id' => $this->input->post('id')))->result();
+		$this->load->view('admin/crud/msg-list-feedback', $params);
+	}
+	
+	public function save_msg_feedback_admin(){
+		$this->db->insert('loan_req_msg', 
+			array(
+				'loan_request_id'  => $this->input->post('id'),
+				'msg' 						 => $this->input->post('msg'),
+				'transaction_date' => date('Y-m-d')
+			)
+		);
+		$params['msg'] = $this->db->get_where('loan_req_msg', array('loan_request_id' => $this->input->post('id')))->result();
+		$this->load->view('admin/crud/msg-list-feedback', $params);
+	}
+	
+	public function server_loans_by_request(){
+		$result 	= $this->AdminMod->get_output_loan_by_request();
+		$res 			= array();
+		$no 			= isset($_POST['start']) ? $_POST['start'] : 0;
+		$status = array('<span class="badge badge-warning">Pending</span>', '<span class="badge badge-success">Approved</span>', '<span class="badge badge-danger">Disapproved</span>');
+		foreach ($result as $row) {
+			$data = array();
+			$no++;
+
+   		$data[] = $row->entry_date;
+   		$data[] = $row->first_name;
+   		$data[] = $row->last_name;
+   		$data[] = $row->middle_name;
+   		$data[] = $row->loan_code;
+   		$data[] = $status[$row->status];
+			$data[] = '<a href="javascript:void(0);" id="btn-show-ln-req-attmnt" data-field="ADD" 
+											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
+											 title="View Attachments" data-id="'.$row->loan_request_id.'"><i class="fas fa-paperclip"></i></a> |
+								<a href="javascript:void(0);" id="btn-show-ln-req-attmnt" data-field="ADD" 
+											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
+											 title="Approve" data-id="'.$row->loan_request_id.'"><i class="fas fa-check-square"></i></a> |
+								<a href="javascript:void(0);" id="btn-comment-ln-request" data-field="ADD" 
+											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
+											 title="Feedback Message" data-id="'.$row->loan_request_id.'"><i class="fas fa-comments"></i></a>';
+			$res[] = $data;
+		}
+
+		$output = array (
+			'draw' 						=> isset($_POST['draw']) ? $_POST['draw'] : null,
+			'recordsTotal' 		=> $this->AdminMod->count_all_loan_by_request(),
+			'recordsFiltered' => $this->AdminMod->count_filter_loan_by_request(),
+			'data' 						=> $res
+		);
+
+		echo json_encode($output);
+	}
+	
+	public function server_portal_loans_request(){
+		$result 	= $this->AdminMod->get_output_loan_by_request();
+		$res 			= array();
+		$no 			= isset($_POST['start']) ? $_POST['start'] : 0;
+		$status = array('<span class="badge badge-warning">Pending</span>', '<span class="badge badge-success">Approved</span>', '<span class="badge badge-danger">Disapproved</span>');
+		foreach ($result as $row) {
+			$data = array();
+			$no++;
+
+   		$data[] = $row->loan_request_id;
+   		$data[] = date('Y-m-d', strtotime($row->entry_date));
+   		$data[] = $row->loan_code;
+   		$data[] = $status[$row->status];
+			$data[] = '<a href="javascript:void(0);" class="btn btn-info btn-sm" id="btn-view-attachment" data-field="ADD" 
+											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
+											 title="View Attachment" data-id="'.$row->loan_request_id.'"><i class="fas fa-paperclip"></i></a> |
+								<a href="javascript:void(0);" class="btn btn-success btn-sm" id="btn-view-comment" data-field="ADD" 
+											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
+											 title="View Comment" data-id="'.$row->loan_request_id.'"><i class="fas fa-comments"></i></a>';
+			$res[] = $data;
+		}
+
+		$output = array (
+			'draw' 						=> isset($_POST['draw']) ? $_POST['draw'] : null,
+			'recordsTotal' 		=> $this->AdminMod->count_all_loan_by_request(),
+			'recordsFiltered' => $this->AdminMod->count_filter_loan_by_request(),
+			'data' 						=> $res
+		);
+
+		echo json_encode($output);
+	}
+	
+	public function server_portal_loan_req_attmnt(){
+		$result 	= $this->AdminMod->get_output_loan_attmnt_request();
+		$res 			= array();
+		$no 			= isset($_POST['start']) ? $_POST['start'] : 0;
+		foreach ($result as $row) {
+			$data = array();
+			$no++;
+
+   		$data[] = $row->file_name;
+			$data[] = '<a href="javascript:void(0);" class="btn btn-info btn-sm" id="btn-process-request-loan" data-field="ADD" 
+											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
+											 title="Process NOW" data-id="'.$row->loan_request_id.'"><i class="fas fa-search"></i></a>';
+			$res[] = $data;
+		}
+
+		$output = array (
+			'draw' 						=> isset($_POST['draw']) ? $_POST['draw'] : null,
+			'recordsTotal' 		=> $this->AdminMod->count_all_loan_attmnt_request(),
+			'recordsFiltered' => $this->AdminMod->count_filter_loan_attmnt_request(),
+			'data' 						=> $res
+		);
+
+		echo json_encode($output);
+	}
+	
 	public function server_co_maker(){
 		$result 	= $this->AdminMod->get_output_co_maker();
 		$res 			= array();
@@ -2263,6 +2392,7 @@ class Admin extends MY_Controller {
 		$this->form_validation->set_rules('office_management_id', 'Office', 'required');
 		$this->form_validation->set_rules('date_of_effectivity', 'Date of Effectivity', 'required');
 		$this->form_validation->set_rules('member_type_id', 'Member', 'required');
+		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
 
 		// if (array_key_exists('pwd_id', $_POST)) {
 		// 	$this->form_validation->set_rules('pwd_id', 'PWD ID', 'trim|required');
@@ -2304,8 +2434,24 @@ class Admin extends MY_Controller {
 				$errors['members_id'] = $updateID;
 			} else {
 				$dataField['members_id'] = $this->AdminMod->primaryKey('members_id');
+				$genPw  = $this->generateKey(6);
+				$hashPw = password_hash($genPw, PASSWORD_BCRYPT);
+				$dataField['username'] 		 = strtolower(str_replace(' ', '', $this->input->post('first_name')[0]) . str_replace(' ', '', $this->input->post('last_name')));
+				$dataField['password'] 		 = $hashPw;
+				$dataField['password_txt'] = $genPw;
+
+				// $from    		 = "manage_account@cpfi-webapp.com";
+				$from    		 = "no-reply@cpfi-webapp.com";
+				$to    	 		 = strtolower($this->input->post('email'));
+				$title    	 = "CPFI | Account Created";
+				$subject  	 = "New Member Created";
+				$message     = "Dear " . strtoupper($this->input->post('first_name')) . ", <br><br> 
+												Congratulations you already created you account below is your login credentials <br><br> Usename: " .
+												$dataField['username'] . " <br> Password: " . $dataField['password_txt'] . " <br><br> Thank you!";
+				$this->sendEmail($from, $to, $subject, $message, $title);
+				
 				$this->db->insert('members', $dataField);
-				$errors['members_id'] 	 = $dataField['members_id'];
+				$errors['members_id'] 	 	 = $dataField['members_id'];
 			}
 			
 			//last insert id

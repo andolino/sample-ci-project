@@ -490,3 +490,15 @@ label[id*="-error"] {
   background: #f0f0f0;
 }
 
+.h-64px{
+  height: 64px;
+}
+
+.bg-purple{
+  background: #97467f !important;
+  border: none !important;
+}
+
+#tbl-loan-req-attchments tbody tr td:nth-child(1){
+  width: 50%;
+}

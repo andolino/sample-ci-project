@@ -3,7 +3,7 @@
 	<table class="table font-12 w-100" id="tbl-member-list" data-page="loan-application-page">
 		<thead>
 		  <tr>
-		    <th scope="col"><input type="checkbox" id="chk-const-list-tbl-all" name="chk-const-list-tbl-all"></th>
+		    <!-- <th scope="col"><input type="checkbox" id="chk-const-list-tbl-all" name="chk-const-list-tbl-all"></th> -->
 		    <th scope="col">ID #</th>
 		    <th scope="col">LAST NAME</th>
 		    <th scope="col">FIRST NAME</th>
