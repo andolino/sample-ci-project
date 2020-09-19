@@ -2,3 +2,66 @@ user: user1
 pw: 123456
 
 every table has a comment for flagging
+
+https://cpfi-webapp.com:2083
+
+mi43tk6xiojj
+Cpfi@2020~
+
+FTP
+dondon@cpfi-test-site.com
+E@q5AqFF1S1i
+http://cpfi-webapp.com/cpfi-test-site.com/
+
+SMTP:
+manage_account@cpfi-webapp.com
+OuPqjDymP#4V
+
+DB
+https://cpfi-webapp.com:2083/cpsess9219512968/3rdparty/phpMyAdmin/index.php
+166.62.10.186
+dondon
+GSMxCnR7Y6224AT
+
+
+
+353245044
+g001nb@xL1
+
+mod file 
+-- add file under admin folder 
++ print_payroll.php
+
+https://www.youtube.com/watch?v=CWOLZBu7ySk
+
+philhealth = basic - absent - late
+
+Zippylet Account
+bernadine.galit@zippylet.com
+ZippyletRb143420
+
+dpentavia@techturf.com.ph
+gMI1@f&xe2qm
+
+QR
+https://mbyongson.qrd.by/admin/login?r=/admin/help/webhooks
+mbyongson
+Mirmo1234!!
+
+CPANEL PSA
+https://sg2plcpnl0094.prod.sin2.secureserver.net:2083/logout/
+psapro-itasset.com
+c0jh0qwz8ppg
+6Pg~P7;o!C4
+
+DB PSA 
+https://sg2plcpnl0094.prod.sin2.secureserver.net:2083/cpsess2092205353/3rdparty/phpMyAdmin/db_sql.php?db=information_schema
+dbpsa
+dondonpentavia
+P5C5W#a]g?0=
+
+FTP PSA 
+dondonpentavia@psapro-itasset.com
+SSAZ$tuVG9jV
+dpentavia@psapro-itasset.com
+@kGxcF96DT$h
