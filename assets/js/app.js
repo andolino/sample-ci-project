@@ -1762,6 +1762,38 @@ $(document).ready(function() {
     });
 
   });  
+  
+  $(document).on('click', '#btn-approved-ln-req-attmnt', function(e) {
+    e.preventDefault();
+    var id = $(this).attr('data-id');
+    var field = $(this).attr('data-field');
+    customSwal(
+      'btn btn-success', 
+      'btn btn-danger mr-2', 
+      'Yes', 
+      'Wait', 
+      ['', 'Are you sure you want to ' + field + ' this request?', 'warning'], 
+      function(){
+          $.ajax({
+            url      : 'save-approval-loan-request',
+            type     : 'POST',
+            dataType : 'JSON',
+            context  : this,
+            data     : { "id" : id, "field" : field },
+            success: function (res){
+              Swal.fire(
+                res.param1,
+                res.param2,
+                res.param3
+              );
+              tbl_loans_by_request.ajax.reload();
+            }
+          });
+        }, function(){
+          console.log('Fail');
+    });
+
+  });  
 
   //================================================> LGU
   $(document).on('click', '#chk-const-list-tbl-all', function(e) {

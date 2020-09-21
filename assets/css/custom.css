@@ -502,3 +502,7 @@ label[id*="-error"] {
 #tbl-loan-req-attchments tbody tr td:nth-child(1){
   width: 50%;
 }
+
+#tbl-loans-by-request tbody tr td:nth-child(7){
+  width: 15% !important;
+}

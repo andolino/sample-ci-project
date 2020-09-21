@@ -221,6 +221,7 @@ $route['server-general-ledger'] 	= 'Admin/serverGeneralLedger';
 $route['server-cash-gift'] 	= 'Admin/serverCashGift';
 $route['server-official-receipt'] 	= 'Admin/serverOfficialReceipt';
 $route['server-get-repayment-list'] = 'Admin/server_tbl_repayments';
+$route['save-approval-loan-request'] = 'Admin/save_approval_loan_request';
 
 
 

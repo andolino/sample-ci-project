@@ -148,6 +148,23 @@ class Admin extends MY_Controller {
 		$this->adminContainer('admin/loan-by-member', $params);	
 	}
 
+	public function save_approval_loan_request(){
+		$id = $this->input->post('id');
+		$field = $this->input->post('field');
+		$q = $this->db->update('loan_request', array('status'=>($field=='Approved'?1:2),'users_id'=>$this->session->users_id), array('loan_request_id'=>$id));
+		$res=array();
+		if ($q) {
+			$res['param1']='Success!';
+			$res['param2']='Thank you! successfully '.$field.'!';
+			$res['param3']='success';
+		} else {
+			$res['param1']='Opps!';
+			$res['param2']='Error Encountered Saved';
+			$res['param3']='warning';
+		}
+		echo json_encode($res);
+	}
+
 	public function loanList(){
 		$params['heading'] 		 	= 'LOANS LIST';
 		$params['membersData'] 	= $this->db->get_where('v_members')->row();
@@ -1667,12 +1684,12 @@ class Admin extends MY_Controller {
 	public function save_msg_feedback_admin(){
 		$this->db->insert('loan_req_msg', 
 			array(
-				'loan_request_id'  => $this->input->post('id'),
+				'loan_request_id'  => $this->input->post('loan_request_id'),
 				'msg' 						 => $this->input->post('msg'),
 				'transaction_date' => date('Y-m-d')
 			)
 		);
-		$params['msg'] = $this->db->get_where('loan_req_msg', array('loan_request_id' => $this->input->post('id')))->result();
+		$params['msg'] = $this->db->get_where('loan_req_msg', array('loan_request_id' => $this->input->post('loan_request_id')))->result();
 		$this->load->view('admin/crud/msg-list-feedback', $params);
 	}
 	
@@ -1694,9 +1711,12 @@ class Admin extends MY_Controller {
 			$data[] = '<a href="javascript:void(0);" id="btn-show-ln-req-attmnt" data-field="ADD" 
 											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="View Attachments" data-id="'.$row->loan_request_id.'"><i class="fas fa-paperclip"></i></a> |
-								<a href="javascript:void(0);" id="btn-show-ln-req-attmnt" data-field="ADD" 
+								<a href="javascript:void(0);" id="btn-approved-ln-req-attmnt" data-field="Approved" 
 											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
-											 title="Approve" data-id="'.$row->loan_request_id.'"><i class="fas fa-check-square"></i></a> |
+											 title="Approve" data-id="'.$row->loan_request_id.'"><i class="fas fa-check-square"></i></a> | 
+								<a href="javascript:void(0);" id="btn-approved-ln-req-attmnt" data-field="Disapproved" 
+											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
+											 title="Disapproved" data-id="'.$row->loan_request_id.'"><i class="fas fa-times"></i></a> |
 								<a href="javascript:void(0);" id="btn-comment-ln-request" data-field="ADD" 
 											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="Feedback Message" data-id="'.$row->loan_request_id.'"><i class="fas fa-comments"></i></a>';

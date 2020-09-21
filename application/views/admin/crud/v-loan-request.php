@@ -1,5 +1,5 @@
 <div class="cont-loans-by-mem row w-100">
-		<div class="col-6">
+		<div class="col-7">
    		<div class="row">
    			<div class="col-12">
  					<a href="javascript:void(0);" class="float-right pr-2 pb-2" 
