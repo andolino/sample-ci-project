@@ -56,6 +56,7 @@ $route['view-setting-page'] 			 		= 'Admin/view_settings_page';
 $route['view-coa'] 								 		= 'Admin/view_chart_of_accounts';
 $route['loan-by-member'] 					 		= 'Admin/loanByMember';
 $route['loan-request']                = 'Admin/loan_request_by_member';
+$route['benefit-request']                = 'Admin/benefit_request_by_member';
 $route['loan-list'] 							 		= 'Admin/loanList';
 $route['claim-benefit'] 					 		= 'Admin/viewClaimBenefit';
 $route['show-claim-benefit'] 			 		= 'Admin/showBenefitClaim';
@@ -83,6 +84,7 @@ $route['get-subsidiary'] 					 		= 'Admin/getSubsidiaryAccounts';
 $route['print-members-docx'] 			 		= 'Admin/printMembersDocx';
 $route['print-cash-gift-docx'] 			 		= 'Admin/printCashGiftDocx';
 $route['get-members-print-to-excel'] 	= 'Admin/getMembersPrintToExcel';
+$route['get-members-print-to-pdf/(:any)'] 	= 'Portal/getMembersPrintToPDF';
 $route['get-members-print-to-pdf/(:any)/(:any)/(:any)/(:any)/(:any)'] 	= 'Admin/getMembersPrintToPDF';
 $route['get-cash-gift-to-excel'] 	= 'Admin/getCashiGiftPrintToExcel';
 $route['search-trial-balance'] 				= 'Admin/searchTrialBalance';
@@ -99,13 +101,17 @@ $route['save-msg-feedback-admin'] 	= 'Admin/save_msg_feedback_admin';
 $route['portal'] 	= 'Portal';
 $route['view-portal-profile'] 	= 'Portal/show_profile';
 $route['view-loan-request-frm'] 	= 'Portal/show_loan_request';
+$route['view-contribution-frm'] 	= 'Portal/show_contribution';
+$route['view-benefit-claim-frm'] 	= 'Portal/show_benefit_claims';
 $route['portal-login'] 	        = 'Portal/members_login';
 $route['submit-member-login'] 			    = 'Portal/proceed_login';
 $route['logout-portal'] 											= 'Portal/destroy_sess';
 $route['save-member-info'] 						= 'Portal/save_members_info';
 $route['update-mem-password'] 						= 'Portal/update_member_password';
 $route['upload-files'] 						= 'Portal/upload_files';
+$route['upload-files-benefit'] 						= 'Portal/upload_files_benefit';
 $route['view-ln-req-msg'] 						= 'Portal/view_loan_comments';
+$route['get-loan-settings'] 						= 'Portal/get_loan_settings';
 
 
 
@@ -170,6 +176,9 @@ $route['view-contribution-rate'] 	= 'Settings/view_contribution_rate';
 $route['view-loan-ltype'] 				= 'Settings/view_loan_type';
 $route['view-benefit-type'] 			= 'Settings/view_benefit_type';
 $route['view-departments'] 				= 'Settings/view_departments';
+$route['view-approval-settings'] 	= 'Settings/view_approval_settings';
+$route['save-loan-approval-settings'] 	= 'Settings/save_loan_approval_settings';
+$route['save-benefit-approval-settings'] 	= 'Settings/save_benefit_approval_settings';
 
 $route['view-loan-type'] 					= 'Admin/view_loan_code';
 $route['view-loan-settings'] 			= 'Admin/view_loan_settings';
@@ -181,6 +190,7 @@ $route['show-cash-gift-frm-per-region'] 			= 'Admin/show_add_cash_gift_per_regio
 $route['show-or-frm-per-region'] 			= 'Admin/show_official_receipt';
 $route['show-frm-add-payments'] 	= 'Admin/show_add_payments';
 $route['show-loan-req-attachments'] 	= 'Admin/show_loan_request_attachments';
+$route['show-benefit-req-attachments'] 	= 'Admin/show_benefit_request_attachments';
 $route['show-schedule-list'] 			= 'Admin/show_schedule_list';
 $route['show-edit-payment-list'] 			= 'Admin/show_edit_payment_list';
 $route['save-update-payments'] 			= 'Admin/save_update_payments';
@@ -222,6 +232,7 @@ $route['server-cash-gift'] 	= 'Admin/serverCashGift';
 $route['server-official-receipt'] 	= 'Admin/serverOfficialReceipt';
 $route['server-get-repayment-list'] = 'Admin/server_tbl_repayments';
 $route['save-approval-loan-request'] = 'Admin/save_approval_loan_request';
+$route['save-approval-benefit-request'] = 'Admin/save_approval_benefit_request';
 
 
 
@@ -243,7 +254,9 @@ $route['show-loans-list'] 				= 'Admin/showLoansList';
 $route['show-loans-by-member'] 		= 'Admin/showLoansByMember';
 $route['server-loans-by-member'] 	= 'Admin/server_loans_by_member';
 $route['server-loans-by-request'] 	= 'Admin/server_loans_by_request';
+$route['server-benefit-by-request'] 	= 'Admin/server_benefit_by_request';
 $route['server-portal-loans-request'] 	= 'Admin/server_portal_loans_request';
+$route['server-portal-benefit-request'] 	= 'Admin/server_portal_benefit_request';
 $route['server-portal-loan-request-attmnt'] 	= 'Admin/server_portal_loan_req_attmnt';
 $route['server-benefit-list-claimed-by-member'] 	= 'Admin/server_benefit_claim_by_member';
 $route['post-loan-comp'] 					= 'Admin/postLoanComp';

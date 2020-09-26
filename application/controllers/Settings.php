@@ -648,6 +648,74 @@ class Settings extends MY_Controller {
 		}
 		echo json_encode($res);
 	}
+	
+	public function save_loan_approval_settings(){
+		$result = $this->db->get_where('request_approver', array('type'=>'loans'))->row();
+		if (empty($result)) {
+			$q = $this->db->insert('request_approver', 
+											array(
+												'loan_first_approver_users_id' => $this->input->post('loan_first_approver_users_id'),
+												'loan_second_approver_users_id' => $this->input->post('loan_second_approver_users_id'),
+												'loan_req_second_approver' => $this->input->post('loan_req_second_approver') ? 1 : 0,
+												'loan_override_first_approver' => $this->input->post('loan_override_first_approver') ? 1 : 0,
+												'type'=>'loans'
+											));
+		} else {
+			$q = $this->db->update('request_approver', 
+											array(
+												'loan_first_approver_users_id' => $this->input->post('loan_first_approver_users_id'),
+												'loan_second_approver_users_id' => $this->input->post('loan_second_approver_users_id'),
+												'loan_req_second_approver' => $this->input->post('loan_req_second_approver') ? 1 : 0,
+												'loan_override_first_approver' => $this->input->post('loan_override_first_approver') ? 1 : 0,
+											), array('type'=>'loans'));
+		}
+		
+		$res=array();
+		if ($q) {
+			$res['param1'] = 'Success!';
+			$res['param2'] = 'Successfully Updated!';
+			$res['param3'] = 'success';
+		} else {
+			$res['param1'] = 'Opps!';	
+			$res['param2'] = 'Error Encountered!';
+			$res['param3'] = 'warning';
+		}
+		echo json_encode($res);
+	}
+	
+	public function save_benefit_approval_settings(){
+		$result = $this->db->get_where('request_approver', array('type'=>'benefit'))->row();
+		if (empty($result)) {
+			$q = $this->db->insert('request_approver', 
+											array(
+												'loan_first_approver_users_id' => $this->input->post('loan_first_approver_users_id'),
+												'loan_second_approver_users_id' => $this->input->post('loan_second_approver_users_id'),
+												'loan_req_second_approver' => $this->input->post('loan_req_second_approver') ? 1 : 0,
+												'loan_override_first_approver' => $this->input->post('loan_override_first_approver') ? 1 : 0,
+												'type'=>'benefit'
+											));
+		} else {
+			$q = $this->db->update('request_approver', 
+											array(
+												'loan_first_approver_users_id' => $this->input->post('loan_first_approver_users_id'),
+												'loan_second_approver_users_id' => $this->input->post('loan_second_approver_users_id'),
+												'loan_req_second_approver' => $this->input->post('loan_req_second_approver') ? 1 : 0,
+												'loan_override_first_approver' => $this->input->post('loan_override_first_approver') ? 1 : 0,
+											), array('type'=>'benefit'));
+		}
+		
+		$res=array();
+		if ($q) {
+			$res['param1'] = 'Success!';
+			$res['param2'] = 'Successfully Updated!';
+			$res['param3'] = 'success';
+		} else {
+			$res['param1'] = 'Opps!';	
+			$res['param2'] = 'Error Encountered!';
+			$res['param3'] = 'warning';
+		}
+		echo json_encode($res);
+	}
 
 	public function view_signatory(){
 		$params['settSignatory'] = $this->db->get_where('signatory', array('is_deleted' => 0))->result();
@@ -707,6 +775,11 @@ class Settings extends MY_Controller {
 	public function view_benefit_type(){
 		$params['settBenefitType'] = $this->db->get_where('benefit_type', array('is_deleted' => 0))->result();
 		$this->load->view('admin/settings/view-benefit-type', $params);
+	}
+	
+	public function view_approval_settings(){
+		$params['users'] = $this->db->get_where('users', array('is_deleted' => 0))->result();
+		$this->load->view('admin/settings/view-approval-settings', $params);
 	}
 
 

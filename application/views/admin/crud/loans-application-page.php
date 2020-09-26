@@ -1,5 +1,15 @@
 <div class="settings-link w-100">
-	
+	<div class="row mb-3">
+		<div class="col-3">
+			<label for="" class="font-12">Approved Loan Request</label>
+			<select class="custom-select custom-select-sm font-12" id="select-loan-request-comp">
+					<option value="" selected hidden></option>
+					<?php foreach($loan_request as $row): ?>
+					<option value="<?php echo $row->members_id; ?>"><?php echo strtoupper($row->last_name) . ', ' . strtoupper($row->first_name) . ' ' . strtoupper($row->middle_name) . ' (' . $row->loan_code . ') '; ?></option>
+				<?php endforeach; ?>
+			</select>
+		</div>
+	</div>
 	<table class="table font-12 w-100" id="tbl-member-list" data-page="loan-application-page">
 		<thead>
 		  <tr>

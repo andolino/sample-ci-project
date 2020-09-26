@@ -8,6 +8,7 @@ class Portal extends MY_Controller {
 	}
 
 	public function index(){
+		
 		$params['heading'] = 'WELCOME CPFI PANEL';
 		$this->portalContainer('portal/index', $params);
   }
@@ -24,14 +25,47 @@ class Portal extends MY_Controller {
 	}
 	
 	public function show_loan_request(){
+		$members_id 			 		 		= $this->session->members_id;
+		$params['members_id']  		= $members_id;
+		$params['loanCode']  			= $this->db->get_where('loan_code', array('is_deleted' => 0))->result();
+		$params['co_maker']  			= $this->db->get_where('members', array('is_deleted' => 0, 'date_of_effectivity < DATE_SUB(NOW(),INTERVAL 1 YEAR) '))->result();
+		
+    $this->load->view('portal/request-a-loan', $params);
+	}
+
+	public function get_loan_settings(){
+		$loan_code_id = $this->input->post('loan_code_id');
+		$params['loan_settings']  = $this->db->get_where('loan_settings', array('loan_code_id' => $loan_code_id, 'is_deleted' => 0))->result();
+		$params['loan_code_id']  = $loan_code_id;
+		$this->load->view('portal/select-loan-settings', $params);
+	}
+	
+	public function show_contribution(){
 		$members_id 			 		 = $this->session->members_id;
 		$params['members_id']  = $members_id;
-		$params['loanCode']  = $this->db->get_where('loan_code', array('is_deleted' => 0))->result();
-		$params['co_maker']  = $this->db->get_where('members', array('is_deleted' => 0, 'date_of_effectivity < DATE_SUB(NOW(),INTERVAL 1 YEAR) '))->result();
-    $this->load->view('portal/request-a-loan', $params);
+		$params['data']=$this->AdminMod->getMembersContributionPortal($members_id);
+    $this->load->view('portal/contribution', $params);
+	}
+	
+	public function show_benefit_claims(){
+		$members_id 			 		 = $this->session->members_id;
+		$params['members_id']  		= $members_id;
+		$params['loanCode']  			= $this->db->get_where('loan_code', array('is_deleted' => 0))->result();
+		$params['benefit_type'] = $this->db->get_where('benefit_type', array('is_deleted' => 0))->result();
+    $this->load->view('portal/request-a-benefit', $params);
+	}
+
+	public function getMembersPrintToPDF(){
+		$m_id = $this->uri->segment(2);
+		$params['data']=$this->AdminMod->getMembersContributionPortal($m_id);
+		$html = $this->load->view('portal/contribution-excel', $params, TRUE);
+		$this->AdminMod->pdf($html, 'Contribution Report', false, 'LEGAL', false, false, false, 'Contribution Report', '');
 	}
 	
 	public function members_login(){
+		if($this->session->userdata('members_id')){
+			redirect(base_url('portal'));
+		}
 		$this->load->view('portal/login');
 	}
 
@@ -211,7 +245,9 @@ class Portal extends MY_Controller {
 					'entry_date' 	 => date('Y-m-d'),
 					'description'  => $this->input->post('description'),
 					'loan_code_id' => $this->input->post('loan_code_id'),
-					'co_maker_id'  => $comaker_id_result
+					'co_maker_id'  => $comaker_id_result,
+					'mo_terms' => $this->input->post('mo_terms'),
+					'amnt_applied' => $this->input->post('amnt_applied')
 				)); 
 				$insert_id = $this->db->insert_id();
 				$dataToDb = array();
@@ -225,11 +261,21 @@ class Portal extends MY_Controller {
 				
 				$insert = $this->db->insert_batch("portal_uploads", $dataToDb); 
 					
+				$approver = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.loan_first_approver_users_id WHERE ra.type = 'loans'")->row();
+				$membersData = $this->db->get_where("members", array('members_id' => $this->input->post('has_update')))->row();
+				$from    		 = "no-reply@cpfi-webapp.com";
+				$to    	 		 = strtolower($approver->email);
+				$title    	 = "CPFI REQUEST";
+				$subject  	 = "New loan request from cpfi member";
+				$message     = "Dear " . strtoupper($approver->screen_name) . ", <br><br> 
+												Loan request request from " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . " <br><br> Thank you!";
+				$this->sendEmail($from, $to, $subject, $message, $title);
+
 				// Upload status message 
 				// $statusMsg = $insert?'Files uploaded successfully!'.$errorUploadType:'Some problem occurred, please try again.'; 
 				if ($insert) {
 					$res['param1'] 		 = 'Success!';
-					$res['param2'] 		 = 'Password is Updated!';
+					$res['param2'] 		 = 'Request Submitted!';
 					$res['param3'] 		 = 'success';
 				} else {
 					$res['param1']     = 'Opps!';
@@ -239,16 +285,135 @@ class Portal extends MY_Controller {
 				echo json_encode($res);
 		}else{ 
 			$comaker_id_result = $this->input->post('co-maker-id');
+
+			$approver = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.loan_first_approver_users_id WHERE ra.type = 'loans'")->row();
+			$membersData = $this->db->get_where("members", array('members_id' => $this->input->post('has_update')))->row();
+			$from    		 = "no-reply@cpfi-webapp.com";
+			$to    	 		 = strtolower($approver->email);
+			$title    	 = "CPFI REQUEST";
+			$subject  	 = "New loan request from cpfi member";
+			$message     = "Dear " . strtoupper($approver->screen_name) . ", <br><br> 
+											Claim benefit request from " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . " <br><br> Thank you!";
+			$this->sendEmail($from, $to, $subject, $message, $title);
+
 			$insert =	$this->db->insert("loan_request", array(
 				'members_id' 	 => $this->input->post('has_update'),
 				'entry_date' 	 => date('Y-m-d'),
 				'description'  => $this->input->post('description'),
 				'loan_code_id' => $this->input->post('loan_code_id'),
-				'co_maker_id'  => $comaker_id_result
+				'co_maker_id'  => $comaker_id_result,
+				'mo_terms' 		 => $this->input->post('mo_terms'),
+				'amnt_applied' => $this->input->post('amnt_applied')
 			)); 
 			if ($insert) {
 				$res['param1'] 		 = 'Success!';
-				$res['param2'] 		 = 'Password is Updated!';
+				$res['param2'] 		 = 'Request Submitted!';
+				$res['param3'] 		 = 'success';
+			} else {
+				$res['param1']     = 'Opps!';
+				$res['param2']     = 'Error Encountered Saved';
+				$res['param3']     = 'warning';
+			}
+			echo json_encode($res);
+		} 
+	}
+	
+	public function upload_files_benefit(){
+		$data = array(); 
+		$errorUploadType = $statusMsg = ''; 
+			// If files are selected to upload 
+			if(!empty($_FILES['files']['name']) && count(array_filter($_FILES['files']['name'])) > 0){ 
+				$filesCount = count($_FILES['files']['name']); 
+				for($i = 0; $i < $filesCount; $i++){ 
+						$_FILES['file']['name']     = $_FILES['files']['name'][$i]; 
+						$_FILES['file']['type']     = $_FILES['files']['type'][$i]; 
+						$_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i]; 
+						$_FILES['file']['error']    = $_FILES['files']['error'][$i]; 
+						$_FILES['file']['size']     = $_FILES['files']['size'][$i]; 
+							
+						// File upload configuration 
+						$uploadPath = './assets/image/uploads'; 
+						$config['upload_path'] = $uploadPath; 
+						$config['allowed_types'] = 'jpg|jpeg|png|gif'; 
+						//$config['max_size']    = '100'; 
+						//$config['max_width'] = '1024'; 
+						//$config['max_height'] = '768'; 
+							
+						// Load and initialize upload library 
+						$this->load->library('upload', $config); 
+						$this->upload->initialize($config); 
+							
+						// Upload file to server 
+						if($this->upload->do_upload('file')){ 
+								// Uploaded file data 
+								$fileData = $this->upload->data(); 
+								$uploadData[$i]['file_name'] = $fileData['file_name']; 
+								$uploadData[$i]['uploaded_on'] = date("Y-m-d H:i:s"); 
+						}else{  
+								$errorUploadType .= $_FILES['file']['name'].' | ';  
+						} 
+				} 
+					
+				$errorUploadType = !empty($errorUploadType)?'<br/>File Type Error: '.trim($errorUploadType, ' | '):''; 
+				// Insert files data into the database 
+				$this->db->insert("benefit_request", array(
+					'members_id' 	 => $this->input->post('has_update'),
+					'entry_date' 	 => date('Y-m-d'),
+					'benefit_type_id' => $this->input->post('benefit_type_id')
+				)); 
+				$insert_id = $this->db->insert_id();
+				$dataToDb = array();
+				foreach ($uploadData as $key => $value) {
+					array_push($dataToDb, array(
+						'file_name' => $value['file_name'],
+						'benefit_request_id' => $insert_id,
+						'transaction_date' => date('Y-m-d')
+					));
+				}
+				
+				$insert = $this->db->insert_batch("portal_uploads", $dataToDb); 
+				
+				// $from    		 = "manage_account@cpfi-webapp.com";
+				$approver = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.loan_first_approver_users_id WHERE ra.type = 'benefit'")->row();
+				$membersData = $this->db->get_where("members", array('members_id' => $this->input->post('has_update')))->row();
+				$from    		 = "no-reply@cpfi-webapp.com";
+				$to    	 		 = strtolower($approver->email);
+				$title    	 = "CPFI REQUEST";
+				$subject  	 = "New benefit request from cpfi member";
+				$message     = "Dear " . strtoupper($approver->screen_name) . ", <br><br> 
+												Claim benefit request from " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . " <br><br> Thank you!";
+				$this->sendEmail($from, $to, $subject, $message, $title);
+				// Upload status message 
+				// $statusMsg = $insert?'Files uploaded successfully!'.$errorUploadType:'Some problem occurred, please try again.'; 
+				if ($insert) {
+					$res['param1'] 		 = 'Success!';
+					$res['param2'] 		 = 'Request Submitted!';
+					$res['param3'] 		 = 'success';
+				} else {
+					$res['param1']     = 'Opps!';
+					$res['param2']     = 'Error Encountered Saved';
+					$res['param3']     = 'warning';
+				}
+				echo json_encode($res);
+		}else{ 
+			$approver = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.loan_first_approver_users_id WHERE ra.type = 'benefit'")->row();
+			$membersData = $this->db->get_where("members", array('members_id' => $this->input->post('has_update')))->row();
+			$from    		 = "no-reply@cpfi-webapp.com";
+			$to    	 		 = strtolower($approver->email);
+			$title    	 = "CPFI REQUEST";
+			$subject  	 = "New benefit request from cpfi member";
+			$message     = "Dear " . strtoupper($approver->screen_name) . ", <br><br> 
+											Claim benefit from " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . " <br><br> Thank you!";
+			$this->sendEmail($from, $to, $subject, $message, $title);
+
+			$insert =	$this->db->insert("benefit_request", array(
+				'members_id' 	 => $this->input->post('has_update'),
+				'entry_date' 	 => date('Y-m-d'),
+				'benefit_type_id' => $this->input->post('benefit_type_id')
+			)); 
+			if ($insert) {
+				$res['param1'] 		 = 'Success!';
+				$res['param2'] 		 = 'Request Submitted!';
 				$res['param3'] 		 = 'success';
 			} else {
 				$res['param1']     = 'Opps!';
@@ -260,8 +425,13 @@ class Portal extends MY_Controller {
 	}
 
 	public function view_loan_comments(){
-		$loan_request_id = $this->input->post('id');
-		$params['msg'] = $this->db->query("SELECT * FROM loan_req_msg lrm left join users u on u.users_id = lrm.user_id WHERE loan_request_id = $loan_request_id")->result();
+		$id = $this->input->post('id');
+		$field = $this->input->post('field');
+		if ($field=='loan_request') {
+			$params['msg'] = $this->db->query("SELECT * FROM loan_req_msg lrm left join users u on u.users_id = lrm.user_id WHERE loan_request_id = $id")->result();
+		} else {
+			$params['msg'] = $this->db->query("SELECT * FROM benefit_req_msg lrm left join users u on u.users_id = lrm.user_id WHERE benefit_request_id = $id")->result();
+		}
 		$this->load->view('portal/loan-req-msg', $params);
 	}
 

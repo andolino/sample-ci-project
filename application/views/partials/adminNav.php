@@ -55,9 +55,29 @@
       </li>
 			<?php endif; ?> 
 			<?php if($userPriv->level == 0 || $userPriv->level == 3): ?>
-			<li>
-        <a href="<?php echo base_url(); ?>claim-benefit"><i class="fas fa-user-cog"></i> BENEFIT CLAIMS</a>
-      </li>
+      <li class="active">
+						<a href="#benefitCSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fas fa-hand-holding-usd"></i> BENEFIT CLAIMS</a>
+						<ul class="collapse list-unstyled" id="benefitCSubmenu">
+								<li>
+										<a href="<?php echo base_url(); ?>claim-benefit">MEMBERS</a>
+								</li>
+								<li>
+										<a href="<?php echo base_url(); ?>benefit-request">MEMBER'S REQUEST</a>
+								</li>
+								<!-- <li>
+										<a href="#">COLLECTION</a>
+								</li> -->
+								<!-- <li>
+										<a href="<?php //echo base_url(); ?>claim-benefit">BENEFIT CLAIMS</a>
+								</li>
+								<li>
+										<a href="<?php //echo base_url(); ?>official-receipt">COLLECTION</a>
+								</li>
+								<li>
+										<a href="<?php //echo base_url(); ?>cash-gift">CASH GIFT</a>
+								</li> -->
+						</ul>
+				</li>
 			<?php endif; ?> 
 			<?php if($userPriv->level == 0 || $userPriv->level == 1): ?>
 			<li>

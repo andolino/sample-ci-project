@@ -33,8 +33,17 @@ class AdminMod extends CI_Model {
 
 	//LOAN BY REQUEST
 	var $tblLoanByRequest = 'v_loans_by_request';
-	var $tblLoanByRequestCollumn = array('loan_request_id', 'members_id', 'is_deleted', 'entry_date', 'users_id', 'description', 'first_name', 'last_name', 'middle_name', 'loan_code', 'status');
+	var $tblLoanByRequestCollumn = array('loan_request_id', 'members_id', 'is_deleted', 'entry_date', 'users_id', 'description', 
+																				'first_name', 'last_name', 'middle_name', 'loan_code', 'amnt_of_loan', 'status', 'remarks', 'approved_by', 
+																				'approved_date', 'disapproved_by', 'disapproved_date');
 	var $tblLoanByRequestOrder = array('loan_request_id' => 'desc');
+	
+	//BENEFIT BY REQUEST
+	var $tblBenefitByRequest = 'v_benefit_by_request';
+	var $tblBenefitByRequestCollumn = array('benefit_request_id', 'members_id', 'is_deleted', 'entry_date', 'users_id', 'description', 
+																						'first_name', 'last_name', 'middle_name', 'status', 'approved_by', 'approved_date', 'disapproved_by', 
+																						'disapproved_date', 'type_of_benefit');
+	var $tblBenefitByRequestOrder = array('benefit_request_id' => 'desc');
 	
 	//LOAN REQUEST ATTCHMNT
 	var $tblLoanAttchmntRequest = 'portal_uploads';
@@ -69,6 +78,9 @@ class AdminMod extends CI_Model {
 			$this->db->where('members_id <>', $this->input->post('co_makers_mem_id'));
 			$this->db->where("members_id NOT IN (SELECT coalesce(co_maker_members_id, '') FROM co_maker)");
 		}
+		if ($this->input->post('members_id')) {
+			$this->db->where('members_id', $this->input->post('members_id'));
+		}
 		$i = 0;
 		foreach ($this->tblMembersCollumn as $item) {
 			if (!empty($_POST['search']['value'])) {
@@ -78,12 +90,18 @@ class AdminMod extends CI_Model {
 						$this->db->where('members_id <>', $this->input->post('co_makers_mem_id'));
 						$this->db->where("members_id NOT IN (SELECT coalesce(co_maker_members_id, '') FROM co_maker)");
 					}
+					if ($this->input->post('members_id')) {
+						$this->db->where('members_id', $this->input->post('members_id'));
+					}
 					$this->db->like($item, strtolower($_POST['search']['value']));
 				} else {
 					$this->db->where('is_deleted', '0');
 					if ($this->input->post('co_makers_mem_id')) {
 						$this->db->where('members_id <>', $this->input->post('co_makers_mem_id'));
 						$this->db->where("members_id NOT IN (SELECT coalesce(co_maker_members_id, '') FROM co_maker)");
+					}
+					if ($this->input->post('members_id')) {
+						$this->db->where('members_id', $this->input->post('members_id'));
 					}
 					$this->db->or_like($item, strtolower($_POST['search']['value']));
 				}
@@ -354,11 +372,14 @@ class AdminMod extends CI_Model {
 	
 
 	//LOAN BY REQUEST
-	private function _que_tbl_loan_by_request(){
+	public function _que_tbl_loan_by_request(){
 		$this->db->from($this->tblLoanByRequest);
 		$this->db->where('is_deleted', '0');
 		if ($this->input->post('id')) {
 			$this->db->where('members_id', $this->input->post('id'));
+		}
+		if (isset($_POST['flag'])) {
+			$this->db->where('status', $this->input->post('flag'));
 		}
 		$i = 0;
 		foreach ($this->tblLoanByRequestCollumn as $item) {
@@ -368,10 +389,16 @@ class AdminMod extends CI_Model {
 					if ($this->input->post('id')) {
 						$this->db->where('members_id', $this->input->post('id'));
 					}
+					if (isset($_POST['flag'])) {
+						$this->db->where('status', $this->input->post('flag'));
+					}
 				}else{
 					$this->db->or_like($item, strtolower($_POST['search']['value']));
 					if ($this->input->post('id')) {
 						$this->db->where('members_id', $this->input->post('id'));
+					}
+					if (isset($_POST['flag'])) {
+						$this->db->where('status', $this->input->post('flag'));
 					}
 				}
 			}
@@ -410,24 +437,99 @@ class AdminMod extends CI_Model {
 		return $query->num_rows();
 	}
 	
-	//LOAN REQUEST ATTCHMNT
-	private function _que_tbl_loan_attmnt_request(){
-		$this->db->from($this->tblLoanAttchmntRequest);
+	//BENEFIT BY REQUEST
+	private function _que_tbl_benefit_by_request(){
+		$this->db->from($this->tblBenefitByRequest);
+		$this->db->where('is_deleted', '0');
 		if ($this->input->post('id')) {
-			$this->db->where('loan_request_id', $this->input->post('id'));
+			$this->db->where('members_id', $this->input->post('id'));
+		}
+		if (isset($_POST['flag'])) {
+			$this->db->where('status', $this->input->post('flag'));
+		}
+		$i = 0;
+		foreach ($this->tblBenefitByRequestCollumn as $item) {
+			if (!empty($_POST['search']['value'])) {
+				if ($i === 0) {
+					$this->db->like($item, strtolower($_POST['search']['value']));
+					if ($this->input->post('id')) {
+						$this->db->where('members_id', $this->input->post('id'));
+					}
+					if (isset($_POST['flag'])) {
+						$this->db->where('status', $this->input->post('flag'));
+					}
+				}else{
+					$this->db->or_like($item, strtolower($_POST['search']['value']));
+					if ($this->input->post('id')) {
+						$this->db->where('members_id', $this->input->post('id'));
+					}
+					if (isset($_POST['flag'])) {
+						$this->db->where('status', $this->input->post('flag'));
+					}
+				}
+			}
+			$column[$i] = $item;
+			$i++;
+		}
+
+		if (isset($_POST['order'])) {
+			$this->db->where('is_deleted', '0');
+			$this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+		}elseif($this->tblBenefitByRequestOrder){
+			$this->db->where('is_deleted', '0');
+			$order = $this->tblBenefitByRequestOrder;
+			$this->db->order_by(key($order), $order[key($order)]);
+		}
+		$this->db->order_by('benefit_request_id', 'DESC');
+	}
+
+	public function get_output_benefit_by_request(){
+		$this->_que_tbl_benefit_by_request();
+		if (!empty($_POST['length']))
+		$this->db->limit(($_POST['length'] < 0 ? 0 : $_POST['length']), $_POST['start']);
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	public function count_all_benefit_by_request(){
+		$this->db->where('is_deleted', '0');
+		$this->db->from($this->tblBenefitByRequest);
+		return $this->db->count_all_results();
+	}
+
+	public function count_filter_benefit_by_request(){
+		$this->_que_tbl_benefit_by_request();
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+	
+	//LOAN REQUEST ATTCHMNT
+	public function _que_tbl_loan_attmnt_request(){
+		$this->db->from($this->tblLoanAttchmntRequest);
+		if ($this->input->post('loan_req_id')) {
+			$this->db->where('loan_request_id', $this->input->post('loan_req_id'));
+		}
+		if ($this->input->post('benefit_req_id')) {
+			$this->db->where('benefit_request_id', $this->input->post('benefit_req_id'));
 		}
 		$i = 0;
 		foreach ($this->tblLoanAttchmntRequestCollumn as $item) {
 			if (!empty($_POST['search']['value'])) {
 				if ($i === 0) {
 					$this->db->like($item, strtolower($_POST['search']['value']));
-					if ($this->input->post('id')) {
-						$this->db->where('loan_request_id', $this->input->post('id'));
+					if ($this->input->post('loan_req_id')) {
+						$this->db->where('loan_request_id', $this->input->post('loan_req_id'));
+					}
+					if ($this->input->post('benefit_req_id')) {
+						$this->db->where('benefit_request_id', $this->input->post('benefit_req_id'));
 					}
 				}else{
 					$this->db->or_like($item, strtolower($_POST['search']['value']));
-					if ($this->input->post('id')) {
-						$this->db->where('loan_request_id', $this->input->post('id'));
+					if ($this->input->post('loan_req_id')) {
+						$this->db->where('loan_request_id', $this->input->post('loan_req_id'));
+					}
+					if ($this->input->post('benefit_req_id')) {
+						$this->db->where('benefit_request_id', $this->input->post('benefit_req_id'));
 					}
 				}
 			}
@@ -690,6 +792,15 @@ class AdminMod extends CI_Model {
 		return $resultKey;
 	}
 
+	public function getMembersContributionPortal($members_id){
+		$q=$this->db->query("SELECT c.*, m.last_name, m.first_name, m.middle_name, m.office_management_id, m.id_no, om.office_name
+													FROM contributions c 
+													left join members m on m.members_id = c.members_id
+													left join office_management om on om.office_management_id = m.office_management_id
+													WHERE c.members_id='$members_id'")->result();
+		return $q;
+	}
+	
 	public function getMembersContribution($sd, $ed, $members_id){
 		$q=$this->db->query("SELECT c.*, m.last_name, m.first_name, m.middle_name, m.office_management_id, m.id_no, om.office_name
 													FROM contributions c 

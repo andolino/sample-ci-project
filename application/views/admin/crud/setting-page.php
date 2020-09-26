@@ -76,6 +76,9 @@
 	</div> -->
 	<div class="col-3 font-12 pr-0 pt-3 btn-panel-bar">
 		<button type="button" class="btn btn-md btn-default w-100" id="loadPage" data-badge-head="BENEFIT TYPE" data-link="view-benefit-type" data-ind="" data-cls="cont-view-benefit-type"><img src="<?php echo base_url('assets/image/icon/benefit.png'); ?>"> BENEFIT TYPE </button>	
+	</div>
+	<div class="col-3 font-12 pr-0 pt-3 btn-panel-bar">
+		<button type="button" class="btn btn-md btn-default w-100" id="loadPage" data-badge-head="APPROVAL SETTINGS" data-link="view-approval-settings" data-ind="" data-cls="cont-view-benefit-type"><img src="<?php echo base_url('assets/image/icon/benefit.png'); ?>"> APPROVAL SETTINGS </button>	
 	</div>	
 	
 </div>

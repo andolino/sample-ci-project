@@ -22,6 +22,7 @@
 				
 			</tbody>
 		</table>
+		<button type="button" class="btn btn-danger btn-sm rounded-0 border float-right mt-3" onclick="window.location.reload()"><i class="fas fa-times"></i> BACK</button>
 	</div>
 	<div class="col-sm-12 req-ln-attmnt none">
 		<div class="row">
@@ -69,7 +70,7 @@
 						</div>
 					</div>
 					<!-- end -->
-					<div class="col-sm-6 mb-3">
+					<div class="col-sm-6 mb-2">
 						<label for="loan_code_id" class="font-12">Loan Code</label>
 						<select class="custom-select custom-select-sm font-12" id="loan_code_id" name="loan_code_id">
 						  <option selected hidden value="">-SELECT-</option>
@@ -77,13 +78,20 @@
 						  	<option value="<?php echo $row->loan_code_id; ?>"><?php echo $row->loan_code; ?></option>
 						  <?php endforeach; ?>
 						</select>
+						<div class="row mt-2">
+							<div class="col-sm-12 mo-term-n-amnt none">
+							
+							</div>
+							<div class="col-sm-6 mt-2">
+								<fieldset>      
+									<label class="font-12">Files : </label>                     
+									<input type="file" multiple="" name="files[]" class="font-12" required>                             
+								</fieldset> 
+							</div>
+						</div>
 					</div>
-					<div class="col-sm-6">
-						<fieldset>      
-							<label class="font-12">Files : </label>                     
-							<input type="file" multiple="" name="files[]" class="font-12">                             
-   				 </fieldset> 
-					</div>
+					
+					
 					<div class="col-sm-6">
             <div class="form-group">
               <label for="description" class="font-12">Purpose of Loan</label>

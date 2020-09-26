@@ -17,6 +17,7 @@
 				<input type="hidden" class="lgu-cons-id" value="<?php echo $members_id; ?>" name="members_id">
 				<input type="file" class="d-none" id="upload-file-dp" name="upload-file-dp">
 			</form>
+			<small id="emailHelp" class="form-text text-muted">Maximum upload file size: 3MB.</small>
 		</div>
 	</div>
 	<div class="col-sm-10">

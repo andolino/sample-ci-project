@@ -4,7 +4,7 @@
    								data-cls="cont-tbl-constituent" data-placement="top" data-toggle="tooltip" title="Back to List"><i class="fas fa-times"></i></a>
 	</div>
 	<div class="col-12">
-		<div class="row d-none">
+		<div class="row">
 		  <div class="col-4 mb-3">
 		    <button type="button" class="btn btn-default btn-md rounded-0 font-12" id="add-contribution" data-m-id="<?php echo $members_id ?? ''; ?>"><i class="fas fa-user-plus"></i> Add Contribution</button>
 		  </div>

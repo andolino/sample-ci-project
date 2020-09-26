@@ -5,7 +5,6 @@
           <tr>
             <!-- <th scope="col"><input type="checkbox" id="chk-const-list-tbl-all" name="chk-const-list-tbl-all"></th> -->
             <th scope="col">FILE NAME</th>
-            <th scope="col">ACTION</th>
           </tr>
         </thead>
         <tbody>
@@ -16,8 +15,7 @@
           <?php else: ?>
             <?php foreach ($attachments as $row): ?>
               <tr>
-                <td><?php echo $row->file_name; ?></td>
-                <td><a href="<?php echo base_url() . 'assets/image/uploads/' . $row->file_name; ?>" class="btn btn-sm btn-success font-12" download>Download</a></td>
+                <td><a href="<?php echo base_url() . 'assets/image/uploads/' . $row->file_name; ?>" class="font-12 text-primary" download><i class="fas fa-list-alt"></i> <?php echo $row->file_name; ?></a></td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>

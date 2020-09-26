@@ -13,6 +13,9 @@ class Admin extends MY_Controller {
 	}
 
 	public function usr_login(){
+		if($this->session->userdata('users_id')){
+			redirect(base_url());
+		}
 		$this->load->view('admin/login');
 	}
 	
@@ -119,12 +122,14 @@ class Admin extends MY_Controller {
 
 	public function loanApplication(){
 		$params['heading'] 		 = 'LOAN APPLICATION';
+		$params['loan_request'] = $this->db->get_where('v_loans_by_request', array('status' => 1))->result();
 		$params['loansPage'] = $this->load->view('admin/crud/loans-application-page', $params, TRUE);
 		$this->adminContainer('admin/loans-application', $params);	
 	}
 
 	public function view_loan_app_page(){
 		$params['heading'] = 'LOAN APPLICATION';
+		$params['loan_request'] = $this->db->get_where('v_loans_by_request', array('status' => 1))->result();
 		$this->load->view('admin/crud/loans-application-page', $params);	
 	}
 
@@ -147,11 +152,78 @@ class Admin extends MY_Controller {
 		$params['loanByMemberPage']	= $this->load->view('admin/crud/v-loan-request', $params, TRUE);
 		$this->adminContainer('admin/loan-by-member', $params);	
 	}
+	
+	public function benefit_request_by_member(){
+		$params['heading'] 		 			= 'BENEFIT CLAIM REQUEST';
+		$params['loanByMemberPage']	= $this->load->view('admin/crud/v-benefit-request', $params, TRUE);
+		$this->adminContainer('admin/loan-by-member', $params);	
+	}
 
 	public function save_approval_loan_request(){
 		$id = $this->input->post('id');
 		$field = $this->input->post('field');
-		$q = $this->db->update('loan_request', array('status'=>($field=='Approved'?1:2),'users_id'=>$this->session->users_id), array('loan_request_id'=>$id));
+		$data = array(
+			'status'						=> ($field=='Approved'?1:2)
+		);
+		if ($field == 'Approved') {
+			$data['approved_users_id'] = $this->session->users_id;
+			$data['approved_date'] 		 = date('Y-m-d H:i:s');
+		} elseif($field == 'Disapproved') {
+			$data['disapproved_users_id'] = $this->session->users_id;
+			$data['disapproved_date'] 		= date('Y-m-d H:i:s');
+		}
+		$q = $this->db->update('loan_request', $data, array('loan_request_id'=>$id));
+
+		$loanRequestData = $this->db->get_where('loan_request', array('loan_request_id' => $id))->row();
+		$approver = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.loan_first_approver_users_id WHERE ra.type = 'loans'")->row();
+		$membersData = $this->db->get_where("members", array('members_id' => $loanRequestData->members_id))->row();
+		$from    		 = "no-reply@cpfi-webapp.com";
+		$to    	 		 = strtolower($membersData->email);
+		$title    	 = "CPFI REQUEST";
+		$subject  	 = "New loan request from cpfi";
+		$message     = "Dear " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . ", <br><br> 
+										Your request # " . str_pad($loanRequestData->loan_request_id, 5, '0', STR_PAD_LEFT) . " has been " . $field . " <br><br> Thank you!";
+		$this->sendEmail($from, $to, $subject, $message, $title);
+
+		$res=array();
+		if ($q) {
+			$res['param1']='Success!';
+			$res['param2']='Thank you! successfully '.$field.'!';
+			$res['param3']='success';
+		} else {
+			$res['param1']='Opps!';
+			$res['param2']='Error Encountered Saved';
+			$res['param3']='warning';
+		}
+		echo json_encode($res);
+	}
+	
+	public function save_approval_benefit_request(){
+		$id = $this->input->post('id');
+		$field = $this->input->post('field');
+		$data = array(
+			'status'						=> ($field=='Approved'?1:2)
+		);
+		if ($field == 'Approved') {
+			$data['approved_users_id'] = $this->session->users_id;
+			$data['approved_date'] 		 = date('Y-m-d H:i:s');
+		} elseif($field == 'Disapproved') {
+			$data['disapproved_users_id'] = $this->session->users_id;
+			$data['disapproved_date'] 		= date('Y-m-d H:i:s');
+		}
+		$q = $this->db->update('benefit_request', $data, array('benefit_request_id'=>$id));
+
+		$benefitRequestData = $this->db->get_where('benefit_request', array('benefit_request_id' => $id))->row();
+		$approver = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.loan_first_approver_users_id WHERE ra.type = 'loans'")->row();
+		$membersData = $this->db->get_where("members", array('members_id' => $benefitRequestData->members_id))->row();
+		$from    		 = "no-reply@cpfi-webapp.com";
+		$to    	 		 = strtolower($membersData->email);
+		$title    	 = "CPFI REQUEST";
+		$subject  	 = "New benefit request from cpfi";
+		$message     = "Dear " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . ", <br><br> 
+										Your request # " . str_pad($benefitRequestData->benefit_request_id, 5, '0', STR_PAD_LEFT) . " has been " . $field . " <br><br> Thank you!";
+		$this->sendEmail($from, $to, $subject, $message, $title);
+
 		$res=array();
 		if ($q) {
 			$res['param1']='Success!';
@@ -661,6 +733,12 @@ class Admin extends MY_Controller {
 		$params['attachments'] = $this->db->get_where('portal_uploads', array('loan_request_id' => $loan_request_id))->result();	
 		$this->load->view('admin/crud/show-loan-req-attachments', $params);
 	}
+	
+	public function show_benefit_request_attachments(){
+		$loan_request_id           = $this->input->get('id');
+		$params['attachments'] = $this->db->get_where('portal_uploads', array('benefit_request_id' => $loan_request_id))->result();	
+		$this->load->view('admin/crud/show-loan-req-attachments', $params);
+	}
 
 	public function savePostPayment(){
 
@@ -1058,7 +1136,7 @@ class Admin extends MY_Controller {
    		$data[] = date('Y-m-d', strtotime($row->date_of_effectivity));
    		
    		if ($viewPage == 'loan-application-page') {
-   			$data[] = '<a href="javascript:void(0);" id="loadPage" data-link="process-a-loan" data-ind="'.$row->members_id.'" 
+   			$data[] = '<a href="javascript:void(0);" class="procLoanComp" id="loadPage" data-link="process-a-loan" data-ind="'.$row->members_id.'" 
    								data-badge-head="LOAN PROCESS - (' . $row->id_no . ') ' . strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name).'" data-cls="cont-process-a-loan" data-placement="top" data-toggle="tooltip" title="Proccess a Loan" data-id="'.$row->members_id.'">
    								<i class="fas fa-edit"></i></a> | 
    								<a href="javascript:void(0);" id="loadPage" data-link="show-loans-list" data-ind="'.$row->members_id.'" 
@@ -1639,7 +1717,6 @@ class Admin extends MY_Controller {
 		$res 			= array();
 		$no 			= isset($_POST['start']) ? $_POST['start'] : 0;
 
-
 		foreach ($result as $row) {
 			$data = array();
 			$no++;
@@ -1671,8 +1748,15 @@ class Admin extends MY_Controller {
 	}
 
 	public function get_message_form(){
-		$params['msg'] = $this->db->get_where('loan_req_msg', array('loan_request_id' => $this->input->get('id')))->result();
+		$flag = $this->input->get('flag');
+		$params=[];
+		if ($flag=='loans') {
+			$params['msg'] = $this->db->get_where('loan_req_msg', array('loan_request_id' => $this->input->get('id')))->result();
+		} else {
+			$params['msg'] = $this->db->get_where('benefit_req_msg', array('benefit_request_id' => $this->input->get('id')))->result();
+		}
 		$params['id'] = $this->input->get('id');
+		$params['flag'] = $flag;
 		$this->load->view('admin/crud/frm-feedback-msg', $params);
 	}
 	
@@ -1682,14 +1766,25 @@ class Admin extends MY_Controller {
 	}
 	
 	public function save_msg_feedback_admin(){
-		$this->db->insert('loan_req_msg', 
-			array(
-				'loan_request_id'  => $this->input->post('loan_request_id'),
-				'msg' 						 => $this->input->post('msg'),
-				'transaction_date' => date('Y-m-d')
-			)
-		);
-		$params['msg'] = $this->db->get_where('loan_req_msg', array('loan_request_id' => $this->input->post('loan_request_id')))->result();
+		if ($this->input->post('loan_request_id')) {
+			$this->db->insert('loan_req_msg', 
+				array(
+					'loan_request_id'  => $this->input->post('loan_request_id'),
+					'msg' 						 => $this->input->post('msg'),
+					'transaction_date' => date('Y-m-d')
+				)
+			);
+			$params['msg'] = $this->db->get_where('loan_req_msg', array('loan_request_id' => $this->input->post('loan_request_id')))->result();
+		} else {
+			$this->db->insert('benefit_req_msg', 
+				array(
+					'benefit_request_id'  => $this->input->post('benefit_request_id'),
+					'msg' 						 => $this->input->post('msg'),
+					'transaction_date' => date('Y-m-d')
+				)
+			);
+			$params['msg'] = $this->db->get_where('benefit_req_msg', array('benefit_request_id' => $this->input->post('benefit_request_id')))->result();
+		}
 		$this->load->view('admin/crud/msg-list-feedback', $params);
 	}
 	
@@ -1702,12 +1797,22 @@ class Admin extends MY_Controller {
 			$data = array();
 			$no++;
 
-   		$data[] = $row->entry_date;
-   		$data[] = $row->first_name;
-   		$data[] = $row->last_name;
-   		$data[] = $row->middle_name;
+   		$data[] = $row->loan_request_id;
+   		$data[] = strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->last_name);
    		$data[] = $row->loan_code;
+   		$data[] = $row->description;
+   		$data[] = number_format($row->amnt_of_loan, 2); // Amount
+			if ($this->input->post('flag') == 2) {
+				$data[] = $row->disapproved_by; // Dispproved by
+				$data[] = $row->disapproved_date == '' ? '' : date('Y-m-d H:i:s', strtotime($row->disapproved_date)); // Approved date
+			} else {
+				$data[] = $row->approved_by; // Approved by
+				$data[] = $row->approved_date == '' ? '' : date('Y-m-d H:i:s', strtotime($row->approved_date)); // Approved date
+			}
+   		// $data[] = ''; // 2nd approver
+   		// $data[] = ''; // 2nd approved date
    		$data[] = $status[$row->status];
+   		$data[] = ''; // Remarks
 			$data[] = '<a href="javascript:void(0);" id="btn-show-ln-req-attmnt" data-field="ADD" 
 											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="View Attachments" data-id="'.$row->loan_request_id.'"><i class="fas fa-paperclip"></i></a> |
@@ -1717,7 +1822,7 @@ class Admin extends MY_Controller {
 								<a href="javascript:void(0);" id="btn-approved-ln-req-attmnt" data-field="Disapproved" 
 											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="Disapproved" data-id="'.$row->loan_request_id.'"><i class="fas fa-times"></i></a> |
-								<a href="javascript:void(0);" id="btn-comment-ln-request" data-field="ADD" 
+								<a href="javascript:void(0);" id="btn-comment-ln-request" data-field="loans" 
 											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="Feedback Message" data-id="'.$row->loan_request_id.'"><i class="fas fa-comments"></i></a>';
 			$res[] = $data;
@@ -1733,8 +1838,60 @@ class Admin extends MY_Controller {
 		echo json_encode($output);
 	}
 	
+	public function server_benefit_by_request(){
+		$result 	= $this->AdminMod->get_output_benefit_by_request();
+		$res 			= array();
+		$no 			= isset($_POST['start']) ? $_POST['start'] : 0;
+		$status = array('<span class="badge badge-warning">Pending</span>', '<span class="badge badge-success">Approved</span>', '<span class="badge badge-danger">Disapproved</span>');
+		foreach ($result as $row) {
+			$data = array();
+			$no++;
+
+			$data[] = $row->benefit_request_id;
+			$data[] = strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->last_name);
+			$data[] = $row->type_of_benefit;
+			$data[] = ''; // Amount
+			if ($this->input->post('flag') == 2) {
+				$data[] = $row->disapproved_by; // Dispproved by
+				$data[] = $row->disapproved_date == '' ? '' : date('Y-m-d H:i:s', strtotime($row->disapproved_date)); // Approved date
+			} else {
+				$data[] = $row->approved_by; // Approved by
+				$data[] = $row->approved_date == '' ? '' : date('Y-m-d H:i:s', strtotime($row->approved_date)); // Approved date
+			}
+			// $data[] = ''; // 2nd approver
+			// $data[] = ''; // 2nd approved date
+			$data[] = $status[$row->status];
+			$data[] = ''; // Remarks
+			$data[] = '<a href="javascript:void(0);" id="btn-show-ben-req-attmnt" data-field="ADD" 
+											 data-id="'.$row->benefit_request_id.'" data-placement="top" data-toggle="tooltip" 
+											 title="View Attachments" data-id="'.$row->benefit_request_id.'"><i class="fas fa-paperclip"></i></a> |
+								<a href="javascript:void(0);" id="btn-approved-ben-req-attmnt" data-field="Approved" 
+											 data-id="'.$row->benefit_request_id.'" data-placement="top" data-toggle="tooltip" 
+											 title="Approve" data-id="'.$row->benefit_request_id.'"><i class="fas fa-check-square"></i></a> | 
+								<a href="javascript:void(0);" id="btn-approved-ben-req-attmnt" data-field="Disapproved" 
+											 data-id="'.$row->benefit_request_id.'" data-placement="top" data-toggle="tooltip" 
+											 title="Disapproved" data-id="'.$row->benefit_request_id.'"><i class="fas fa-times"></i></a> |
+								<a href="javascript:void(0);" id="btn-comment-ben-request" data-field="benefit" 
+											 data-id="'.$row->benefit_request_id.'" data-placement="top" data-toggle="tooltip" 
+											 title="Feedback Message" data-id="'.$row->benefit_request_id.'"><i class="fas fa-comments"></i></a>';
+			$res[] = $data;
+		}
+
+		$output = array (
+			'draw' 						=> isset($_POST['draw']) ? $_POST['draw'] : null,
+			'recordsTotal' 		=> $this->AdminMod->count_all_benefit_by_request(),
+			'recordsFiltered' => $this->AdminMod->count_filter_benefit_by_request(),
+			'data' 						=> $res
+		);
+
+		echo json_encode($output);
+		// echo $this->input->post('flag');
+		// $this->output->enable_profiler(true);
+	}
+	
 	public function server_portal_loans_request(){
 		$result 	= $this->AdminMod->get_output_loan_by_request();
+		// $this->output->enable_profiler(true);
 		$res 			= array();
 		$no 			= isset($_POST['start']) ? $_POST['start'] : 0;
 		$status = array('<span class="badge badge-warning">Pending</span>', '<span class="badge badge-success">Approved</span>', '<span class="badge badge-danger">Disapproved</span>');
@@ -1746,12 +1903,45 @@ class Admin extends MY_Controller {
    		$data[] = date('Y-m-d', strtotime($row->entry_date));
    		$data[] = $row->loan_code;
    		$data[] = $status[$row->status];
-			$data[] = '<a href="javascript:void(0);" class="btn btn-info btn-sm" id="btn-view-attachment" data-field="ADD" 
+			$data[] = '<a href="javascript:void(0);" class="btn btn-info btn-sm" id="btn-view-attachment" data-field="loan_request" data-field="ADD" 
 											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="View Attachment" data-id="'.$row->loan_request_id.'"><i class="fas fa-paperclip"></i></a> |
-								<a href="javascript:void(0);" class="btn btn-success btn-sm" id="btn-view-comment" data-field="ADD" 
+								<a href="javascript:void(0);" class="btn btn-success btn-sm" id="btn-view-comment" data-field="benefit_request" 
 											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="View Comment" data-id="'.$row->loan_request_id.'"><i class="fas fa-comments"></i></a>';
+			$res[] = $data;
+		}
+
+		$output = array (
+			'draw' 						=> isset($_POST['draw']) ? $_POST['draw'] : null,
+			'recordsTotal' 		=> $this->AdminMod->count_all_loan_by_request(),
+			'recordsFiltered' => $this->AdminMod->count_filter_loan_by_request(),
+			'data' 						=> $res
+		);
+
+		echo json_encode($output);
+	}
+	
+	public function server_portal_benefit_request(){
+		$result 	= $this->AdminMod->get_output_benefit_by_request();
+		// $this->output->enable_profiler(true);
+		$res 			= array();
+		$no 			= isset($_POST['start']) ? $_POST['start'] : 0;
+		$status = array('<span class="badge badge-warning">Pending</span>', '<span class="badge badge-success">Approved</span>', '<span class="badge badge-danger">Disapproved</span>');
+		foreach ($result as $row) {
+			$data = array();
+			$no++;
+
+   		$data[] = $row->benefit_request_id;
+   		$data[] = date('Y-m-d', strtotime($row->entry_date));
+   		$data[] = $row->type_of_benefit;
+   		$data[] = $status[$row->status];
+			$data[] = '<a href="javascript:void(0);" class="btn btn-info btn-sm" id="btn-view-attachment" data-field="benefit_request" data-field="ADD" 
+											 data-id="'.$row->benefit_request_id.'" data-placement="top" data-toggle="tooltip" 
+											 title="View Attachment" data-id="'.$row->benefit_request_id.'"><i class="fas fa-paperclip"></i></a> |
+								<a href="javascript:void(0);" class="btn btn-success btn-sm" id="btn-view-comment" data-field="benefit_request" 
+											 data-id="'.$row->benefit_request_id.'" data-placement="top" data-toggle="tooltip" 
+											 title="View Comment" data-id="'.$row->benefit_request_id.'"><i class="fas fa-comments"></i></a>';
 			$res[] = $data;
 		}
 
@@ -2569,8 +2759,8 @@ class Admin extends MY_Controller {
 
 	public function upload_const_dp(){
 		$config['upload_path'] 		= './assets/image/uploads';
-		$config['allowed_types'] 	= 'gif|jpg|png|jpeg';
-		$config['max_size']  			= 0; // any size
+		$config['allowed_types'] 	= 'gif|jpg|png|jpeg|PNG';
+		$config['max_size']  			= 3000; // 3mb
 		$config['remove_spaces']	= true;
 		$id 											= $this->input->post('members_id');
 		$this->load->library('upload', $config);
@@ -2591,16 +2781,48 @@ class Admin extends MY_Controller {
         'x_axis'          =>  '0',
         'y_axis'          =>  '0'
       );
+			$configer['quality'] = "100%";
+			$filename = $_FILES['upload-file-dp']['tmp_name'];
+			$imgdata= @exif_read_data($this->upload->upload_path.$this->upload->file_name, 'IFD0');
+			// $configer['width'] = 176;
+			// $configer['height'] = 234;
+			list($width, $height) = getimagesize($filename);
+			// if ($width >= $height){
+			// 	$configer['width'] = 234;
+			// 	$configer['height'] = 176;
+			// }
+			// else{
+				$configer['height'] = 234;
+				$configer['width'] = 176;
+			// }
+			$config['master_dim'] = 'auto';
 
-      $configer['quality'] = "100%";
-			$configer['width'] = 176;
-			$configer['height'] = 234;
 			$dim = (intval($dImg["image_width"]) / intval($dImg["image_height"])) - ($configer['width'] / $configer['height']);
-			$configer['master_dim'] = ($dim > 0)? "height" : "width";
+			// $configer['master_dim'] = ($dim > 0)? "height" : "width";
+			if (!$this->image_lib->resize()){  
+			}else{
+					$this->image_lib->clear();
+					$config=array();
+					$config['image_library'] = 'gd2';
+					$config['source_image'] = $this->upload->upload_path.$this->upload->file_name;
+					switch($imgdata['Orientation']) {
+							case 3:
+									$config['rotation_angle']='180';
+									break;
+							case 6:
+									$config['rotation_angle']='270';
+									break;
+							case 8:
+									$config['rotation_angle']='90';
+									break;
+					}
+					// $this->image_lib->initialize($config); 
+					$this->image_lib->rotate();
+			}
 
       $this->image_lib->clear();
       $this->image_lib->initialize($configer);
-      $this->image_lib->resize();
+      // $this->image_lib->resize();
 
 			$chkExisting    = $this->db->get_where('uploads', array('members_id' => $id))->result();
 			if ($chkExisting) {

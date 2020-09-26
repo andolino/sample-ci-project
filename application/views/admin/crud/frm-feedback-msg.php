@@ -11,7 +11,7 @@
     </ul>
     <div class="input-group">
       <input id="btn-input" type="text" class="form-control form-control-sm font-12" name="msg" placeholder="Type your message here..." />
-      <input type="hidden" name="loan_request_id" value="<?php echo $id; ?>" />
+      <input type="hidden" name="<?php echo $flag=='loans'?'loan_request_id':'benefit_request_id'; ?>" value="<?php echo $id; ?>" />
       <span class="input-group-btn">
       <button class="btn btn-warning btn-sm" id="btn-chat">
               Send</button>
