@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 4.9.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 26, 2020 at 05:15 AM
+-- Generation Time: Sep 28, 2020 at 02:18 AM
 -- Server version: 10.4.11-MariaDB
--- PHP Version: 7.2.31
+-- PHP Version: 7.2.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -232,16 +233,20 @@ CREATE TABLE `benefit_request` (
   `second_approved_users_id` int(11) DEFAULT NULL,
   `second_approved_date` datetime DEFAULT NULL,
   `mo_terms` int(5) DEFAULT NULL,
-  `amnt_applied` decimal(12,2) DEFAULT 0.00
+  `amnt_applied` decimal(12,2) DEFAULT 0.00,
+  `req_remarks` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `benefit_request`
 --
 
-INSERT INTO `benefit_request` (`benefit_request_id`, `members_id`, `benefit_type_id`, `is_deleted`, `entry_date`, `users_id`, `description`, `loan_code_id`, `status`, `approved_users_id`, `approved_date`, `disapproved_users_id`, `disapproved_date`, `second_approved_users_id`, `second_approved_date`, `mo_terms`, `amnt_applied`) VALUES
-(1, '00000009', 4, 0, '2020-09-24', 0, NULL, NULL, 2, 1, '2020-09-24 00:00:00', 1, '2020-09-24 20:37:51', NULL, NULL, NULL, '0.00'),
-(2, '00000009', 5, 0, '2020-09-24', 0, NULL, NULL, 2, 1, '2020-09-24 20:19:43', 1, '2020-09-24 20:37:47', NULL, NULL, NULL, '0.00');
+INSERT INTO `benefit_request` (`benefit_request_id`, `members_id`, `benefit_type_id`, `is_deleted`, `entry_date`, `users_id`, `description`, `loan_code_id`, `status`, `approved_users_id`, `approved_date`, `disapproved_users_id`, `disapproved_date`, `second_approved_users_id`, `second_approved_date`, `mo_terms`, `amnt_applied`, `req_remarks`) VALUES
+(1, '00000009', 4, 0, '2020-09-24', 0, NULL, NULL, 2, 1, '2020-09-24 00:00:00', 1, '2020-09-24 20:37:51', NULL, NULL, NULL, '0.00', NULL),
+(2, '00000009', 5, 0, '2020-09-24', 0, NULL, NULL, 2, 1, '2020-09-24 20:19:43', 1, '2020-09-24 20:37:47', NULL, NULL, NULL, '0.00', NULL),
+(3, '00000009', 7, 0, '2020-09-26', 0, NULL, NULL, 1, 1, '2020-09-27 11:49:02', NULL, NULL, NULL, NULL, NULL, '0.00', NULL),
+(4, '00000009', 1, 0, '2020-09-26', 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL),
+(5, '00000009', 7, 0, '2020-09-26', 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0.00', NULL);
 
 -- --------------------------------------------------------
 
@@ -416,7 +421,8 @@ INSERT INTO `claim_benefit` (`claimed_benefit_id`, `members_id`, `benefit_type_i
 (20, '00000001', 7, '2023-02-23', '0.00', '0.00', '0.00', '40.00', '0.00', '0.00', '0.00', '0.00', '4000.00', 0, 1, 0, '2020-05-09', NULL, NULL),
 (23, '00000001', 1, '2030-02-28', '440.00', '100.00', '440.00', '100.00', '10000.00', '2000.00', '3000.00', '5000.00', '-239730.06', 1, 1, 0, '2020-05-09', '0.00', NULL),
 (24, '00000002', 9, '2022-09-30', '0.00', '0.00', '0.00', '40.00', '0.00', '0.00', '0.00', '0.00', '1200.00', 0, 1, 0, '2020-05-09', NULL, NULL),
-(25, '00000005', 7, '2023-02-23', '0.00', '0.00', '0.00', '40.00', '0.00', '0.00', '0.00', '0.00', '4000.00', 0, 1, 0, '2020-05-15', NULL, NULL);
+(25, '00000005', 7, '2023-02-23', '0.00', '0.00', '0.00', '40.00', '0.00', '0.00', '0.00', '0.00', '4000.00', 0, 1, 0, '2020-05-15', NULL, NULL),
+(27, '00000009', 7, '2022-09-30', '0.00', '0.00', '0.00', '40.00', '0.00', '0.00', '0.00', '0.00', '4000.00', 0, 1, 0, '2020-09-27', NULL, 3);
 
 -- --------------------------------------------------------
 
@@ -885,18 +891,20 @@ CREATE TABLE `loan_request` (
   `second_approved_users_id` int(11) DEFAULT NULL,
   `second_approved_date` datetime DEFAULT NULL,
   `mo_terms` int(5) DEFAULT NULL,
-  `amnt_applied` decimal(12,2) DEFAULT 0.00
+  `amnt_applied` decimal(12,2) DEFAULT 0.00,
+  `req_remarks` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `loan_request`
 --
 
-INSERT INTO `loan_request` (`loan_request_id`, `members_id`, `is_deleted`, `entry_date`, `users_id`, `description`, `loan_code_id`, `status`, `co_maker_id`, `approved_users_id`, `approved_date`, `disapproved_users_id`, `disapproved_date`, `second_approved_users_id`, `second_approved_date`, `mo_terms`, `amnt_applied`) VALUES
-(10, '00000009', 0, '2020-09-18', 1, 'TEST', 1, 2, '00000001,00000002', 1, '2020-09-22 00:00:00', 1, '2020-09-24 20:43:37', NULL, NULL, NULL, '0.00'),
-(11, '00000009', 0, '2020-09-18', 0, 'TEST', 2, 1, '00000004,00000006', 1, '2020-09-22 00:00:00', 1, '2020-09-22 00:00:00', NULL, NULL, NULL, '0.00'),
-(12, '00000009', 0, '2020-09-18', 1, '', 0, 1, '00000002,00000004', 1, '2020-09-22 00:00:00', 1, '2020-09-22 00:00:00', NULL, NULL, NULL, '0.00'),
-(13, '00000009', 0, '2020-09-23', 0, 'test', 2, 0, '00000003,00000006', NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL);
+INSERT INTO `loan_request` (`loan_request_id`, `members_id`, `is_deleted`, `entry_date`, `users_id`, `description`, `loan_code_id`, `status`, `co_maker_id`, `approved_users_id`, `approved_date`, `disapproved_users_id`, `disapproved_date`, `second_approved_users_id`, `second_approved_date`, `mo_terms`, `amnt_applied`, `req_remarks`) VALUES
+(10, '00000009', 0, '2020-09-18', 1, 'TEST', 1, 2, '00000001,00000002', 1, '2020-09-22 00:00:00', 1, '2020-09-24 20:43:37', NULL, NULL, NULL, '0.00', NULL),
+(11, '00000009', 0, '2020-09-18', 0, 'TEST', 2, 1, '00000004,00000006', 1, '2020-09-22 00:00:00', 1, '2020-09-22 00:00:00', NULL, NULL, NULL, '0.00', NULL),
+(12, '00000009', 0, '2020-09-18', 1, '', 0, 1, '00000002,00000004', 1, '2020-09-22 00:00:00', 1, '2020-09-22 00:00:00', NULL, NULL, NULL, '0.00', NULL),
+(13, '00000009', 0, '2020-09-23', 0, 'test', 2, 0, '00000003,00000006', NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL),
+(14, '00000009', 0, '2020-09-27', 0, 'test', 2, 0, '00000002,00000004', NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1317,7 +1325,16 @@ INSERT INTO `portal_uploads` (`portal_uploads_id`, `loan_request_id`, `benefit_r
 (23, 12, NULL, NULL, NULL, 'IMG-88645e100075f646cc71b0e5992f40b6-V.jpg', NULL, '2020-09-18'),
 (24, 13, NULL, NULL, NULL, 'IMG_20200826_1402084.jpg', NULL, '2020-09-23'),
 (27, NULL, 2, NULL, NULL, 'Capture12.PNG', NULL, '2020-09-24'),
-(28, NULL, 2, NULL, NULL, 'Capture23.PNG', NULL, '2020-09-24');
+(28, NULL, 2, NULL, NULL, 'Capture23.PNG', NULL, '2020-09-24'),
+(29, NULL, 3, NULL, NULL, '3P2.png', NULL, '2020-09-26'),
+(30, NULL, 3, NULL, NULL, '3P11.png', NULL, '2020-09-26'),
+(31, NULL, 4, NULL, NULL, '3P3.png', NULL, '2020-09-26'),
+(32, NULL, 4, NULL, NULL, '3P12.png', NULL, '2020-09-26'),
+(33, NULL, 5, NULL, NULL, '3P4.png', NULL, '2020-09-26'),
+(34, NULL, 5, NULL, NULL, '3P13.png', NULL, '2020-09-26'),
+(35, NULL, 5, NULL, NULL, '3P21.png', NULL, '2020-09-26'),
+(36, 14, NULL, NULL, NULL, '3P5.png', NULL, '2020-09-27'),
+(37, 14, NULL, NULL, NULL, '3P211.png', NULL, '2020-09-27');
 
 -- --------------------------------------------------------
 
@@ -1368,7 +1385,8 @@ CREATE TABLE `request_approver` (
 --
 
 INSERT INTO `request_approver` (`loan_request_approver_id`, `loan_first_approver_users_id`, `loan_second_approver_users_id`, `loan_req_second_approver`, `loan_override_first_approver`, `benefit_first_approver_users_id`, `benefit_second_approver_users_id`, `benefit_req_second_approver`, `benefit_override_first_approver`, `transaction_date`, `type`) VALUES
-(1, 6, 8, 1, 1, 0, 0, 0, 0, NULL, 'loans');
+(1, 6, 8, 1, 1, 0, 0, 0, 0, NULL, 'loans'),
+(2, 1, 1, 0, 0, 0, 0, 0, 0, NULL, 'benefit');
 
 -- --------------------------------------------------------
 
@@ -1550,6 +1568,8 @@ CREATE TABLE `v_benefit_by_request` (
 ,`disapproved_by` text
 ,`disapproved_date` datetime
 ,`type_of_benefit` text
+,`req_remarks` text
+,`total_claim` decimal(12,2)
 );
 
 -- --------------------------------------------------------
@@ -1822,6 +1842,7 @@ CREATE TABLE `v_loans_by_request` (
 ,`disapproved_by` text
 ,`disapproved_date` datetime
 ,`amnt_of_loan` decimal(12,2)
+,`req_remarks` text
 );
 
 -- --------------------------------------------------------
@@ -2067,7 +2088,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `v_benefit_by_request`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_benefit_by_request`  AS  select `br`.`benefit_request_id` AS `benefit_request_id`,`br`.`members_id` AS `members_id`,`br`.`is_deleted` AS `is_deleted`,`br`.`entry_date` AS `entry_date`,`br`.`users_id` AS `users_id`,`br`.`description` AS `description`,`lm`.`first_name` AS `first_name`,`lm`.`last_name` AS `last_name`,`lm`.`middle_name` AS `middle_name`,`br`.`status` AS `status`,`u1`.`screen_name` AS `approved_by`,`br`.`approved_date` AS `approved_date`,`u2`.`screen_name` AS `disapproved_by`,`br`.`disapproved_date` AS `disapproved_date`,`bt`.`type_of_benefit` AS `type_of_benefit` from (((((`benefit_request` `br` left join `members` `lm` on(`lm`.`members_id` = `br`.`members_id`)) left join `claim_benefit` `cb` on(`cb`.`benefit_request_id` = `br`.`benefit_request_id`)) left join `benefit_type` `bt` on(`bt`.`benefit_type_id` = `cb`.`benefit_type_id`)) left join `users` `u1` on(`u1`.`users_id` = `br`.`approved_users_id`)) left join `users` `u2` on(`u2`.`users_id` = `br`.`disapproved_users_id`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_benefit_by_request`  AS  select `br`.`benefit_request_id` AS `benefit_request_id`,`br`.`members_id` AS `members_id`,`br`.`is_deleted` AS `is_deleted`,`br`.`entry_date` AS `entry_date`,`br`.`users_id` AS `users_id`,`br`.`description` AS `description`,`lm`.`first_name` AS `first_name`,`lm`.`last_name` AS `last_name`,`lm`.`middle_name` AS `middle_name`,`br`.`status` AS `status`,`u1`.`screen_name` AS `approved_by`,`br`.`approved_date` AS `approved_date`,`u2`.`screen_name` AS `disapproved_by`,`br`.`disapproved_date` AS `disapproved_date`,`bt`.`type_of_benefit` AS `type_of_benefit`,`br`.`req_remarks` AS `req_remarks`,`cb`.`total_claim` AS `total_claim` from (((((`benefit_request` `br` left join `members` `lm` on(`lm`.`members_id` = `br`.`members_id`)) left join `claim_benefit` `cb` on(`cb`.`benefit_request_id` = `br`.`benefit_request_id`)) left join `benefit_type` `bt` on(`bt`.`benefit_type_id` = `br`.`benefit_type_id`)) left join `users` `u1` on(`u1`.`users_id` = `br`.`approved_users_id`)) left join `users` `u2` on(`u2`.`users_id` = `br`.`disapproved_users_id`)) ;
 
 -- --------------------------------------------------------
 
@@ -2166,7 +2187,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `v_loans_by_request`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_loans_by_request`  AS  select `lr`.`loan_request_id` AS `loan_request_id`,`lr`.`members_id` AS `members_id`,`lr`.`is_deleted` AS `is_deleted`,`lr`.`entry_date` AS `entry_date`,`lr`.`users_id` AS `users_id`,`lr`.`description` AS `description`,`lm`.`first_name` AS `first_name`,`lm`.`last_name` AS `last_name`,`lm`.`middle_name` AS `middle_name`,`lc`.`loan_code` AS `loan_code`,`lr`.`status` AS `status`,`lcomp`.`remarks` AS `remarks`,`u1`.`screen_name` AS `approved_by`,`lr`.`approved_date` AS `approved_date`,`u2`.`screen_name` AS `disapproved_by`,`lr`.`disapproved_date` AS `disapproved_date`,`lcomp`.`amnt_of_loan` AS `amnt_of_loan` from (((((`loan_request` `lr` left join `members` `lm` on(`lm`.`members_id` = `lr`.`members_id`)) left join `loan_code` `lc` on(`lc`.`loan_code_id` = `lr`.`loan_code_id`)) left join `loan_computation` `lcomp` on(`lcomp`.`loan_request_id` = `lr`.`loan_request_id`)) left join `users` `u1` on(`u1`.`users_id` = `lr`.`approved_users_id`)) left join `users` `u2` on(`u2`.`users_id` = `lr`.`disapproved_users_id`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_loans_by_request`  AS  select `lr`.`loan_request_id` AS `loan_request_id`,`lr`.`members_id` AS `members_id`,`lr`.`is_deleted` AS `is_deleted`,`lr`.`entry_date` AS `entry_date`,`lr`.`users_id` AS `users_id`,`lr`.`description` AS `description`,`lm`.`first_name` AS `first_name`,`lm`.`last_name` AS `last_name`,`lm`.`middle_name` AS `middle_name`,`lc`.`loan_code` AS `loan_code`,`lr`.`status` AS `status`,`lcomp`.`remarks` AS `remarks`,`u1`.`screen_name` AS `approved_by`,`lr`.`approved_date` AS `approved_date`,`u2`.`screen_name` AS `disapproved_by`,`lr`.`disapproved_date` AS `disapproved_date`,`lcomp`.`amnt_of_loan` AS `amnt_of_loan`,`lr`.`req_remarks` AS `req_remarks` from (((((`loan_request` `lr` left join `members` `lm` on(`lm`.`members_id` = `lr`.`members_id`)) left join `loan_code` `lc` on(`lc`.`loan_code_id` = `lr`.`loan_code_id`)) left join `loan_computation` `lcomp` on(`lcomp`.`loan_request_id` = `lr`.`loan_request_id`)) left join `users` `u1` on(`u1`.`users_id` = `lr`.`approved_users_id`)) left join `users` `u2` on(`u2`.`users_id` = `lr`.`disapproved_users_id`)) ;
 
 -- --------------------------------------------------------
 
@@ -2537,7 +2558,7 @@ ALTER TABLE `beneficiaries`
 -- AUTO_INCREMENT for table `benefit_request`
 --
 ALTER TABLE `benefit_request`
-  MODIFY `benefit_request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `benefit_request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `benefit_req_msg`
@@ -2573,7 +2594,7 @@ ALTER TABLE `civil_status`
 -- AUTO_INCREMENT for table `claim_benefit`
 --
 ALTER TABLE `claim_benefit`
-  MODIFY `claimed_benefit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `claimed_benefit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `contributions`
@@ -2663,7 +2684,7 @@ ALTER TABLE `loan_receipt_temp`
 -- AUTO_INCREMENT for table `loan_request`
 --
 ALTER TABLE `loan_request`
-  MODIFY `loan_request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `loan_request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `loan_req_msg`
@@ -2711,7 +2732,7 @@ ALTER TABLE `official_receipt`
 -- AUTO_INCREMENT for table `portal_uploads`
 --
 ALTER TABLE `portal_uploads`
-  MODIFY `portal_uploads_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `portal_uploads_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `relationship_type`
@@ -2723,7 +2744,7 @@ ALTER TABLE `relationship_type`
 -- AUTO_INCREMENT for table `request_approver`
 --
 ALTER TABLE `request_approver`
-  MODIFY `loan_request_approver_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `loan_request_approver_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `signatory`
