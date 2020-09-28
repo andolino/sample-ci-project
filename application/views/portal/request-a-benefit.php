@@ -15,6 +15,7 @@
 					<th scope="col">BENEFIT CLAIMS</th>
 					<th scope="col">REQUEST DATE</th>
 					<th scope="col">STATUS</th>
+					<th scope="col">AMOUNT</th>
 					<th scope="col">ACTION</th>
 				</tr>
 			</thead>

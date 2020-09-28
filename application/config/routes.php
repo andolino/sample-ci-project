@@ -94,6 +94,7 @@ $route['cash-gift'] 									= 'Admin/getCashGift';
 $route['official-receipt'] 	= 'Admin/officialReceipt';
 $route['get-total-contribution-per-region'] 	= 'Admin/getTotalContributionPerRegion';
 $route['get-msg-frm'] 	= 'Admin/get_message_form';
+$route['get-disapproved-frm'] 	= 'Admin/get_disapproved_frm';
 $route['get-msg-simultaneous'] 	= 'Admin/get_message_simultaneous';
 $route['save-msg-feedback-admin'] 	= 'Admin/save_msg_feedback_admin';
 

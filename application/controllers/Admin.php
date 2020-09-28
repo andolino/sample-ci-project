@@ -122,7 +122,7 @@ class Admin extends MY_Controller {
 
 	public function loanApplication(){
 		$params['heading'] 		 = 'LOAN APPLICATION';
-		$params['loan_request'] = $this->db->get_where('v_loans_by_request', array('status' => 1))->result();
+		$params['loan_request'] = $this->db->order_by('loan_request_id', 'desc')->get_where('v_loans_by_request', array('status' => 1))->result();
 		$params['loansPage'] = $this->load->view('admin/crud/loans-application-page', $params, TRUE);
 		$this->adminContainer('admin/loans-application', $params);	
 	}
@@ -162,15 +162,17 @@ class Admin extends MY_Controller {
 	public function save_approval_loan_request(){
 		$id = $this->input->post('id');
 		$field = $this->input->post('field');
+		$remarks = $this->input->post('remarks');
 		$data = array(
 			'status'						=> ($field=='Approved'?1:2)
 		);
 		if ($field == 'Approved') {
-			$data['approved_users_id'] = $this->session->users_id;
-			$data['approved_date'] 		 = date('Y-m-d H:i:s');
+			$data['approved_users_id'] 		= $this->session->users_id;
+			$data['approved_date'] 		 		= date('Y-m-d H:i:s');
 		} elseif($field == 'Disapproved') {
 			$data['disapproved_users_id'] = $this->session->users_id;
 			$data['disapproved_date'] 		= date('Y-m-d H:i:s');
+			$data['req_remarks'] 		 					= $remarks;
 		}
 		$q = $this->db->update('loan_request', $data, array('loan_request_id'=>$id));
 
@@ -180,7 +182,7 @@ class Admin extends MY_Controller {
 		$from    		 = "no-reply@cpfi-webapp.com";
 		$to    	 		 = strtolower($membersData->email);
 		$title    	 = "CPFI REQUEST";
-		$subject  	 = "New loan request from cpfi";
+		$subject  	 = "Loan Request";
 		$message     = "Dear " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . ", <br><br> 
 										Your request # " . str_pad($loanRequestData->loan_request_id, 5, '0', STR_PAD_LEFT) . " has been " . $field . " <br><br> Thank you!";
 		$this->sendEmail($from, $to, $subject, $message, $title);
@@ -219,7 +221,7 @@ class Admin extends MY_Controller {
 		$from    		 = "no-reply@cpfi-webapp.com";
 		$to    	 		 = strtolower($membersData->email);
 		$title    	 = "CPFI REQUEST";
-		$subject  	 = "New benefit request from cpfi";
+		$subject  	 = "Benefit Claims";
 		$message     = "Dear " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . ", <br><br> 
 										Your request # " . str_pad($benefitRequestData->benefit_request_id, 5, '0', STR_PAD_LEFT) . " has been " . $field . " <br><br> Thank you!";
 		$this->sendEmail($from, $to, $subject, $message, $title);
@@ -246,7 +248,8 @@ class Admin extends MY_Controller {
 	}
 
 	public function showBenefitClaim(){
-		$this->load->view('admin/crud/benefit-claim-page');	
+		$params['benefit_request'] = $this->db->order_by('benefit_request_id', 'desc')->get_where('v_benefit_by_request', array('status' => 1))->result();
+		$this->load->view('admin/crud/benefit-claim-page', $params);	
 	}
 
 	public function saveContribution(){
@@ -391,6 +394,7 @@ class Admin extends MY_Controller {
 
 	public function viewClaimBenefit(){	
 		$params['heading'] 			 = 'BENEFIT CLAIMS';
+		$params['benefit_request'] = $this->db->order_by('benefit_request_id', 'desc')->get_where('v_benefit_by_request', array('status' => 1))->result();
 		$params['benefitClaims'] = $this->load->view('admin/crud/benefit-claim-page', $params, TRUE);	
 		$this->adminContainer('admin/benefit-claims', $params);	
 	}
@@ -517,11 +521,13 @@ class Admin extends MY_Controller {
 	}
 
 	public function process_benefit_claim(){
-		$members_id 	  	 			= $this->input->get('data');
-		$params['data'] 	 			= $this->AdminMod->getMembersRecord($members_id);
-		$params['claimBenefit'] = $this->db->order_by('claim_all','desc')->join('benefit_type', 'benefit_type.benefit_type_id = claim_benefit.benefit_type_id', 'left')->get_where('claim_benefit', array('members_id' => $members_id))->result();
-		$params['benefit_type'] = $this->db->get_where('benefit_type', array('is_deleted' => 0))->result();
-		$params['balance']			= $this->db->get_where('v_balance', array('members_id'=>$members_id))->result();
+		$members_id 	  	 						= $this->input->get('data');
+		$benefit_request_id 	  			= $this->input->get('request_id');
+		$params['data'] 	 						= $this->AdminMod->getMembersRecord($members_id);
+		$params['claimBenefit'] 			= $this->db->order_by('claim_all','desc')->join('benefit_type', 'benefit_type.benefit_type_id = claim_benefit.benefit_type_id', 'left')->get_where('claim_benefit', array('members_id' => $members_id))->result();
+		$params['benefit_type'] 			= $this->db->get_where('benefit_type', array('is_deleted' => 0))->result();
+		$params['balance']						= $this->db->get_where('v_balance', array('members_id'=>$members_id))->result();
+		$params['benefit_request_id']	= $benefit_request_id;
 		$this->load->view('admin/crud/process-benefit-claim', $params);
 	}
 
@@ -631,6 +637,7 @@ class Admin extends MY_Controller {
 		$data['claim_all'] 				 		 = $benefitType->multi_claim;
 		$data['users_id'] 				 		 = $this->session->users_id;
 		$data['entry_date'] 			 		 = date('Y-m-d');
+		$data['benefit_request_id'] 	 = $this->input->post('benefit_request_id');
 
 		if ($benefitType->multi_claim == 1) {
 			$this->db->update('members', array('retired_date' => date('Y-m-d', strtotime($this->input->post('claim_date'))),
@@ -1609,7 +1616,7 @@ class Admin extends MY_Controller {
 			} else {
 				$data[] = '';
 			}
-			$data[] = '<a href="javascript:void(0);" id="loadPage" data-link="process-claim-benefit" data-ind="'.$row->members_id.'" 
+			$data[] = '<a href="javascript:void(0);" class="process-benefit-claim" id="loadPage" data-link="process-claim-benefit" data-ind="'.$row->members_id.'" 
 										data-badge-head="BENEFIT CLAIM - '.strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name).'" 
 										data-cls="cont-process-benefit-claim-by-member" data-placement="top" data-toggle="tooltip" title="Claim Benefits"
 										data-id="'.$row->members_id.'"><i class="fas fa-hand-holding-usd"></i></a>';
@@ -1759,6 +1766,19 @@ class Admin extends MY_Controller {
 		$params['flag'] = $flag;
 		$this->load->view('admin/crud/frm-feedback-msg', $params);
 	}
+
+	public function get_disapproved_frm(){
+		$flag = $this->input->get('flag');
+		$params=[];
+		if ($flag=='loans') {
+			$params['msg'] = $this->db->get_where('loan_req_msg', array('loan_request_id' => $this->input->get('id')))->result();
+		} else {
+			$params['msg'] = $this->db->get_where('benefit_req_msg', array('benefit_request_id' => $this->input->get('id')))->result();
+		}
+		$params['id'] = $this->input->get('id');
+		$params['flag'] = $flag;
+		$this->load->view('admin/crud/frm-disapproved-msg', $params);
+	}
 	
 	public function get_message_simultaneous(){
 		$params['msg'] = $this->db->get_where('loan_req_msg', array('loan_request_id' => $this->input->post('id')))->result();
@@ -1819,7 +1839,7 @@ class Admin extends MY_Controller {
 								<a href="javascript:void(0);" id="btn-approved-ln-req-attmnt" data-field="Approved" 
 											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="Approve" data-id="'.$row->loan_request_id.'"><i class="fas fa-check-square"></i></a> | 
-								<a href="javascript:void(0);" id="btn-approved-ln-req-attmnt" data-field="Disapproved" 
+								<a href="javascript:void(0);" id="btn-disapproved-ln-request" data-field="loans" 
 											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="Disapproved" data-id="'.$row->loan_request_id.'"><i class="fas fa-times"></i></a> |
 								<a href="javascript:void(0);" id="btn-comment-ln-request" data-field="loans" 
@@ -1850,7 +1870,7 @@ class Admin extends MY_Controller {
 			$data[] = $row->benefit_request_id;
 			$data[] = strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->last_name);
 			$data[] = $row->type_of_benefit;
-			$data[] = ''; // Amount
+			$data[] = number_format($row->total_claim, 2); // Amount
 			if ($this->input->post('flag') == 2) {
 				$data[] = $row->disapproved_by; // Dispproved by
 				$data[] = $row->disapproved_date == '' ? '' : date('Y-m-d H:i:s', strtotime($row->disapproved_date)); // Approved date
@@ -1903,6 +1923,7 @@ class Admin extends MY_Controller {
    		$data[] = date('Y-m-d', strtotime($row->entry_date));
    		$data[] = $row->loan_code;
    		$data[] = $status[$row->status];
+   		$data[] = $row->req_remarks;
 			$data[] = '<a href="javascript:void(0);" class="btn btn-info btn-sm" id="btn-view-attachment" data-field="loan_request" data-field="ADD" 
 											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="View Attachment" data-id="'.$row->loan_request_id.'"><i class="fas fa-paperclip"></i></a> |
@@ -1933,9 +1954,10 @@ class Admin extends MY_Controller {
 			$no++;
 
    		$data[] = $row->benefit_request_id;
-   		$data[] = date('Y-m-d', strtotime($row->entry_date));
    		$data[] = $row->type_of_benefit;
+   		$data[] = date('Y-m-d', strtotime($row->entry_date));
    		$data[] = $status[$row->status];
+   		$data[] = number_format($row->total_claim, 2);
 			$data[] = '<a href="javascript:void(0);" class="btn btn-info btn-sm" id="btn-view-attachment" data-field="benefit_request" data-field="ADD" 
 											 data-id="'.$row->benefit_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="View Attachment" data-id="'.$row->benefit_request_id.'"><i class="fas fa-paperclip"></i></a> |
@@ -1947,8 +1969,8 @@ class Admin extends MY_Controller {
 
 		$output = array (
 			'draw' 						=> isset($_POST['draw']) ? $_POST['draw'] : null,
-			'recordsTotal' 		=> $this->AdminMod->count_all_loan_by_request(),
-			'recordsFiltered' => $this->AdminMod->count_filter_loan_by_request(),
+			'recordsTotal' 		=> $this->AdminMod->count_all_benefit_by_request(),
+			'recordsFiltered' => $this->AdminMod->count_filter_benefit_by_request(),
 			'data' 						=> $res
 		);
 

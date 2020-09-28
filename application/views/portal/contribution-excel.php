@@ -40,11 +40,13 @@
 	</tr>
 	<?php $tota_ded=0; ?>
 	<?php $tota_balance=0; ?>
+	<?php $sum=0; ?>
 	<?php foreach ($data as $row): ?>
+		<?php $sum+=($row->deduction - $row->balance); ?>
 		<tr>
 			<td style="text-align: center;"><?php echo date('F, Y', strtotime($row->date_applied)); ?></td>
 			<td style="text-align: right;"><?php echo number_format($row->deduction, 2); ?></td>
-			<td style="text-align: right;"><?php echo number_format($row->deduction - $row->balance, 2); ?></td>
+			<td style="text-align: right;"><?php echo number_format($sum, 2); ?></td>
 		</tr>
 	<?php 
 		$tota_ded+=$row->deduction;

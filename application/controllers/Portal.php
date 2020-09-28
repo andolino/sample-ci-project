@@ -204,15 +204,16 @@ class Portal extends MY_Controller {
 	public function upload_files(){
 		$data = array(); 
 		$errorUploadType = $statusMsg = ''; 
+		// $uploadData = (object) array();
 			// If files are selected to upload 
 			if(!empty($_FILES['files']['name']) && count(array_filter($_FILES['files']['name'])) > 0){ 
 				$filesCount = count($_FILES['files']['name']); 
 				for($i = 0; $i < $filesCount; $i++){ 
-						$_FILES['file']['name']     = $_FILES['files']['name'][$i]; 
-						$_FILES['file']['type']     = $_FILES['files']['type'][$i]; 
-						$_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i]; 
-						$_FILES['file']['error']    = $_FILES['files']['error'][$i]; 
-						$_FILES['file']['size']     = $_FILES['files']['size'][$i]; 
+						$_FILES['file[]']['name']     = $_FILES['files']['name'][$i]; 
+						$_FILES['file[]']['type']     = $_FILES['files']['type'][$i]; 
+						$_FILES['file[]']['tmp_name'] = $_FILES['files']['tmp_name'][$i]; 
+						$_FILES['file[]']['error']    = $_FILES['files']['error'][$i]; 
+						$_FILES['file[]']['size']     = $_FILES['files']['size'][$i]; 
 							
 						// File upload configuration 
 						$uploadPath = './assets/image/uploads'; 
@@ -227,19 +228,22 @@ class Portal extends MY_Controller {
 						$this->upload->initialize($config); 
 							
 						// Upload file to server 
-						if($this->upload->do_upload('file')){ 
+						if($this->upload->do_upload('file[]')){ 
 								// Uploaded file data 
 								$fileData = $this->upload->data(); 
 								$uploadData[$i]['file_name'] = $fileData['file_name']; 
 								$uploadData[$i]['uploaded_on'] = date("Y-m-d H:i:s"); 
+								
 						}else{  
-								$errorUploadType .= $_FILES['file']['name'].' | ';  
+								$errorUploadType .= $_FILES['file[]']['name'].' | ';  
 						} 
-				} 
+						
+				}
 					
 				$errorUploadType = !empty($errorUploadType)?'<br/>File Type Error: '.trim($errorUploadType, ' | '):''; 
 				// Insert files data into the database 
 				$comaker_id_result = $this->input->post('co-maker-id');
+				
 				$this->db->insert("loan_request", array(
 					'members_id' 	 => $this->input->post('has_update'),
 					'entry_date' 	 => date('Y-m-d'),
@@ -266,7 +270,7 @@ class Portal extends MY_Controller {
 				$from    		 = "no-reply@cpfi-webapp.com";
 				$to    	 		 = strtolower($approver->email);
 				$title    	 = "CPFI REQUEST";
-				$subject  	 = "New loan request from cpfi member";
+				$subject  	 = "Loan Request";
 				$message     = "Dear " . strtoupper($approver->screen_name) . ", <br><br> 
 												Loan request request from " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . " <br><br> Thank you!";
 				$this->sendEmail($from, $to, $subject, $message, $title);
@@ -325,11 +329,11 @@ class Portal extends MY_Controller {
 			if(!empty($_FILES['files']['name']) && count(array_filter($_FILES['files']['name'])) > 0){ 
 				$filesCount = count($_FILES['files']['name']); 
 				for($i = 0; $i < $filesCount; $i++){ 
-						$_FILES['file']['name']     = $_FILES['files']['name'][$i]; 
-						$_FILES['file']['type']     = $_FILES['files']['type'][$i]; 
-						$_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i]; 
-						$_FILES['file']['error']    = $_FILES['files']['error'][$i]; 
-						$_FILES['file']['size']     = $_FILES['files']['size'][$i]; 
+						$_FILES['file[]']['name']     = $_FILES['files']['name'][$i]; 
+						$_FILES['file[]']['type']     = $_FILES['files']['type'][$i]; 
+						$_FILES['file[]']['tmp_name'] = $_FILES['files']['tmp_name'][$i]; 
+						$_FILES['file[]']['error']    = $_FILES['files']['error'][$i]; 
+						$_FILES['file[]']['size']     = $_FILES['files']['size'][$i]; 
 							
 						// File upload configuration 
 						$uploadPath = './assets/image/uploads'; 
@@ -344,13 +348,13 @@ class Portal extends MY_Controller {
 						$this->upload->initialize($config); 
 							
 						// Upload file to server 
-						if($this->upload->do_upload('file')){ 
+						if($this->upload->do_upload('file[]')){ 
 								// Uploaded file data 
 								$fileData = $this->upload->data(); 
 								$uploadData[$i]['file_name'] = $fileData['file_name']; 
 								$uploadData[$i]['uploaded_on'] = date("Y-m-d H:i:s"); 
 						}else{  
-								$errorUploadType .= $_FILES['file']['name'].' | ';  
+								$errorUploadType .= $_FILES['file[]']['name'].' | ';  
 						} 
 				} 
 					
@@ -379,7 +383,7 @@ class Portal extends MY_Controller {
 				$from    		 = "no-reply@cpfi-webapp.com";
 				$to    	 		 = strtolower($approver->email);
 				$title    	 = "CPFI REQUEST";
-				$subject  	 = "New benefit request from cpfi member";
+				$subject  	 = "Benefit Claim Request";
 				$message     = "Dear " . strtoupper($approver->screen_name) . ", <br><br> 
 												Claim benefit request from " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . " <br><br> Thank you!";
 				$this->sendEmail($from, $to, $subject, $message, $title);

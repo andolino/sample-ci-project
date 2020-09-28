@@ -35,14 +35,14 @@ class AdminMod extends CI_Model {
 	var $tblLoanByRequest = 'v_loans_by_request';
 	var $tblLoanByRequestCollumn = array('loan_request_id', 'members_id', 'is_deleted', 'entry_date', 'users_id', 'description', 
 																				'first_name', 'last_name', 'middle_name', 'loan_code', 'amnt_of_loan', 'status', 'remarks', 'approved_by', 
-																				'approved_date', 'disapproved_by', 'disapproved_date');
+																				'approved_date', 'disapproved_by', 'disapproved_date', 'req_remarks');
 	var $tblLoanByRequestOrder = array('loan_request_id' => 'desc');
 	
 	//BENEFIT BY REQUEST
 	var $tblBenefitByRequest = 'v_benefit_by_request';
 	var $tblBenefitByRequestCollumn = array('benefit_request_id', 'members_id', 'is_deleted', 'entry_date', 'users_id', 'description', 
 																						'first_name', 'last_name', 'middle_name', 'status', 'approved_by', 'approved_date', 'disapproved_by', 
-																						'disapproved_date', 'type_of_benefit');
+																						'disapproved_date', 'type_of_benefit', 'total_claim');
 	var $tblBenefitByRequestOrder = array('benefit_request_id' => 'desc');
 	
 	//LOAN REQUEST ATTCHMNT

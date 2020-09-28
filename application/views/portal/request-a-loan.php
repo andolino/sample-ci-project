@@ -15,6 +15,7 @@
 					<th scope="col">REQUEST DATE</th>
 					<th scope="col">LOAN TYPE</th>
 					<th scope="col">STATUS</th>
+					<th scope="col">REMARKS</th>
 					<th scope="col">ACTION</th>
 				</tr>
 			</thead>
@@ -72,7 +73,7 @@
 					<!-- end -->
 					<div class="col-sm-6 mb-2">
 						<label for="loan_code_id" class="font-12">Loan Code</label>
-						<select class="custom-select custom-select-sm font-12" id="loan_code_id" name="loan_code_id">
+						<select class="custom-select custom-select-sm font-12" id="loan_code_id" name="loan_code_id" required>
 						  <option selected hidden value="">-SELECT-</option>
 						  <?php foreach ($loanCode as $row): ?>
 						  	<option value="<?php echo $row->loan_code_id; ?>"><?php echo $row->loan_code; ?></option>
@@ -101,7 +102,7 @@
 					<div class="col-sm-6">
 						<div class="form-group">
 							<label for="description" class="font-12">Co-Maker</label>
-							<select class="co-maker form-control" name="co_maker[]" multiple="multiple">
+							<select id="co-maker" class="co-maker form-control" name="co_maker[]" multiple="multiple" required>
 								<?php foreach($co_maker as $row): ?>
 									<option value="<?php echo $row->members_id; ?>"><?php echo strtoupper($row->last_name) . ', ' . strtoupper($row->first_name); ?></option>
 								<?php endforeach; ?>

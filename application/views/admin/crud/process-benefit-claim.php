@@ -6,6 +6,7 @@
 	<div class="col-12"></div>	
 	<div class="col-8">
 		<form id="frm-claim-beneft">
+			<input type="hidden" name="benefit_request_id" value="<?php echo empty($benefit_request_id) ? '' : $benefit_request_id; ?>">
 			<div class="row">
 					<!-- heading -->
 					<div class="col-6">

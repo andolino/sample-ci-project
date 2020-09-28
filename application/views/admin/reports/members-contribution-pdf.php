@@ -5,7 +5,7 @@
 		<td style="width: 20%;"></td>
 	</tr>
 </table>
-<table border="0.5" style="font-size:8px;">
+<table style="font-size:8px;">
 	<tr>
 		<td style="text-align: left;">Name of Member: </td>
 		<td colspan="4" style="text-align: left"><?php echo !empty($data) ? strtoupper($data[0]->last_name . ', ' . $data[0]->first_name . ' ' . $data[0]->middle_name) : ''; ?></td>
@@ -41,13 +41,15 @@
 	</tr>
 	<?php $tota_ded=0; ?>
 	<?php $tota_balance=0; ?>
+	<?php $sum=0; ?>
 	<?php foreach ($data as $row): ?>
+		<?php $sum+=($row->deduction - $row->balance); ?>
 		<tr>
 			<td style="text-align: center;"><?php echo date('F/Y', strtotime($row->date_applied)); ?></td>
 			<td style="text-align: center;"><?php echo date('m/d/Y', strtotime($row->entry_date)); ?></td>
 			<td style="text-align: center;"><?php echo $row->orno; ?></td>
-			<td style="text-align: right;"><?php echo $row->deduction; ?></td>
-			<td style="text-align: right;"><?php echo $row->deduction - $row->balance; ?></td>
+			<td style="text-align: right;"><?php echo number_format($row->deduction, 2); ?></td>
+			<td style="text-align: right;"><?php echo number_format($sum, 2); ?></td>
 		</tr>
 	<?php 
 		$tota_ded+=$row->deduction;

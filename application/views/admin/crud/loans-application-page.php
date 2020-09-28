@@ -5,7 +5,7 @@
 			<select class="custom-select custom-select-sm font-12" id="select-loan-request-comp">
 					<option value="" selected hidden></option>
 					<?php foreach($loan_request as $row): ?>
-					<option value="<?php echo $row->members_id; ?>"><?php echo strtoupper($row->last_name) . ', ' . strtoupper($row->first_name) . ' ' . strtoupper($row->middle_name) . ' (' . $row->loan_code . ') '; ?></option>
+					<option value="<?php echo $row->members_id; ?>"><?php echo strtoupper($row->last_name) . ', ' . strtoupper($row->first_name) . ' ' . strtoupper($row->middle_name) . ' (' . $row->loan_code . ') (' . str_pad($row->loan_request_id, 5, '0', STR_PAD_LEFT) . ')'; ?></option>
 				<?php endforeach; ?>
 			</select>
 		</div>

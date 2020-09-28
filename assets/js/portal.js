@@ -233,9 +233,17 @@ $(document).ready(function () {
           res.param2,
           res.param3
         );
-        animateSingleOut('.req-ln-frm', 'fadeOut');
-        setTimeout(function(){ animateSingleIn('.req-ln-tbl', 'fadeIn'); },1000);
-        tbl_portal_loans_by_request.ajax.reload();
+        setTimeout(function(){ 
+          window.location.reload();
+        }, 500);
+        // animateSingleOut('.req-ln-frm', 'fadeOut');
+        // setTimeout(function(){ animateSingleIn('.req-ln-tbl', 'fadeIn'); },1000);
+        // $("#frm-request-a-loan").trigger('reset');
+        // $(".co-maker").select2('destroy');
+        // $(".co-maker").html("<option></option>");
+        // $(".co-maker").select2(); 
+        // tbl_portal_loans_by_request.ajax.reload();
+        // $('.mo-term-n-amnt').addClass('none'); 
       }
     });
   });
@@ -258,9 +266,13 @@ $(document).ready(function () {
           res.param2,
           res.param3
         );
-        animateSingleOut('.req-ln-frm', 'fadeOut');
-        setTimeout(function(){ animateSingleIn('.req-ln-tbl', 'fadeIn'); },1000);
-        tbl_portal_benefit_req_attmnt.ajax.reload();
+        setTimeout(function(){ 
+          window.location.reload();
+        }, 500);
+        // animateSingleOut('.req-ln-frm', 'fadeOut');
+        // setTimeout(function(){ animateSingleIn('.req-ln-tbl', 'fadeIn'); },1000);
+        // $("#frm-request-a-benefit").trigger('reset');
+        // tbl_portal_benefit_req_attmnt.ajax.reload();
       }
     });
   });
@@ -284,11 +296,11 @@ function initLoanRequestDataTables(){
     columnDefs                 : [
       { 
         orderable            : false, 
-        targets              : [0,1,2,3,4] 
+        targets              : [0,1,2,3,4,5] 
       },
       { 
         className            : 'text-right', 
-        targets              : [3,4] 
+        targets              : [4,5] 
       }
     ],
     "serverSide"               : true,
@@ -328,7 +340,7 @@ function initBenefitRequestDataTables(){
     columnDefs                 : [
       { 
         orderable            : false, 
-        targets              : [0,1,2,3,4] 
+        targets              : [0,1,2,3,4,5] 
       },
       { 
         className            : 'text-right', 

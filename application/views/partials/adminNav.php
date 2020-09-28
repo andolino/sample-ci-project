@@ -59,10 +59,10 @@
 						<a href="#benefitCSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fas fa-hand-holding-usd"></i> BENEFIT CLAIMS</a>
 						<ul class="collapse list-unstyled" id="benefitCSubmenu">
 								<li>
-										<a href="<?php echo base_url(); ?>claim-benefit">MEMBERS</a>
-								</li>
-								<li>
-										<a href="<?php echo base_url(); ?>benefit-request">MEMBER'S REQUEST</a>
+                    <a href="<?php echo base_url(); ?>benefit-request">BENEFIT CLAIMS REQUEST</a>
+                </li>
+                <li>
+										<a href="<?php echo base_url(); ?>claim-benefit">PROCESS BENEFIT CLAIMS</a>
 								</li>
 								<!-- <li>
 										<a href="#">COLLECTION</a>

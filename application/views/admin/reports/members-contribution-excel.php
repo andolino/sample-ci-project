@@ -49,13 +49,15 @@
 	</tr>
 	<?php $tota_ded=0; ?>
 	<?php $tota_balance=0; ?>
+	<?php $sum=0; ?>
 	<?php foreach ($data as $row): ?>
+	<?php $sum+=($row->deduction - $row->balance); ?>
 		<tr>
 			<td style="text-align: center;"><?php echo date('F/Y', strtotime($row->date_applied)); ?></td>
 			<td style="text-align: center;"><?php echo date('m/d/Y', strtotime($row->entry_date)); ?></td>
 			<td style="text-align: center;"><?php echo $row->orno; ?></td>
-			<td style="text-align: right;"><?php echo $row->deduction; ?></td>
-			<td style="text-align: right;"><?php echo $row->deduction - $row->balance; ?></td>
+			<td style="text-align: right;"><?php echo number_format($row->deduction, 2); ?></td>
+			<td style="text-align: right;"><?php echo number_format($sum, 2); ?></td>
 		</tr>
 	<?php 
 		$tota_ded+=$row->deduction;
