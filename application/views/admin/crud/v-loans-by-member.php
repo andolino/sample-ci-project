@@ -3,12 +3,12 @@
 	<div class="cont-loans-by-mem row w-100 none">
 		<div class="col-9">
    		<div class="row">
-   			<div class="col-12">
+   			<!-- <div class="col-12">
  					<a href="javascript:void(0);" class="float-right pr-2 pb-2" 
 					id="loadPage" data-link="view-loan-app-page" data-badge-head="LOAN APPLICATION"
  					data-cls="cont-tbl-constituent" data-placement="top" 
  					data-toggle="tooltip" title="Back to Settings"><i class="fas fa-times"></i></a>
-   			</div>	
+   			</div>	 -->
 			</div>
 			<!-- <div class="row">
 				<div class="col-4 pb-3">
@@ -81,6 +81,9 @@
 		</div>
 		<div class="col-3">
 			<div class="card loans-card-add none">
+			<a href="#" class="font-12" style="text-align: right;
+																					padding-right: 10px;
+																					padding-top: 10px;" onclick="animateSingleOut('.loans-card-add', 'fadeOut');"><i class="fas fa-times"></i></a>
 				<div class="card-body">
 					<h5 class="title-loans-form"></h5>
 					<div class="loans-cont-add"></div>

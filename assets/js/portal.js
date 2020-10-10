@@ -41,11 +41,21 @@ $(document).ready(function () {
           $('.upload-ctrl').addClass('none');
         });
         initLoanRequestDataTables();
-        
         $('.co-maker').select2({
           width: '100%',
           maximumSelectionLength: 2
         });
+      }
+    });
+  });
+  
+  $(document).on('click', '#requestALoan', function (e) {
+    $.ajax({
+      type: "post",
+      url: "option-co-maker",
+      data: {},
+      success: function (res) {
+        $('.co-maker').html(res);
       }
     });
   });
@@ -84,7 +94,11 @@ $(document).ready(function () {
       // dataType: "JSON",
       success: function (res) {
         $('.custom-container').html(res);
-
+        var today = new Date(); 
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+        today = mm + '/' + dd + '/' + yyyy;
         // $( "div.picture-cont" )
         // .mouseenter(function() {
         //   $('.upload-ctrl').removeClass('none');
@@ -93,7 +107,15 @@ $(document).ready(function () {
         //   $('.upload-ctrl').addClass('none');
         // });
         initBenefitRequestDataTables();
-        
+        $('#date_effectivity').daterangepicker({
+          "showDropdowns" : true,
+          "singleDatePicker" : true,
+          "minDate": today
+        }, function(start, end, label) {
+          var dd = new Date();
+          var sd = new Date(dd.getFullYear(), 0, 1);
+          console.log(dd, sd);
+      });
         // $('.co-maker').select2({
         //   width: '100%',
         //   maximumSelectionLength: 2
@@ -233,17 +255,20 @@ $(document).ready(function () {
           res.param2,
           res.param3
         );
-        setTimeout(function(){ 
-          window.location.reload();
-        }, 500);
-        // animateSingleOut('.req-ln-frm', 'fadeOut');
-        // setTimeout(function(){ animateSingleIn('.req-ln-tbl', 'fadeIn'); },1000);
-        // $("#frm-request-a-loan").trigger('reset');
-        // $(".co-maker").select2('destroy');
-        // $(".co-maker").html("<option></option>");
-        // $(".co-maker").select2(); 
-        // tbl_portal_loans_by_request.ajax.reload();
-        // $('.mo-term-n-amnt').addClass('none'); 
+        // setTimeout(function(){ 
+        //   window.location.reload();
+        // }, 500);
+        animateSingleOut('.req-ln-frm', 'fadeOut');
+        setTimeout(function(){ animateSingleIn('.req-ln-tbl', 'fadeIn'); },1000);
+        $("#frm-request-a-loan").trigger('reset');
+        $(".co-maker").select2('destroy');
+        $(".co-maker").html("<option></option>");
+        $('.co-maker').select2({
+          width: '100%',
+          maximumSelectionLength: 2
+        });
+        tbl_portal_loans_by_request.ajax.reload();
+        $('.mo-term-n-amnt').addClass('none'); 
       }
     });
   });
@@ -266,13 +291,15 @@ $(document).ready(function () {
           res.param2,
           res.param3
         );
-        setTimeout(function(){ 
-          window.location.reload();
-        }, 500);
-        // animateSingleOut('.req-ln-frm', 'fadeOut');
-        // setTimeout(function(){ animateSingleIn('.req-ln-tbl', 'fadeIn'); },1000);
-        // $("#frm-request-a-benefit").trigger('reset');
-        // tbl_portal_benefit_req_attmnt.ajax.reload();
+        // setTimeout(function(){ 
+        //   // window.location.reload();
+        // }, 500);
+        if (res.param3 == 'success' || res.param3 == 'warning') {
+          animateSingleOut('.req-ln-frm', 'fadeOut');
+          setTimeout(function(){ animateSingleIn('.req-ln-tbl', 'fadeIn'); },1000);
+          $("#frm-request-a-benefit").trigger('reset');
+          tbl_portal_benefit_req_attmnt.ajax.reload();
+        }
       }
     });
   });
@@ -293,6 +320,7 @@ function initLoanRequestDataTables(){
         searchPlaceholder      : 'Search...',
         lengthMenu             : '_MENU_'       
     },
+    order: [[0, 'desc']],
     columnDefs                 : [
       { 
         orderable            : false, 
@@ -337,10 +365,11 @@ function initBenefitRequestDataTables(){
         searchPlaceholder      : 'Search...',
         lengthMenu             : '_MENU_'       
     },
+    order: [[0, 'desc']],
     columnDefs                 : [
       { 
         orderable            : false, 
-        targets              : [0,1,2,3,4,5] 
+        targets              : [0,1,2,3,4,5,6] 
       },
       { 
         className            : 'text-right', 

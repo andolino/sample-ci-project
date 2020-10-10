@@ -16,6 +16,7 @@
 					<th scope="col">REQUEST DATE</th>
 					<th scope="col">STATUS</th>
 					<th scope="col">AMOUNT</th>
+					<th scope="col">REMARKS</th>
 					<th scope="col">ACTION</th>
 				</tr>
 			</thead>
@@ -73,12 +74,18 @@
 					<!-- end -->
 					<div class="col-sm-6 mb-2">
 						<label for="benefit_type_id" class="font-12">Benefit Type</label>
-						<select class="custom-select custom-select-sm font-12" id="benefit_type_id" name="benefit_type_id">
+						<select class="custom-select custom-select-sm font-12" id="benefit_type_id" name="benefit_type_id" required>
 						  <option selected hidden value="">-SELECT-</option>
 						  <?php foreach ($benefit_type as $row): ?>
-						  	<option value="<?php echo $row->benefit_type_id; ?>"><?php echo $row->type_of_benefit; ?></option>
+						  	<option value="<?php echo $row->benefit_type_id; ?>"><?php echo $row->description; ?></option>
 						  <?php endforeach; ?>
 						</select>
+						<div class="row mt-2">
+							<div class="col-sm-12">
+								<label for="date_effectivity" class="font-12">Date of Effectivity</label>
+								<input type="text" class="form-control form-control-sm font-12" id="date_effectivity" name="date_effectivity" required>
+							</div>
+						</div>
 						<div class="row mt-2">
 							<div class="col-sm-12 mo-term-n-amnt none"></div>
 							<div class="col-sm-6 mt-2">

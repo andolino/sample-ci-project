@@ -2,7 +2,7 @@
 	<div class="col-sm-12 req-ln-tbl">
 		<div class="row">
 			<div class="col-sm-12 col-md-6 col-lg-3">
-				<button type="button" class="btn btn-purple btn-sm rounded-0 border mb-3 w-100" onclick="
+				<button type="button" class="btn btn-purple btn-sm rounded-0 border mb-3 w-100" id="requestALoan" onclick="
 					animateSingleOut('.req-ln-tbl', 'fadeOut');
 					setTimeout(function(){ animateSingleIn('.req-ln-frm', 'fadeIn'); },1000)"><i class="fas fa-save"></i> REQUEST A LOAN</button>
 			</div>
@@ -15,7 +15,7 @@
 					<th scope="col">REQUEST DATE</th>
 					<th scope="col">LOAN TYPE</th>
 					<th scope="col">STATUS</th>
-					<th scope="col">REMARKS</th>
+					<th scope="col">DATE/TIME</th>
 					<th scope="col">ACTION</th>
 				</tr>
 			</thead>
@@ -72,7 +72,7 @@
 					</div>
 					<!-- end -->
 					<div class="col-sm-6 mb-2">
-						<label for="loan_code_id" class="font-12">Loan Code</label>
+						<label for="loan_code_id" class="font-12">Loan Type</label>
 						<select class="custom-select custom-select-sm font-12" id="loan_code_id" name="loan_code_id" required>
 						  <option selected hidden value="">-SELECT-</option>
 						  <?php foreach ($loanCode as $row): ?>

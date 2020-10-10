@@ -51,7 +51,15 @@
 			<?php endif; ?> 
 			<?php if($userPriv->level == 0 || $userPriv->level == 2): ?>
 			<li>
-        <a href="<?php echo base_url(); ?>official-receipt"><i class="fas fa-user-cog"></i> COLLECTION</a>
+        <a href="#homeColmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fas fa-hand-holding-usd"></i>COLLECTION</a>
+        <ul class="collapse list-unstyled" id="homeColmenu">
+          <li>
+            <a href="javascript:void(0);" id="add-contribution-by-type">PROCESS CONTRIBUTION</a>
+            <a href="javascript:void(0);" id="add-payments-by-type">PROCESS LOAN PAYMENTS</a>
+            <a href="<?php echo base_url(); ?>official-receipt">PROCESS OR</a>
+            <a href="javascript:void(0);" id="showBtnPrintByRegion">REPORTS</a>
+          </li>
+        </ul>
       </li>
 			<?php endif; ?> 
 			<?php if($userPriv->level == 0 || $userPriv->level == 3): ?>
@@ -109,16 +117,16 @@
         <a href="#acctgRepSubMenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fas fa-paste"></i> ACCTG REPORTS</a>
         <ul class="collapse list-unstyled" id="acctgRepSubMenu">
             <li>
-                <a href="<?php echo base_url(); ?>gj-posted">GJ</a>
+                <a href="<?php echo base_url(); ?>gj-posted">GJ REPORT</a>
             </li>
             <li>
-                <a href="<?php echo base_url(); ?>crj-posted">CRJ</a>
+                <a href="<?php echo base_url(); ?>crj-posted">CRJ REPORT</a>
             </li>
             <li>
-                <a href="<?php echo base_url(); ?>cdj-posted">CDJ</a>
+                <a href="<?php echo base_url(); ?>cdj-posted">CDJ REPORT</a>
             </li>
             <li>
-                <a href="<?php echo base_url(); ?>pacs-posted">PACS</a>
+                <a href="<?php echo base_url(); ?>pacs-posted">PACS REPORT</a>
             </li>
             <li>
                 <a href="<?php echo base_url(); ?>general-ledger">GENERAL LEDGER</a>
@@ -135,6 +143,9 @@
         </ul>
       </li>
 			<?php endif; ?> 
+      <li>
+        <a href="<?php echo base_url(); ?>change-password"><i class="fas fa-tasks"></i> CHANGE PASSOWRD</a>
+      </li>
   </ul>
 
 </nav>

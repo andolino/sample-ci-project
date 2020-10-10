@@ -74,6 +74,9 @@
 		</div>
 		<div class="col-3">
 			<div class="card loans-card-add none">
+			<a href="#" class="font-12" style="text-align: right;
+																					padding-right: 10px;
+																					padding-top: 10px;" onclick="animateSingleOut('.loans-card-add', 'fadeOut');"><i class="fas fa-times"></i></a>
 				<div class="card-body">
 					<h5 class="title-loans-form"></h5>
 					<div class="loans-cont-add"></div>

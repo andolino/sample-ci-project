@@ -3,7 +3,7 @@
     <div class="input-group">
       <div class="row">
         <div class="col-sm-12">
-          <input id="btn-input" type="text" class="form-control form-control-sm font-12" name="remarks" placeholder="Type your remarks here..." />
+          <input id="btn-input" type="text" class="form-control form-control-sm font-12" name="remarks" placeholder="Type your remarks here..." required/>
           <input type="hidden" name="<?php echo $flag=='loans'?'loan_request_id':'benefit_request_id'; ?>" value="<?php echo $id; ?>" />
           <input type="hidden" name="field" value="Disapproved" />
           <input type="hidden" name="id" value="<?php echo $id; ?>" />

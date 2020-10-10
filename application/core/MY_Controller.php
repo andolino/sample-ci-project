@@ -48,36 +48,66 @@ class MY_Controller extends CI_Controller{
     return $output;
 	}
 	
-	public function sendEmail($from, $email, $subject, $message, $title){
-    $config = Array(
-      'protocol' => 'smtp',
-      'smtp_host' => 'ssl://smtp.cpfi-webapp.com',
-      'smtp_port' => 2083,
-      'smtp_user' => 'manage_account@cpfi-webapp.com', 
-      'smtp_pass' => 'OuPqjDymP#4V', 
-      'mailtype' => 'html',
-      'charset' => 'iso-8859-1',
-      // 'charset' => 'utf-8',
-      'wordwrap' => TRUE
-		);
-		$this->load->library('email', $config);
-		$this->email->set_newline("\r\n");
-		$this->email->set_header('MIME-Version', '1.0; charset=utf-8'); //must add this line
-		$this->email->set_header('Content-type', 'text/html'); //must add this line
-		$this->email->from($from, $title);
-		$this->email->to($email);
-		$this->email->subject($subject);
-		$this->email->message($message);
-		// $this->email->attach('C:\Users\xyz\Desktop\images\abc.png');
-		if($this->email->send()){
-			// echo 'Email send.';
-		} else {
-			show_error($this->email->print_debugger());
+		public function sendEmail($from, $email, $subject, $message, $title){
+			$config = Array(
+				'protocol' => 'smtp',
+				'smtp_host' => 'ssl://smtp.cpfi-webapp.com',
+				'smtp_port' => 2083,
+				'smtp_user' => 'manage_account@cpfi-webapp.com', 
+				'smtp_pass' => 'OuPqjDymP#4V', 
+				'mailtype' => 'html',
+				'charset' => 'iso-8859-1',
+				// 'charset' => 'utf-8',
+				'wordwrap' => TRUE
+			);
+			$this->load->library('email', $config); 
+			$this->email->set_newline("\r\n");
+			$this->email->set_header('MIME-Version', '1.0; charset=utf-8'); //must add this line
+			$this->email->set_header('Content-type', 'text/html'); //must add this line
+			$this->email->from($from, $title);
+			$this->email->to($email);
+			$this->email->subject($subject);
+			// $this->email->attach(base_url() . 'assets/image/uploads/clouds-dawn-dramatic-1024x5761.jpg');
+			$this->email->message($message);
+			// $this->email->attach('C:\Users\xyz\Desktop\images\abc.png');
+			if($this->email->send()){
+					// echo 'Email send.';
+			} else {
+					show_error($this->email->print_debugger());
+			}
 		}
-  }
+
+		public function sendEmailWithAttachments($from, $email, $subject, $message, $title, $attachments){
+			$config = Array(
+				'protocol' => 'smtp',
+				'smtp_host' => 'ssl://smtp.cpfi-webapp.com',
+				'smtp_port' => 2083,
+				'smtp_user' => 'manage_account@cpfi-webapp.com', 
+				'smtp_pass' => 'OuPqjDymP#4V', 
+				'mailtype' => 'html',
+				'charset' => 'iso-8859-1',
+				// 'charset' => 'utf-8',
+				'wordwrap' => TRUE
+			);
+			$this->load->library('email', $config); 
+			$this->email->set_newline("\r\n");
+			$this->email->set_mailtype("html");
+			$this->email->from($from, $title);
+			$this->email->to($email);
+			$this->email->subject($subject);
+			for ($i=0; $i < count($attachments); $i++) { 
+				$this->email->attach('./assets/image/uploads/'.$attachments[$i]);
+			}
+			$this->email->message($message);
+			if($this->email->send()){
+					// echo 'Email send.';
+			} else {
+					show_error($this->email->print_debugger());
+			}
+		}
 
 
-  function convertIntegerToWords($x) {
+    function convertIntegerToWords($x) {
         $w = '';
     $nwords = array('ZERO', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN',
                          'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE', 'THIRTEEN',

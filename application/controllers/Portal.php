@@ -206,7 +206,7 @@ class Portal extends MY_Controller {
 		$errorUploadType = $statusMsg = ''; 
 		// $uploadData = (object) array();
 			// If files are selected to upload 
-			if(!empty($_FILES['files']['name']) && count(array_filter($_FILES['files']['name'])) > 0){ 
+			if(!empty($_FILES['files']['name']) && count(array_filter($_FILES['files']['name'])) > 0) { 
 				$filesCount = count($_FILES['files']['name']); 
 				for($i = 0; $i < $filesCount; $i++){ 
 						$_FILES['file[]']['name']     = $_FILES['files']['name'][$i]; 
@@ -232,9 +232,10 @@ class Portal extends MY_Controller {
 								// Uploaded file data 
 								$fileData = $this->upload->data(); 
 								$uploadData[$i]['file_name'] = $fileData['file_name']; 
+								$uploadData[$i]['full_path'] = $fileData['full_path']; 
 								$uploadData[$i]['uploaded_on'] = date("Y-m-d H:i:s"); 
 								
-						}else{  
+						} else {  
 								$errorUploadType .= $_FILES['file[]']['name'].' | ';  
 						} 
 						
@@ -244,9 +245,15 @@ class Portal extends MY_Controller {
 				// Insert files data into the database 
 				$comaker_id_result = $this->input->post('co-maker-id');
 				
+				// get uploaded name
+				$uploadedName = array();
+				for ($i=0; $i < count($uploadData); $i++) { 
+					$uploadedName[] = $uploadData[$i]['file_name'];
+				}
+
 				$this->db->insert("loan_request", array(
 					'members_id' 	 => $this->input->post('has_update'),
-					'entry_date' 	 => date('Y-m-d'),
+					'entry_date' 	 => date('Y-m-d H:i:s'),
 					'description'  => $this->input->post('description'),
 					'loan_code_id' => $this->input->post('loan_code_id'),
 					'co_maker_id'  => $comaker_id_result,
@@ -273,7 +280,7 @@ class Portal extends MY_Controller {
 				$subject  	 = "Loan Request";
 				$message     = "Dear " . strtoupper($approver->screen_name) . ", <br><br> 
 												Loan request request from " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . " <br><br> Thank you!";
-				$this->sendEmail($from, $to, $subject, $message, $title);
+				$this->sendEmailWithAttachments($from, $to, $subject, $message, $title, $uploadedName);
 
 				// Upload status message 
 				// $statusMsg = $insert?'Files uploaded successfully!'.$errorUploadType:'Some problem occurred, please try again.'; 
@@ -302,7 +309,7 @@ class Portal extends MY_Controller {
 
 			$insert =	$this->db->insert("loan_request", array(
 				'members_id' 	 => $this->input->post('has_update'),
-				'entry_date' 	 => date('Y-m-d'),
+				'entry_date' 	 => date('Y-m-d H:i:s'),
 				'description'  => $this->input->post('description'),
 				'loan_code_id' => $this->input->post('loan_code_id'),
 				'co_maker_id'  => $comaker_id_result,
@@ -320,6 +327,11 @@ class Portal extends MY_Controller {
 			}
 			echo json_encode($res);
 		} 
+	}
+
+	public function option_co_maker(){
+		$params['co_maker'] = $this->db->get_where('members', array('is_deleted' => 0, 'date_of_effectivity < DATE_SUB(NOW(),INTERVAL 1 YEAR) '))->result();
+		$this->load->view('portal/option-co-maker', $params);
 	}
 	
 	public function upload_files_benefit(){
@@ -359,11 +371,28 @@ class Portal extends MY_Controller {
 				} 
 					
 				$errorUploadType = !empty($errorUploadType)?'<br/>File Type Error: '.trim($errorUploadType, ' | '):''; 
+				$bClaimSettings = $this->db->get_where('benefit_type', array('benefit_type_id'=>$this->input->post('benefit_type_id')))->row();
+				$bRequest = $this->db->get_where('benefit_request', 
+																				array(
+																					'benefit_type_id'=>$this->input->post('benefit_type_id'),
+																					'members_id' => $this->input->post('has_update')
+																				))->row();
+
+				// if once avail and its already in request
+				if ($bClaimSettings->is_avail_once == 1 && !empty($bRequest)) {
+					$res['param1'] 		 = 'Opps!';
+					$res['param2'] 		 = 'Sorry you are no longer request this type of benefit';
+					$res['param3'] 		 = 'error';
+					echo json_encode($res);
+					die();
+				}
+
 				// Insert files data into the database 
 				$this->db->insert("benefit_request", array(
-					'members_id' 	 => $this->input->post('has_update'),
-					'entry_date' 	 => date('Y-m-d'),
-					'benefit_type_id' => $this->input->post('benefit_type_id')
+					'members_id' 	 		 => $this->input->post('has_update'),
+					'entry_date' 	 		 => date('Y-m-d H:i:s'),
+					'benefit_type_id'  => $this->input->post('benefit_type_id'),
+					'effectivity_date' => date('Y-m-d', strtotime($this->input->post('date_effectivity')))
 				)); 
 				$insert_id = $this->db->insert_id();
 				$dataToDb = array();
@@ -378,14 +407,23 @@ class Portal extends MY_Controller {
 				$insert = $this->db->insert_batch("portal_uploads", $dataToDb); 
 				
 				// $from    		 = "manage_account@cpfi-webapp.com";
-				$approver = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.loan_first_approver_users_id WHERE ra.type = 'benefit'")->row();
+				$approver 	 = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.loan_first_approver_users_id WHERE ra.type = 'benefit'")->row();
 				$membersData = $this->db->get_where("members", array('members_id' => $this->input->post('has_update')))->row();
+				$officeData  = $this->db->get_where("office_management", array('office_management_id' => $membersData->members_id))->row();
 				$from    		 = "no-reply@cpfi-webapp.com";
 				$to    	 		 = strtolower($approver->email);
 				$title    	 = "CPFI REQUEST";
 				$subject  	 = "Benefit Claim Request";
-				$message     = "Dear " . strtoupper($approver->screen_name) . ", <br><br> 
-												Claim benefit request from " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . " <br><br> Thank you!";
+				$message     = "The Chairperson <br>"; 
+				$message     .= "Board of Trustees <br>"; 
+				$message     .= "Sir/Madam: <br><br>"; 
+				$message     .= "This is to inform you that ".strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . ", " . (!empty($officeData) ? $officeData->office_name : '') . "<br><br>"; 
+				$message     .= "Benefit Claim to avail : " . $bClaimSettings->type_of_benefit . "<br>"; 
+				$message     .= "Date of Event / Effectivity : " . date('Y-m-d', strtotime($this->input->post('date_effectivity'))) . "<br><br>"; 
+				$message     .= "Claimant : " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . "<br><br>"; 
+				$message     .= "LBP Account No. : " . $membersData->bank_account . "<br>"; 
+				$message     .= "Email Address. : " . $membersData->email . "<br>"; 
+				$message     .= "Contact No. : " . $membersData->contact_no . "<br>"; 
 				$this->sendEmail($from, $to, $subject, $message, $title);
 				// Upload status message 
 				// $statusMsg = $insert?'Files uploaded successfully!'.$errorUploadType:'Some problem occurred, please try again.'; 
@@ -399,6 +437,7 @@ class Portal extends MY_Controller {
 					$res['param3']     = 'warning';
 				}
 				echo json_encode($res);
+
 		}else{ 
 			$approver = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.loan_first_approver_users_id WHERE ra.type = 'benefit'")->row();
 			$membersData = $this->db->get_where("members", array('members_id' => $this->input->post('has_update')))->row();
@@ -411,9 +450,10 @@ class Portal extends MY_Controller {
 			$this->sendEmail($from, $to, $subject, $message, $title);
 
 			$insert =	$this->db->insert("benefit_request", array(
-				'members_id' 	 => $this->input->post('has_update'),
-				'entry_date' 	 => date('Y-m-d'),
-				'benefit_type_id' => $this->input->post('benefit_type_id')
+				'members_id' 	 		 => $this->input->post('has_update'),
+				'entry_date' 	 		 => date('Y-m-d H:i:s'),
+				'benefit_type_id'  => $this->input->post('benefit_type_id'),
+				'effectivity_date' => date('Y-m-d', strtotime($this->input->post('date_effectivity')))
 			)); 
 			if ($insert) {
 				$res['param1'] 		 = 'Success!';

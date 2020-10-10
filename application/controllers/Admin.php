@@ -12,6 +12,106 @@ class Admin extends MY_Controller {
 		$this->adminContainer('admin/index', $params);
 	}
 
+	public function checkingLoanRequestReminder(){
+		$reminderHr = $this->db->get_where('request_approver', array('type'=>'loans'))->row();
+		$userApprover = $this->db->get_where('users', array('users_id' => $reminderHr->loan_first_approver_users_id))->row();
+		$dataPendingRequest = $this->db->query("SELECT lc.loan_type_name, lr.*, m.last_name, m.first_name FROM loan_request lr
+																							left join members m on m.members_id = lr.members_id
+																							left join loan_code lc on lc.loan_code_id = lr.loan_code_id
+																							WHERE lr.approved_date IS NULL AND lr.disapproved_date IS null")->result();
+		$hrToRemind = $reminderHr->hour_expiration;
+		$lastTimeRemind = $reminderHr->last_time_remind;
+		
+		if ($lastTimeRemind == '' || $lastTimeRemind == null) {
+
+			$from    		 = "no-reply@cpfi-webapp.com";
+			$to    	 		 = !empty($userApprover) ? $userApprover->email : 'baisac.andolino@gmail.com';//strtolower($this->input->post('email'));
+			$title    	 = "Loan Request Notification";
+			$subject  	 = "CPFI - Loan Request Gentle Reminder";
+			$message     = "Hi " . ucfirst($userApprover->last_name) . ', ' . ucfirst($userApprover->first_name);
+			$message     .= "<br><br> This is a gentle reminder, for the pending request that seeks your approval / disapproval: <br><br>";
+			$message     .= "Request Details: <br><br>";
+			foreach ($dataPendingRequest as $row) {
+				$message .= 'Member: ' . ucfirst($row->last_name) . ', ' . ucfirst($row->first_name) . '<br>Request No.: ' . str_pad($row->loan_request_id, 5, '0', STR_PAD_LEFT) . '<br>Loan Request: ' . $row->loan_type_name . '<br><br>';
+			}
+			$this->sendEmail($from, $to, $subject, $message, $title);	
+			$this->db->update('request_approver', array('last_time_remind' => date('Y-m-d H:i:s')), array('type' => 'loans'));
+		} else {
+			$firstDate = new \DateTime($lastTimeRemind);
+			$secondDate = new \DateTime(date('Y-m-d H:i:s'));
+			$diff = $firstDate->diff($secondDate);
+			$diffHours = $diff->h;
+			// diff in hours (don't worry about different years, it's taken into account)
+			$diffInHours = $diffHours + ($diff->days * 24);
+			// more than 1 hour diff
+			if ($diffInHours >= $hrToRemind) {
+				$from    		 = "no-reply@cpfi-webapp.com";
+				$to    	 		 = !empty($userApprover) ? $userApprover->email : 'baisac.andolino@gmail.com';//strtolower($this->input->post('email'));
+				$title    	 = "Loan Request Notification";
+				$subject  	 = "CPFI - Loan Request Gentle Reminder";
+				$message     = "Hi " . ucfirst($userApprover->last_name) . ', ' . ucfirst($userApprover->first_name);
+				$message     .= "<br><br> This is a gentle reminder, for the pending request that seeks your approval / disapproval: <br><br>";
+				$message     .= "Request Details: <br><br>";
+				foreach ($dataPendingRequest as $row) {
+					$message .= 'Member: ' . ucfirst($row->last_name) . ', ' . ucfirst($row->first_name) . '<br>Request No.: ' . str_pad($row->loan_request_id, 5, '0', STR_PAD_LEFT) . '<br>Loan Request: ' . $row->loan_type_name . '<br><br>';
+				}
+				$this->sendEmail($from, $to, $subject, $message, $title);	
+				$this->db->update('request_approver', array('last_time_remind' => date('Y-m-d H:i:s')), array('type' => 'loans'));
+			}
+			echo 'oowa';
+		}
+	}
+	
+	public function checkingBenefitRequestReminder(){
+		$reminderHr = $this->db->get_where('request_approver', array('type'=>'benefit'))->row();
+		$userApprover = $this->db->get_where('users', array('users_id' => $reminderHr->benefit_first_approver_users_id))->row();
+		$dataPendingRequest = $this->db->query("SELECT br.*, m.last_name, m.first_name, bt.type_of_benefit FROM benefit_request br
+																							LEFT JOIN members m ON m.members_id = br.members_id
+																							LEFT JOIN benefit_type bt ON br.benefit_type_id = bt.benefit_type_id 
+																							WHERE br.approved_date IS NULL AND br.disapproved_date IS NULL")->result();
+		$hrToRemind = $reminderHr->hour_expiration;
+		$lastTimeRemind = $reminderHr->last_time_remind;
+		
+		if ($lastTimeRemind == '' || $lastTimeRemind == null) {
+
+			$from    		 = "no-reply@cpfi-webapp.com";
+			$to    	 		 = !empty($userApprover) ? $userApprover->email : 'baisac.andolino@gmail.com';//strtolower($this->input->post('email'));
+			$title    	 = "Benefit Request Notification ";
+			$subject  	 = "CPFI - Benefit Request Gentle Reminder";
+			$message     = "Hi " . ucfirst($userApprover->last_name) . ', ' . ucfirst($userApprover->first_name);
+			$message     .= "<br><br> This is a gentle reminder, for the pending request that seeks your approval / disapproval: <br><br>";
+			$message     .= "Request Details: <br><br>";
+			foreach ($dataPendingRequest as $row) {
+				$message .= 'Member: ' . ucfirst($row->last_name) . ', ' . ucfirst($row->first_name) . '<br>Request No.: ' . str_pad($row->benefit_request_id, 5, '0', STR_PAD_LEFT) . '<br>Benefit Request: ' . $row->type_of_benefit . '<br><br>';
+			}
+			$this->sendEmail($from, $to, $subject, $message, $title);	
+			$this->db->update('request_approver', array('last_time_remind' => date('Y-m-d H:i:s')), array('type' => 'benefit'));
+		} else {
+			$firstDate = new \DateTime($lastTimeRemind);
+			$secondDate = new \DateTime(date('Y-m-d H:i:s'));
+			$diff = $firstDate->diff($secondDate);
+			$diffHours = $diff->h;
+			// diff in hours (don't worry about different years, it's taken into account)
+			$diffInHours = $diffHours + ($diff->days * 24);
+			// more than 1 hour diff
+			if ($diffInHours >= $hrToRemind) {
+				$from    		 = "no-reply@cpfi-webapp.com";
+				$to    	 		 = !empty($userApprover) ? $userApprover->email : 'baisac.andolino@gmail.com';//strtolower($this->input->post('email'));
+				$title    	 = "Benefit Request Notification";
+				$subject  	 = "CPFI - Benefit Request Gentle Reminder";
+				$message     = "Hi " . ucfirst($userApprover->last_name) . ', ' . ucfirst($userApprover->first_name);
+				$message     .= "<br><br> This is a gentle reminder, for the pending request that seeks your approval / disapproval: <br><br>";
+				$message     .= "Request Details: <br><br>";
+				foreach ($dataPendingRequest as $row) {
+					$message .= 'Member: ' . ucfirst($row->last_name) . ', ' . ucfirst($row->first_name) . '<br>Request No.: ' . str_pad($row->benefit_request_id, 5, '0', STR_PAD_LEFT) . '<br>Benefit Request: ' . $row->type_of_benefit . '<br><br>';
+				}
+				$this->sendEmail($from, $to, $subject, $message, $title);	
+				$this->db->update('request_approver', array('last_time_remind' => date('Y-m-d H:i:s')), array('type' => 'benefit'));
+			}
+			echo 'oowa';
+		}
+	}
+
 	public function usr_login(){
 		if($this->session->userdata('users_id')){
 			redirect(base_url());
@@ -174,17 +274,25 @@ class Admin extends MY_Controller {
 			$data['disapproved_date'] 		= date('Y-m-d H:i:s');
 			$data['req_remarks'] 		 					= $remarks;
 		}
-		$q = $this->db->update('loan_request', $data, array('loan_request_id'=>$id));
-
-		$loanRequestData = $this->db->get_where('loan_request', array('loan_request_id' => $id))->row();
+		$subject  	 = "";
+		if ($this->input->post('loan_request_id')) {
+			$q = $this->db->update('loan_request', $data, array('loan_request_id'=>$id));
+			$requestData = $this->db->get_where('loan_request', array('loan_request_id' => $id))->row();
+			$subject  	 = "Loan Request";
+		} else {
+			$q = $this->db->update('benefit_request', $data, array('benefit_request_id'=>$id));
+			$requestData = $this->db->get_where('benefit_request', array('benefit_request_id' => $id))->row();
+			$subject  	 = "Benefit Request";
+		}
+		
 		$approver = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.loan_first_approver_users_id WHERE ra.type = 'loans'")->row();
-		$membersData = $this->db->get_where("members", array('members_id' => $loanRequestData->members_id))->row();
+		$membersData = $this->db->get_where("members", array('members_id' => $requestData->members_id))->row();
 		$from    		 = "no-reply@cpfi-webapp.com";
 		$to    	 		 = strtolower($membersData->email);
 		$title    	 = "CPFI REQUEST";
-		$subject  	 = "Loan Request";
+		
 		$message     = "Dear " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . ", <br><br> 
-										Your request # " . str_pad($loanRequestData->loan_request_id, 5, '0', STR_PAD_LEFT) . " has been " . $field . " <br><br> Thank you!";
+										Your request # " . str_pad($requestData->loan_request_id, 5, '0', STR_PAD_LEFT) . " has been " . $field . " <br><br> Thank you!";
 		$this->sendEmail($from, $to, $subject, $message, $title);
 
 		$res=array();
@@ -458,7 +566,92 @@ class Admin extends MY_Controller {
 		$params['pacsTransaction'] = $this->load->view('admin/accounting/posted-pacs-page', $params, TRUE);	
 		$this->adminContainer('admin/pacs-transaction', $params);	
 
+	}	
+	public function changePassword(){	
+		$params['heading'] 		 			= 'CHANGE PASSWORD';
+		$params['loanByMemberPage']	= $this->load->view('admin/change-admin-password', $params, TRUE);
+		$this->adminContainer('admin/loan-by-member', $params);	
+
 	}
+	public function submit_admin_new_password(){
+		$rules = array(
+			[
+				'field' => 'curr_password',
+				'label' => 'Current Password',
+				'rules' => 'required'
+			],
+			[
+				'field' => 'password',
+				'label' => 'Password',
+				'rules' => 'required|callback_valid_password'
+			],
+			[
+				'field' => 'new_password',
+				'label' => 'New Password',
+				'rules' => 'required|matches[password]|callback_valid_password'
+			],
+		);
+		$this->form_validation->set_rules($rules);
+		// $this->form_validation->set_rules('new-password', 'New Password', 'required');
+		// $this->form_validation->set_rules('re-new-password', 'Re-Enter New Password', 'required|matches[new-password]');
+		$errors 				 = array();
+		if ($this->form_validation->run() == FALSE) {
+			$errors 			 = $this->form_validation->error_array();
+			$errors['msg'] = 'failed';
+		} else {
+			$un     			 = $this->uri->segment(2);
+			$curr_password 		 = $this->input->post('curr_password');
+			$users = $this->db->get_where('users', array('txt_password'=>$curr_password))->row();
+			if (!empty($users)) {
+				$password 		 = $this->input->post('new_password');
+				$hashed_pw 	 	 = password_hash($this->input->post('new_password'), PASSWORD_BCRYPT);
+				$this->db->update('users', array('password' => $hashed_pw, 'txt_password' => $this->input->post('new_password')), array('users_id' => $this->session->users_id));
+				$errors['msg'] = 'success';
+			} else {
+				$errors['curr_password'] = 'The current password is invalid!';
+				$errors['msg'] = 'failed';
+			}
+		}
+		echo json_encode($errors);
+	}
+
+	public function valid_password($password = ''){
+		$password = trim($password);
+		$regex_lowercase = '/[a-z]/';
+		$regex_uppercase = '/[A-Z]/';
+		$regex_number = '/[0-9]/';
+		$regex_special = '/[!@#$%^&*()\-_=+{};:,<.>§~]/';
+		if (empty($password)){
+			$this->form_validation->set_message('valid_password', 'The {field} field is required.');
+			return FALSE;
+		}
+		if (preg_match_all($regex_lowercase, $password) < 1){
+			$this->form_validation->set_message('valid_password', 'The {field} field must be at least one lowercase letter.');
+			return FALSE;
+		}
+		if (preg_match_all($regex_uppercase, $password) < 1){
+			$this->form_validation->set_message('valid_password', 'The {field} field must be at least one uppercase letter.');
+			return FALSE;
+		}
+		if (preg_match_all($regex_number, $password) < 1){
+			$this->form_validation->set_message('valid_password', 'The {field} field must have at least one number.');
+			return FALSE;
+		}
+		if (preg_match_all($regex_special, $password) < 1){
+			$this->form_validation->set_message('valid_password', 'The {field} field must have at least one special character.' . ' ' . htmlentities('!@#$%^&*()\-_=+{};:,<.>§~'));
+			return FALSE;
+		}
+		if (strlen($password) < 5){
+			$this->form_validation->set_message('valid_password', 'The {field} field must be at least 5 characters in length.');
+			return FALSE;
+		}
+		if (strlen($password) > 32){
+			$this->form_validation->set_message('valid_password', 'The {field} field cannot exceed 32 characters in length.');
+			return FALSE;
+		}
+		return TRUE;
+	}
+
 	public function viewGeneralLedger(){	
 		$params['heading'] 			 = 'GENERAL LEDGER';
 		$params['generalLedger'] = $this->load->view('admin/accounting/general-ledger-page', $params, TRUE);	
@@ -1817,22 +2010,22 @@ class Admin extends MY_Controller {
 			$data = array();
 			$no++;
 
-   		$data[] = $row->loan_request_id;
+   		$data[] = str_pad($row->loan_request_id, 5, '0', STR_PAD_LEFT);
    		$data[] = strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->last_name);
    		$data[] = $row->loan_code;
    		$data[] = $row->description;
-   		$data[] = number_format($row->amnt_of_loan, 2); // Amount
+   		$data[] = $row->amnt_of_loan == '' ? '' : number_format($row->amnt_of_loan, 2); // Amount
 			if ($this->input->post('flag') == 2) {
 				$data[] = $row->disapproved_by; // Dispproved by
-				$data[] = $row->disapproved_date == '' ? '' : date('Y-m-d H:i:s', strtotime($row->disapproved_date)); // Approved date
+				$data[] = $row->disapproved_date == '' ? '' : date('Y-m-d h:i:s A', strtotime($row->disapproved_date)); // Approved date
 			} else {
 				$data[] = $row->approved_by; // Approved by
-				$data[] = $row->approved_date == '' ? '' : date('Y-m-d H:i:s', strtotime($row->approved_date)); // Approved date
+				$data[] = $row->approved_date == '' ? '' : date('Y-m-d h:i:s A', strtotime($row->approved_date)); // Approved date
 			}
    		// $data[] = ''; // 2nd approver
-   		// $data[] = ''; // 2nd approved date
+			 // $data[] = ''; // 2nd approved date
+   		$data[] = $this->input->post('flag') == 2 ? $row->req_remarks : ($row->date_processed == '' ? '' : date('Y-m-d H:i:s', strtotime($row->date_processed)));
    		$data[] = $status[$row->status];
-   		$data[] = ''; // Remarks
 			$data[] = '<a href="javascript:void(0);" id="btn-show-ln-req-attmnt" data-field="ADD" 
 											 data-id="'.$row->loan_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="View Attachments" data-id="'.$row->loan_request_id.'"><i class="fas fa-paperclip"></i></a> |
@@ -1867,16 +2060,16 @@ class Admin extends MY_Controller {
 			$data = array();
 			$no++;
 
-			$data[] = $row->benefit_request_id;
+			$data[] = str_pad($row->benefit_request_id, 5, '0', STR_PAD_LEFT);
 			$data[] = strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->last_name);
 			$data[] = $row->type_of_benefit;
 			$data[] = number_format($row->total_claim, 2); // Amount
 			if ($this->input->post('flag') == 2) {
 				$data[] = $row->disapproved_by; // Dispproved by
-				$data[] = $row->disapproved_date == '' ? '' : date('Y-m-d H:i:s', strtotime($row->disapproved_date)); // Approved date
+				$data[] = $row->disapproved_date == '' ? '' : date('Y-m-d h:i:s A', strtotime($row->disapproved_date)); // Approved date
 			} else {
 				$data[] = $row->approved_by; // Approved by
-				$data[] = $row->approved_date == '' ? '' : date('Y-m-d H:i:s', strtotime($row->approved_date)); // Approved date
+				$data[] = $row->approved_date == '' ? '' : date('Y-m-d h:i:s A', strtotime($row->approved_date)); // Approved date
 			}
 			// $data[] = ''; // 2nd approver
 			// $data[] = ''; // 2nd approved date
@@ -1888,7 +2081,7 @@ class Admin extends MY_Controller {
 								<a href="javascript:void(0);" id="btn-approved-ben-req-attmnt" data-field="Approved" 
 											 data-id="'.$row->benefit_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="Approve" data-id="'.$row->benefit_request_id.'"><i class="fas fa-check-square"></i></a> | 
-								<a href="javascript:void(0);" id="btn-approved-ben-req-attmnt" data-field="Disapproved" 
+								<a href="javascript:void(0);" id="btn-disapproved-ben-request" data-field="Disapproved" 
 											 data-id="'.$row->benefit_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="Disapproved" data-id="'.$row->benefit_request_id.'"><i class="fas fa-times"></i></a> |
 								<a href="javascript:void(0);" id="btn-comment-ben-request" data-field="benefit" 
@@ -1919,7 +2112,7 @@ class Admin extends MY_Controller {
 			$data = array();
 			$no++;
 
-   		$data[] = $row->loan_request_id;
+   		$data[] = str_pad($row->loan_request_id, 5, '0', STR_PAD_LEFT);
    		$data[] = date('Y-m-d', strtotime($row->entry_date));
    		$data[] = $row->loan_code;
    		$data[] = $status[$row->status];
@@ -1953,11 +2146,12 @@ class Admin extends MY_Controller {
 			$data = array();
 			$no++;
 
-   		$data[] = $row->benefit_request_id;
+   		$data[] = str_pad($row->benefit_request_id, 5, '0', STR_PAD_LEFT);
    		$data[] = $row->type_of_benefit;
    		$data[] = date('Y-m-d', strtotime($row->entry_date));
    		$data[] = $status[$row->status];
    		$data[] = number_format($row->total_claim, 2);
+   		$data[] = $row->req_remarks;
 			$data[] = '<a href="javascript:void(0);" class="btn btn-info btn-sm" id="btn-view-attachment" data-field="benefit_request" data-field="ADD" 
 											 data-id="'.$row->benefit_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="View Attachment" data-id="'.$row->benefit_request_id.'"><i class="fas fa-paperclip"></i></a> |
@@ -2346,7 +2540,7 @@ class Admin extends MY_Controller {
 		 * IF HAS PREVIOUS LOAN BALANCE SMLV then 12 multiply to repayment period else 12; 
 		 */
 		$oneYr = 12*$loanSettingsDetails->repymnt_period;
-		$pD = date('Y-m-d', strtotime($dateProcessed));
+		$pD = date('Y-m-d H:i:s', strtotime($dateProcessed));
 		$arrPD = array();
 		for($i = 1; $i <= $oneYr; $i++){
 		 $arrPD[$i] = date('Y-m', strtotime("+".$i."months", strtotime($pD)));
@@ -2450,7 +2644,7 @@ class Admin extends MY_Controller {
 			'breakdown_lb_principal' 	 => str_replace(',', '', $this->input->post('blb_principal')),
 			'breakdown_lb_interest'  	 => str_replace(',', '', $this->input->post('blb_interest')),
 			'breakdown_lb_total' 		 	 => str_replace(',', '', $this->input->post('blb_total')),
-			'date_processed' 				 	 => date('Y-m-d', strtotime($this->input->post('date_processed'))),
+			'date_processed' 				 	 => date('Y-m-d H:i:s', strtotime($this->input->post('date_processed'))),
 			// 'posted_date' 					 	 => '',
 			// 'balance' 							 	 => $this->input->post('m_id'),
 			'current_orno' 					 	 => $this->input->post('prev_loan_orno'),
@@ -2458,8 +2652,23 @@ class Admin extends MY_Controller {
 			// 'is_posted' 							 => $this->input->post('m_id'),
 			// 'is_deleted' 							 => $this->input->post('m_id'),
 			'entry_date' 							 => date('Y-m-d'),
-			'users_id'								 => $this->session->users_id
+			'users_id'								 => $this->session->users_id,
+			'loan_request_id'					 => $this->input->post('loan_request_id') == '' ? null : $this->input->post('loan_request_id')
 		);
+
+		if ($this->input->post('loan_request_id')) {
+			$new_comaker = $this->db->get_where('loan_request', array('loan_request_id' => $this->input->post('loan_request_id')))->row();
+			$mCoMakerID = explode(',', $new_comaker->co_maker_id);
+			$dataNewCM=array();
+			for ($i=0; $i < count($mCoMakerID); $i++) { 
+				array_push($dataNewCM, array(
+					'members_id' 				  => $this->input->post('m_id'),
+					'co_maker_members_id' => $mCoMakerID[$i],
+					'entry_date' 					=> date('Y-m-d')
+				));
+			}
+			$this->db->insert_batch('co_maker', $dataNewCM);
+		}
 
 		//save payment for previous loan
 		$arrLoanSchedID = explode('|', $this->input->post('loanSchedID'));
@@ -2543,7 +2752,6 @@ class Admin extends MY_Controller {
 				$this->db->insert_batch('loan_receipt_temp', $loanReceiptField);
 			}
 			$q = $this->db->insert_batch('loan_schedule', $dataLoanSchedule);
-
 
 		}
 

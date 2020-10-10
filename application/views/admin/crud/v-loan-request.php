@@ -1,12 +1,12 @@
 <div class="cont-loans-by-mem row w-100">
 		<div class="col-sm-9">
    		<div class="row">
-   			<div class="col-12">
+   			<!-- <div class="col-12">
  					<a href="javascript:void(0);" class="float-right pr-2 pb-2" 
 					id="loadPage" data-link="view-loan-app-page" data-badge-head="LOAN APPLICATION"
  					data-cls="cont-tbl-constituent" data-placement="top" 
  					data-toggle="tooltip" title="Back to Settings"><i class="fas fa-times"></i></a>
-   			</div>	
+   			</div>	 -->
 			</div>
 			<!-- <div class="row">
 				<div class="col-4 pb-3">
@@ -16,13 +16,13 @@
    		
 			<ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
-          <a class="nav-link active font-12" id="home-tab" onclick="tbl_loans_by_request_pending.draw()" data-toggle="tab" href="#pending_request" role="tab" aria-controls="home" aria-selected="true">Pending Request</a>
+          <a class="nav-link active font-12" id="home-tab" onclick="tbl_loans_by_request_pending.draw(); animateSingleOut('.loans-card-add', 'fadeOut')" data-toggle="tab" href="#pending_request" role="tab" aria-controls="home" aria-selected="true">Pending Request</a>
         </li>
         <li class="nav-item" role="presentation">
-          <a class="nav-link font-12" id="profile-tab" onclick="tbl_loans_by_request_approved.draw()" data-toggle="tab" href="#approved_request" role="tab" aria-controls="profile" aria-selected="false">Approved Request</a>
+          <a class="nav-link font-12" id="profile-tab" onclick="tbl_loans_by_request_approved.draw(); animateSingleOut('.loans-card-add', 'fadeOut')" data-toggle="tab" href="#approved_request" role="tab" aria-controls="profile" aria-selected="false">Approved Request</a>
 				</li>
 				<li class="nav-item" role="presentation">
-          <a class="nav-link font-12" id="profile-tab" onclick="tbl_loans_by_request_disapproved.draw()" data-toggle="tab" href="#disapproved_request" role="tab" aria-controls="profile" aria-selected="false">Disapproved Request</a>
+          <a class="nav-link font-12" id="profile-tab" onclick="tbl_loans_by_request_disapproved.draw() animateSingleOut('.loans-card-add', 'fadeOut')" data-toggle="tab" href="#disapproved_request" role="tab" aria-controls="profile" aria-selected="false">Disapproved Request</a>
         </li>
       </ul>
       <div class="tab-content" id="myTabContent">
@@ -37,8 +37,8 @@
 								<th class="">AMOUNT</th>
 								<th class="">APPROVED BY</th>
 								<th class="">DATE/TIME</th>
+								<th class="">DATE/TIME</th>
 								<th class="">STATUS</th>
-								<th class="">REMARKS</th>
 								<th>ACTION</th>
 							</tr>
 						</thead>
@@ -56,8 +56,8 @@
 								<th class="">AMOUNT</th>
 								<th class="">APPROVED BY</th>
 								<th class="">DATE/TIME</th>
+								<th class="">DATE/TIME</th>
 								<th class="">STATUS</th>
-								<th class="">REMARKS</th>
 								<th>ACTION</th>
 							</tr>
 						</thead>
@@ -75,8 +75,8 @@
 								<th class="">AMOUNT</th>
 								<th class="">DISAPPROVED BY</th>
 								<th class="">DATE/TIME</th>
-								<th class="">STATUS</th>
 								<th class="">REMARKS</th>
+								<th class="">STATUS</th>
 								<th>ACTION</th>
 							</tr>
 						</thead>
@@ -89,6 +89,9 @@
 		</div>
 		<div class="col-sm-3">
 			<div class="card loans-card-add none">
+			<a href="#" class="font-12" style="text-align: right;
+																					padding-right: 10px;
+																					padding-top: 10px;" onclick="animateSingleOut('.loans-card-add', 'fadeOut');"><i class="fas fa-times"></i></a>
 				<div class="card-body">
 					<h5 class="title-loans-form"></h5>
 					<div class="loans-cont-add"></div>

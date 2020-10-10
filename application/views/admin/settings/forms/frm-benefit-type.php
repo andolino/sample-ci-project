@@ -8,16 +8,29 @@
 		    <label for="min_amnt" class="font-12 pt-2">MINIMUM AMOUNT</label>
 		    <input type="text" class="form-control form-control-sm font-12" id="min_amnt" name="min_amnt" value="<?php echo !empty($data) ? $data->min_amnt : ''; ?>" required>
 		    <div class="min_amnt err-msg"></div>
-		    <label for="min_amnt" class="font-12 pt-2">MULTI CLAIM</label>
+				<label for="description" class="font-12 pt-2">DESCRIPTION</label>
+		    <input type="text" class="form-control form-control-sm font-12" id="description" name="description" value="<?php echo !empty($data) ? $data->description : ''; ?>" required>
+		    <div class="description err-msg"></div>
 		    
+				<label for="" class="font-12 pt-2">MULTI CLAIM</label>
 		    <div class="custom-control custom-radio">
 					  <input type="radio" id="ra1" name="multi_claim" value="1" class="custom-control-input" <?php echo !empty($data) ? ($data->multi_claim == 1 ? 'checked' : '') : ''; ?>>
 					  <label class="custom-control-label font-12" for="ra1">Yes</label>
-					</div>
-					<div class="custom-control custom-radio">
-					  <input type="radio" id="ra2" name="multi_claim" value="0" class="custom-control-input" <?php echo !empty($data) ? ($data->multi_claim == 0 ? 'checked' : '') : ''; ?>>
-					  <label class="custom-control-label font-12" for="ra2">No</label>
-					</div>
+				</div>
+				<div class="custom-control custom-radio">
+					<input type="radio" id="ra2" name="multi_claim" value="0" class="custom-control-input" <?php echo !empty($data) ? ($data->multi_claim == 0 ? 'checked' : '') : ''; ?>>
+					<label class="custom-control-label font-12" for="ra2">No</label>
+				</div>
+
+				<label for="" class="font-12 pt-2">Avail Once?</label>
+		    <div class="custom-control custom-radio">
+					  <input type="radio" id="ra4" name="is_avail_once" value="1" class="custom-control-input" <?php echo !empty($data) ? ($data->is_avail_once == 1 ? 'checked' : '') : ''; ?>>
+					  <label class="custom-control-label font-12" for="ra4">Yes</label>
+				</div>
+				<div class="custom-control custom-radio">
+					<input type="radio" id="ra5" name="is_avail_once" value="0" class="custom-control-input" <?php echo !empty($data) ? ($data->is_avail_once == 0 ? 'checked' : '') : ''; ?>>
+					<label class="custom-control-label font-12" for="ra5">No</label>
+				</div>
 
 		    <div class="min_amnt err-msg"></div>
 		    <input type="hidden" class="" name="entry_date" value="<?php echo date('Y-m-d'); ?>">

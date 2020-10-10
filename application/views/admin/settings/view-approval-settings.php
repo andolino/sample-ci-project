@@ -27,14 +27,18 @@
           <div class="card">
             <!-- <div class="row"> -->
               <div class="col-5 mt-3">
-                <div class="form-group">
+                <div class="form-group mb-0">
                   <label for="first_approver" class="font-12">Approver</label>
                   <select class="custom-select custom-select-sm" name="loan_first_approver_users_id">
                     <?php foreach($users as $row): ?>
-                      <option value="<?php echo $row->users_id; ?>"><?php echo $row->screen_name; ?></option>
+                      <option value="<?php echo $row->users_id; ?>" <?php echo !empty($loanApprover) ? ($loanApprover->loan_first_approver_users_id == $row->users_id ? 'selected' : '') : ''; ?>><?php echo $row->screen_name; ?></option>
                     <?php endforeach; ?>
                   </select>
                 </div>
+              </div>
+              <div class="col-5 mt-2">
+                <label for="hour_expiration" class="font-12">Reminding Hour</label>
+                <input type="text" class="form-control form-control-sm font-12" id="hour_expiration" value="<?php echo !empty($loanApprover) ? $loanApprover->hour_expiration : ''; ?>" name="hour_expiration"/>
               </div>
               <div class="col-5">
                 <div class="form-group none">
@@ -55,7 +59,7 @@
                       </div>
                   </div>
                 </div>
-                <button type="submit" class="btn btn-sm font-12 btn-default rounded-0 border mb-3"><i class="fas fa-save"></i> UPDATE</button>
+                <button type="submit" class="btn btn-sm font-12 btn-default rounded-0 border mt-3 mb-3"><i class="fas fa-save"></i> UPDATE</button>
               </div>
             <!-- </div> -->
           </div>
@@ -67,14 +71,18 @@
             <div class="card">
               <!-- <div class="row"> -->
                 <div class="col-5 mt-3">
-                  <div class="form-group">
+                  <div class="form-group mb-0">
                     <label for="first_approver" class="font-12">Approver</label>
-                    <select class="custom-select custom-select-sm" name="loan_first_approver_users_id">
+                    <select class="custom-select custom-select-sm" name="benefit_first_approver_users_id">
                       <?php foreach($users as $row): ?>
-                        <option value="<?php echo $row->users_id; ?>"><?php echo $row->screen_name; ?></option>
+                        <option value="<?php echo $row->users_id; ?>" <?php echo !empty($benefitApprover) ? ($benefitApprover->benefit_first_approver_users_id == $row->users_id ? 'selected' : '') : ''; ?>><?php echo $row->screen_name; ?></option>
                       <?php endforeach; ?>
                     </select>
                   </div>
+                </div>
+                <div class="col-5 mt-2">
+                  <label for="hour_expiration" class="font-12">Reminding Hour</label>
+                  <input type="text" class="form-control form-control-sm font-12" id="hour_expiration" value="<?php echo !empty($benefitApprover) ? $benefitApprover->hour_expiration : ''; ?>" name="hour_expiration"/>
                 </div>
                 <div class="col-5">
                   <div class="form-group none">
@@ -95,7 +103,7 @@
                         </div>
                     </div>
                   </div>
-                  <button type="submit" class="btn btn-sm font-12 btn-default rounded-0 border mb-3"><i class="fas fa-save"></i> UPDATE</button>
+                  <button type="submit" class="btn btn-sm font-12 btn-default rounded-0 border mt-3 mb-3"><i class="fas fa-save"></i> UPDATE</button>
                 </div>
               <!-- </div> -->
             </div>

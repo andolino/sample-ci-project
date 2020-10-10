@@ -113,6 +113,7 @@ $route['upload-files'] 						= 'Portal/upload_files';
 $route['upload-files-benefit'] 						= 'Portal/upload_files_benefit';
 $route['view-ln-req-msg'] 						= 'Portal/view_loan_comments';
 $route['get-loan-settings'] 						= 'Portal/get_loan_settings';
+$route['option-co-maker'] 						= 'Portal/option_co_maker';
 
 
 
@@ -234,6 +235,8 @@ $route['server-official-receipt'] 	= 'Admin/serverOfficialReceipt';
 $route['server-get-repayment-list'] = 'Admin/server_tbl_repayments';
 $route['save-approval-loan-request'] = 'Admin/save_approval_loan_request';
 $route['save-approval-benefit-request'] = 'Admin/save_approval_benefit_request';
+$route['reminding-loan-request'] = 'Admin/checkingLoanRequestReminder';
+$route['reminding-benefit-request'] = 'Admin/checkingBenefitRequestReminder';
 
 
 
@@ -295,6 +298,9 @@ $route['control-token'] 							= 'Admin/control_token';
 $route['show-gen-token'] 							= 'Admin/show_gen_token';
 $route['generate-token'] 							= 'Admin/generateToken';
 $route['save-token'] 									= 'Admin/saveToken';
+$route['change-password'] 									= 'Admin/changePassword';
+$route['submit-admin-new-password'] 	= 'Admin/submit_admin_new_password';
+$route['checking-reminder-request'] 	= 'Admin/checkingReminderRequest';
 
 //reports
 $route['crj-summary-report/(:any)/(:any)'] = 'Reports/crjSummaryReport';

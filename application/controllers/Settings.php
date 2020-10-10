@@ -655,18 +655,20 @@ class Settings extends MY_Controller {
 			$q = $this->db->insert('request_approver', 
 											array(
 												'loan_first_approver_users_id' => $this->input->post('loan_first_approver_users_id'),
-												'loan_second_approver_users_id' => $this->input->post('loan_second_approver_users_id'),
-												'loan_req_second_approver' => $this->input->post('loan_req_second_approver') ? 1 : 0,
-												'loan_override_first_approver' => $this->input->post('loan_override_first_approver') ? 1 : 0,
-												'type'=>'loans'
+												// 'loan_second_approver_users_id' => $this->input->post('loan_second_approver_users_id'),
+												// 'loan_req_second_approver' => $this->input->post('loan_req_second_approver') ? 1 : 0,
+												// 'loan_override_first_approver' => $this->input->post('loan_override_first_approver') ? 1 : 0,
+												'type'=>'loans',
+												'hour_expiration' => $this->input->post('hour_expiration') ? $this->input->post('hour_expiration') : null
 											));
 		} else {
 			$q = $this->db->update('request_approver', 
 											array(
 												'loan_first_approver_users_id' => $this->input->post('loan_first_approver_users_id'),
-												'loan_second_approver_users_id' => $this->input->post('loan_second_approver_users_id'),
-												'loan_req_second_approver' => $this->input->post('loan_req_second_approver') ? 1 : 0,
-												'loan_override_first_approver' => $this->input->post('loan_override_first_approver') ? 1 : 0,
+												// 'loan_second_approver_users_id' => $this->input->post('loan_second_approver_users_id'),
+												// 'loan_req_second_approver' => $this->input->post('loan_req_second_approver') ? 1 : 0,
+												// 'loan_override_first_approver' => $this->input->post('loan_override_first_approver') ? 1 : 0,
+												'hour_expiration' => $this->input->post('hour_expiration') ? $this->input->post('hour_expiration') : null
 											), array('type'=>'loans'));
 		}
 		
@@ -688,19 +690,21 @@ class Settings extends MY_Controller {
 		if (empty($result)) {
 			$q = $this->db->insert('request_approver', 
 											array(
-												'loan_first_approver_users_id' => $this->input->post('loan_first_approver_users_id'),
-												'loan_second_approver_users_id' => $this->input->post('loan_second_approver_users_id'),
-												'loan_req_second_approver' => $this->input->post('loan_req_second_approver') ? 1 : 0,
-												'loan_override_first_approver' => $this->input->post('loan_override_first_approver') ? 1 : 0,
+												'benefit_first_approver_users_id' 	=> $this->input->post('benefit_first_approver_users_id'),
+												// 'loan_second_approver_users_id' => $this->input->post('loan_second_approver_users_id'),
+												// 'loan_req_second_approver' 			=> $this->input->post('loan_req_second_approver') ? 1 : 0,
+												// 'loan_override_first_approver' 	=> $this->input->post('loan_override_first_approver') ? 1 : 0,
+												'hour_expiration' 						 	=> $this->input->post('hour_expiration') ? $this->input->post('hour_expiration') : null,
 												'type'=>'benefit'
 											));
 		} else {
 			$q = $this->db->update('request_approver', 
 											array(
-												'loan_first_approver_users_id' => $this->input->post('loan_first_approver_users_id'),
-												'loan_second_approver_users_id' => $this->input->post('loan_second_approver_users_id'),
-												'loan_req_second_approver' => $this->input->post('loan_req_second_approver') ? 1 : 0,
-												'loan_override_first_approver' => $this->input->post('loan_override_first_approver') ? 1 : 0,
+												'benefit_first_approver_users_id' 	=> $this->input->post('benefit_first_approver_users_id'),
+												// 'loan_second_approver_users_id' => $this->input->post('loan_second_approver_users_id'),
+												// 'loan_req_second_approver' 			=> $this->input->post('loan_req_second_approver') ? 1 : 0,
+												// 'loan_override_first_approver' 	=> $this->input->post('loan_override_first_approver') ? 1 : 0,
+												'hour_expiration' 							=> $this->input->post('hour_expiration') ? $this->input->post('hour_expiration') : null
 											), array('type'=>'benefit'));
 		}
 		
@@ -778,7 +782,9 @@ class Settings extends MY_Controller {
 	}
 	
 	public function view_approval_settings(){
-		$params['users'] = $this->db->get_where('users', array('is_deleted' => 0))->result();
+		$params['users'] 					 = $this->db->get_where('users', array('is_deleted' => 0))->result();
+		$params['loanApprover'] 	 = $this->db->get_where('request_approver', array('type' => 'loans'))->row();
+		$params['benefitApprover'] = $this->db->get_where('request_approver', array('type' => 'benefit'))->row();
 		$this->load->view('admin/settings/view-approval-settings', $params);
 	}
 
