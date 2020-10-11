@@ -377,7 +377,12 @@ class Portal extends MY_Controller {
 																					'benefit_type_id'=>$this->input->post('benefit_type_id'),
 																					'members_id' => $this->input->post('has_update')
 																				))->row();
-
+				// get uploaded name
+				$uploadedName = array();
+				for ($i=0; $i < count($uploadData); $i++) { 
+					$uploadedName[] = $uploadData[$i]['file_name'];
+				}
+				
 				// if once avail and its already in request
 				if ($bClaimSettings->is_avail_once == 1 && !empty($bRequest)) {
 					$res['param1'] 		 = 'Opps!';
@@ -424,7 +429,7 @@ class Portal extends MY_Controller {
 				$message     .= "LBP Account No. : " . $membersData->bank_account . "<br>"; 
 				$message     .= "Email Address. : " . $membersData->email . "<br>"; 
 				$message     .= "Contact No. : " . $membersData->contact_no . "<br>"; 
-				$this->sendEmail($from, $to, $subject, $message, $title);
+				$this->sendEmailWithAttachments($from, $to, $subject, $message, $title, $uploadedName);
 				// Upload status message 
 				// $statusMsg = $insert?'Files uploaded successfully!'.$errorUploadType:'Some problem occurred, please try again.'; 
 				if ($insert) {
