@@ -86,9 +86,12 @@ select
         when (`lc`.`is_approved` = 1) then 'Approved'
         else 'Dispproved'
     end) AS `is_approved_txt`,
-    `mt`.`type` as `type`
+    `mt`.`type` as `type`,
+    `lc`.`date_processed` as `date_processed`,
+    om.office_name 
 from `members` `m`
 left join `member_type` `mt` on `mt`.`member_type_id` = `m`.`member_type_id`
+left join office_management om on om.office_management_id = m.office_management_id
 left join `loan_computation` `lc` on `lc`.`members_id` = `m`.`members_id`
 left join `loan_settings` `ls` on `ls`.`loan_settings_id` = `lc`.`loan_settings_id`
 left join `loan_code` `lcc` on `lcc`.`loan_code_id` = `ls`.`loan_code_id`
@@ -96,3 +99,22 @@ left join `loan_schedule` `lscd` on `lscd`.`loan_computation_id` = `lc`.`loan_co
 left join `loan_receipt` `lr` on `lr`.`loan_schedule_id` = `lscd`.`loan_schedule_id`
 where `lc`.`loan_computation_id` is not null and `lc`.`is_deleted` = 0
 group by `m`.`members_id`;
+
+
+
+create or replace view v_contribution_summary_report as 
+SELECT 
+	sum(c.total) as total,
+	sum(c.balance) as balance,
+	sum(c.deduction) as deduction,
+	sum(c.deduction) -  sum(c.balance) + sum(c.total) as accum,
+	m.last_name, 
+	m.first_name, 
+	m.middle_name, 
+	m.office_management_id,
+	m.id_no, 
+	om.office_name
+FROM contributions c 
+left join members m on m.members_id = c.members_id
+left join office_management om on om.office_management_id = m.office_management_id
+group by m.members_id;

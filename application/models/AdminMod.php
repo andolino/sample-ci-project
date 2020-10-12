@@ -1464,5 +1464,9 @@ class AdminMod extends CI_Model {
 		return $this->db->query("SELECT * FROM v_official_receipt where official_receipt_id = $id")->row();
 	}
 
+	public function getLoansPrintSummary($sd, $ed, $active){
+		return $this->db->query("SELECT * FROM v_loan_summary_report")->result();	
+	}
+
 
 }

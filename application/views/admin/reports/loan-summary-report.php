@@ -67,6 +67,9 @@
 
 				
 			</table>
+			<pre>	
+				<?php print_r($cPData); ?>
+			</pre>
 		</div>
 	</div>
 
