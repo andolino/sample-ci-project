@@ -74,3 +74,25 @@ dpentavia@psapro-itasset.com
 
 database update sept 26, 2020
 -- none
+
+
+
+create or replace view v_loan_summary_report as 
+select
+    `m`.`members_id` AS `members_id`,
+    concat(ucase(`m`.`last_name`), ', ', ucase(`m`.`first_name`), ' ', ucase(`m`.`middle_name`)) AS `fname`,
+    (select sum(`lc2`.`amnt_of_loan`) from loan_computation lc2 where lc2.members_id = m.members_id) - sum(`lr`.`amnt_paid`) AS `balance`,
+    (case
+        when (`lc`.`is_approved` = 1) then 'Approved'
+        else 'Dispproved'
+    end) AS `is_approved_txt`,
+    `mt`.`type` as `type`
+from `members` `m`
+left join `member_type` `mt` on `mt`.`member_type_id` = `m`.`member_type_id`
+left join `loan_computation` `lc` on `lc`.`members_id` = `m`.`members_id`
+left join `loan_settings` `ls` on `ls`.`loan_settings_id` = `lc`.`loan_settings_id`
+left join `loan_code` `lcc` on `lcc`.`loan_code_id` = `ls`.`loan_code_id`
+left join `loan_schedule` `lscd` on `lscd`.`loan_computation_id` = `lc`.`loan_computation_id`
+left join `loan_receipt` `lr` on `lr`.`loan_schedule_id` = `lscd`.`loan_schedule_id`
+where `lc`.`loan_computation_id` is not null and `lc`.`is_deleted` = 0
+group by `m`.`members_id`;
