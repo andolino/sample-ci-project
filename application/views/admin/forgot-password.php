@@ -2,6 +2,9 @@
 <html>
 <head>
 <title>CPFI | FORGOT PASSWORD</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <link rel="shortcut icon" href="<?= base_url('assets/image/misc/ico.ico') ?>" type="image/x-icon">
 <link href="<?php echo base_url('assets/css/login.css'); ?>" rel="stylesheet" id="bootstrap-css">
 <link href="<?php echo base_url('assets/css/bootstrap.min.css'); ?>" rel="stylesheet" id="bootstrap-css">
@@ -60,6 +63,15 @@
 </script>
 <?php endif; ?>
 </head>
+<style>
+  .btn-purple {
+    background-color: #9b4981 !important;
+    color: #f0f0f0 !important;
+  }
+  .text-purple{
+    color: #9b4981 !important;
+  }
+</style>
 
 <body>
 <div class="wrapper fadeInDown">
@@ -84,12 +96,12 @@
       <div ref="email" class="invalid-feedback">
         
       </div>
-      <input type="submit" class="fadeIn fourth" value="Reset now">
+      <input type="submit" class="fadeIn fourth btn-purple" value="Reset now">
     </form>
 
     <!-- Remind Passowrd -->
     <div id="formFooter">
-      <a class="underlineHover" href="<?php echo base_url('login'); ?>">Already have account?</a>
+      <a class="underlineHover text-purple" href="<?php echo base_url('login'); ?>">Already have account?</a>
     </div>
 
   </div>

@@ -34,40 +34,74 @@
 					      <div class="row">
 					      	<div class="col-3">
 						      	<label class="card-title font-12">Name</label>
-						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->last_name . ', ' . $data[0]->first_name . ' ' . $data[0]->middle_name); ?></p>
+						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->last_name . ', ' . $data[0]->first_name . ' ' . $data[0]->middle_name . ' ' . $data[0]->name_extension); ?></p>
 						      </div>
 						      <div class="col-2">
 						      	<label class="card-title font-12">Date of Birth</label>
-						      	<p class="card-text font-12"><?php echo date('F j, Y', strtotime($data[0]->dob)); ?></p>
+						      	<p class="card-text font-12"><?php echo $data[0]->dob == '' ? '' : date('F j, Y', strtotime($data[0]->dob)); ?></p>
 						      </div>
 						      <div class="col-2">
 						      	<label class="card-title font-12">Civil Status</label>
-						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->status); ?></p>
+						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->status ?? '--'); ?></p>
 						      </div>
-						      <div class="col-2">
+						      <!-- <div class="col-2">
 						      	<label class="card-title font-12">Address</label>
-						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->address); ?></p>
+						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->address ?? '--'); ?></p>
+									</div> -->
+									<div class="col-2">
+						      	<label class="card-title font-12">Address</label>
+						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->sex == '' ? $data[0]->sex : '--'); ?></p>
 						      </div>
 						      <div class="col-2">
 						      	<label class="card-title font-12">Monthly Salary</label>
-						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->monthly_salary); ?></p>
+						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->monthly_salary ?? '--'); ?></p>
 						      </div>
 						      <div class="col-3 mt-3">
 						      	<label class="card-title font-12">Designation</label>
-						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->designation); ?></p>
+						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->designation ?? '--'); ?></p>
 						      </div>
 						      <div class="col-2 mt-3">
-						      	<label class="card-title font-12">Office</label>
-						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->office_name); ?></p>
+						      	<label class="card-title font-12">Departments</label>
+						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->office_name ?? '--'); ?></p>
 						      </div>
 						      <div class="col-2 mt-3">
 						      	<label class="card-title font-12">Date of Effectivity</label>
-						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->date_of_effectivity); ?></p>
+						      	<p class="card-text font-12"><?php echo $data[0]->date_of_effectivity == '' ? '' : strtoupper($data[0]->date_of_effectivity); ?></p>
 						      </div>
 						      <div class="col-2 mt-3">
 						      	<label class="card-title font-12">Member Type</label>
-						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->type); ?></p>
+						      	<p class="card-text font-12"><?php echo strtoupper($data[0]->type ?? '--'); ?></p>
 						      </div>
+									<div class="col-2 mt-3">
+						      	<label class="card-title font-12">Salary Grade</label>
+						      	<p class="card-text font-12"><?php echo $data[0]->salary_grade ?? '--'; ?></p>
+						      </div>
+									<div class="col-3 mt-3">
+						      	<label class="card-title font-12">Bank Account</label>
+						      	<p class="card-text font-12"><?php echo $data[0]->bank_account == '' ? '--' : $data[0]->bank_account; ?></p>
+						      </div>
+									<div class="col-2 mt-3">
+						      	<label class="card-title font-12">Contact Number</label>
+						      	<p class="card-text font-12"><?php echo $data[0]->contact_no == '' ? '--' : $data[0]->contact_no; ?></p>
+						      </div>
+									<div class="col-2 mt-3">
+						      	<label class="card-title font-12">Email</label>
+						      	<p class="card-text font-12"><?php echo $data[0]->email == '' ? '--' : $data[0]->email; ?></p>
+									</div>
+									<?php $tota_ded=0; ?>
+									<?php $tota_balance=0; ?>
+									<?php $sum=0; ?>
+									<?php foreach ($contrib as $row): ?>
+									<?php $sum+=($row->deduction - $row->balance + $row->total); ?> 
+									<?php 
+										$tota_ded+=$row->deduction;
+										$tota_balance+=($row->deduction - $row->balance);
+									?>
+									<?php endforeach ?>
+									<div class="col-2 mt-3">
+						      	<label class="card-title font-12">Contribution</label>
+						      	<p class="card-text font-12"><?php echo $sum; ?></p>
+									</div>
 					      </div>
 					    </div>
 					  </div>

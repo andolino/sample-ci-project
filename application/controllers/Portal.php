@@ -241,7 +241,7 @@ class Portal extends MY_Controller {
 						
 				}
 					
-				$errorUploadType = !empty($errorUploadType)?'<br/>File Type Error: '.trim($errorUploadType, ' | '):''; 
+				// $errorUploadType = !empty($errorUploadType)?'<br/>File Type Error: '.trim($errorUploadType, ' | '):''; 
 				// Insert files data into the database 
 				$comaker_id_result = $this->input->post('co-maker-id');
 				
@@ -370,7 +370,7 @@ class Portal extends MY_Controller {
 						} 
 				} 
 					
-				$errorUploadType = !empty($errorUploadType)?'<br/>File Type Error: '.trim($errorUploadType, ' | '):''; 
+				// $errorUploadType = !empty($errorUploadType)?'<br/>File Type Error: '.trim($errorUploadType, ' | '):''; 
 				$bClaimSettings = $this->db->get_where('benefit_type', array('benefit_type_id'=>$this->input->post('benefit_type_id')))->row();
 				$bRequest = $this->db->get_where('benefit_request', 
 																				array(
@@ -412,7 +412,7 @@ class Portal extends MY_Controller {
 				$insert = $this->db->insert_batch("portal_uploads", $dataToDb); 
 				
 				// $from    		 = "manage_account@cpfi-webapp.com";
-				$approver 	 = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.loan_first_approver_users_id WHERE ra.type = 'benefit'")->row();
+				$approver 	 = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.benefit_first_approver_users_id WHERE ra.type = 'benefit'")->row();
 				$membersData = $this->db->get_where("members", array('members_id' => $this->input->post('has_update')))->row();
 				$officeData  = $this->db->get_where("office_management", array('office_management_id' => $membersData->members_id))->row();
 				$from    		 = "no-reply@cpfi-webapp.com";
@@ -449,9 +449,17 @@ class Portal extends MY_Controller {
 			$from    		 = "no-reply@cpfi-webapp.com";
 			$to    	 		 = strtolower($approver->email);
 			$title    	 = "CPFI REQUEST";
-			$subject  	 = "New benefit request from cpfi member";
-			$message     = "Dear " . strtoupper($approver->screen_name) . ", <br><br> 
-											Claim benefit from " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . " <br><br> Thank you!";
+			$subject  	 = "Benefit Claim Request";
+			$message     = "The Chairperson <br>"; 
+			$message     .= "Board of Trustees <br>"; 
+			$message     .= "Sir/Madam: <br><br>"; 
+			$message     .= "This is to inform you that ".strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . ", " . (!empty($officeData) ? $officeData->office_name : '') . "<br><br>"; 
+			$message     .= "Benefit Claim to avail : " . $bClaimSettings->type_of_benefit . "<br>"; 
+			$message     .= "Date of Event / Effectivity : " . date('Y-m-d', strtotime($this->input->post('date_effectivity'))) . "<br><br>"; 
+			$message     .= "Claimant : " . strtoupper($membersData->last_name) . ', ' . strtoupper($membersData->first_name) . "<br><br>"; 
+			$message     .= "LBP Account No. : " . $membersData->bank_account . "<br>"; 
+			$message     .= "Email Address. : " . $membersData->email . "<br>"; 
+			$message     .= "Contact No. : " . $membersData->contact_no . "<br>"; 
 			$this->sendEmail($from, $to, $subject, $message, $title);
 
 			$insert =	$this->db->insert("benefit_request", array(

@@ -188,7 +188,15 @@ a.article:hover {
     #sidebarCollapse span {
         display: none;
     }
+    
 }
+
+@media only screen and (max-width: 1400px) {
+  #loadPage {
+    font-size: 12px !important;
+  }
+}
+
 .none {
   display: none;
 }
@@ -520,3 +528,6 @@ label[id*="-error"] {
 
 #tbl-benefit-by-request-disapproved tbody tr td:nth-child(3){ width: 10% !important; }
 #tbl-benefit-by-request-disapproved tbody tr td:nth-child(9){ width: 10% !important; }
+
+#tbl-member-list tbody tr td:nth-child(2) { width: 17%; }
+#tbl-member-list tbody tr td:nth-child(4) { width: 24%; }

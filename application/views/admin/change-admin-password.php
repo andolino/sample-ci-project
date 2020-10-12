@@ -18,7 +18,7 @@
         <label for="new_password" class="font-12">Re-Enter New Password</label>
         <input type="password" class="form-control font-12" id="new_password" name="new_password">
       </div>
-      <button type="submit" class="btn btn-primary font-12">Update</button>
+      <button type="submit" class="btn btn-purple font-12">Update</button>
     </form>
   </div>
 </div>

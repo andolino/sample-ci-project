@@ -47,6 +47,16 @@
 </script>
 </head>
 
+<style>
+  .btn-purple {
+    background-color: #9b4981 !important;
+    color: #f0f0f0 !important;
+  }
+  .text-purple{
+    color: #9b4981 !important;
+  }
+</style>
+
 <body>
 <div class="wrapper fadeInDown">
   <div id="formContent">
@@ -72,12 +82,12 @@
       <div ref="password" class="invalid-feedback">
         
       </div>
-      <input type="submit" class="fadeIn fourth" value="Log In">
+      <input type="submit" class="fadeIn fourth btn-purple" value="Log In">
     </form>
 
     <!-- Remind Passowrd -->
     <div id="formFooter">
-      <a class="underlineHover" href="<?php echo base_url('forgot-password'); ?>">Forgot Password?</a>
+      <a class="underlineHover text-purple" href="<?php echo base_url('forgot-password'); ?>">Forgot Password?</a>
     </div>
 
   </div>

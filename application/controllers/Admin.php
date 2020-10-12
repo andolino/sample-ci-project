@@ -234,7 +234,7 @@ class Admin extends MY_Controller {
 	}
 
 	public function show_settings(){
-		$params['heading'] 		 = 'SETTINGS';
+		$params['heading'] 		 = 'DASHBOARD';
 		$params['settingPage'] = $this->load->view('admin/crud/setting-page', $params, TRUE);
 		$this->adminContainer('admin/settings', $params);	
 	}
@@ -244,6 +244,14 @@ class Admin extends MY_Controller {
 		$params['membersData'] 			= $this->db->get('v_members')->row();
 		$params['loanSettings'] 		= $this->db->get('v_loan_settings')->result();
 		$params['loanByMemberPage']	= $this->load->view('admin/crud/v-loans-by-member', $params, TRUE);
+		$this->adminContainer('admin/loan-by-member', $params);	
+	}
+	
+	public function reportView(){
+		$params['heading'] 		 			= 'REPORTS';
+		$params['membersData'] 			= $this->db->get('v_members')->row();
+		$params['loanSettings'] 		= $this->db->get('v_loan_settings')->result();
+		$params['loanByMemberPage']	= $this->load->view('admin/crud/v-report', $params, TRUE);
 		$this->adminContainer('admin/loan-by-member', $params);	
 	}
 	
@@ -1306,6 +1314,7 @@ class Admin extends MY_Controller {
 		$members_id 	  	 = $this->input->get('data');
 		$params['data'] 	 = $this->AdminMod->getMembersRecord($members_id); 
 		$params['uploads'] = $this->db->get_where('uploads', array('members_id' => $members_id))->row();
+		$params['contrib'] = $this->AdminMod->getMembersContributionPortal($members_id);
 		$this->load->view('admin/crud/view-member', $params);
 	}
 
@@ -1327,12 +1336,12 @@ class Admin extends MY_Controller {
 			$no++;
    		// $data[] = '<input type="checkbox" id="chk-const-list-tbl" value="'.$row->members_id.'" name="chk-const-list-tbl">';
    		$data[] = $row->id_no;
-   		$data[] = strtoupper($row->last_name);
+   		$data[] = strtoupper($row->last_name) . ', ' . strtoupper($row->first_name) . ' ' . strtoupper($row->middle_name) . ' ' . strtoupper($row->name_extension);
    		$data[] = strtoupper($row->first_name);
    		$data[] = strtoupper($row->middle_name);
    		$data[] =	date('Y-m-d', strtotime($row->dob));
-   		$data[] = $row->address;
-   		$data[] = $row->status;
+   		$data[] = $row->office_name; //$row->address;
+   		$data[] = $row->type;//$row->status;
    		$data[] = date('Y-m-d', strtotime($row->date_of_effectivity));
    		
    		if ($viewPage == 'loan-application-page') {
@@ -1692,6 +1701,11 @@ class Admin extends MY_Controller {
 	public function showChooseRegionType(){
 		$this->load->view('admin/accounting/choose-region-type');
 	}
+	
+	public function showChooseLoanSummaryField(){
+		$this->load->view('admin/crud/loan-print-summary-field');
+	}
+
 
 	public function postAcctEntry(){
 		$date = $this->input->post('date');
@@ -2813,6 +2827,7 @@ class Admin extends MY_Controller {
 		$params['civilStatus'] = $this->db->get_where('civil_status', array('is_deleted'=>0))->result();
 		$params['ofcMngmt'] 	 = $this->db->get_where('office_management', array('is_deleted'=>0))->result();
 		$params['memberType']  = $this->db->get_where('member_type', array('is_deleted'=>0))->result();
+		$params['contrib'] 		 = $this->AdminMod->getMembersContributionPortal($members_id);
 		$this->load->view('admin/crud/edit-member', $params);
 	}
 

@@ -54,6 +54,17 @@ class Reports extends MY_Controller {
 		$params['ed'] = date('F, Y', strtotime($ed));
 		$this->load->view('admin/reports/contribution-and-payments', $params);
 	}
+	
+	public function printLoanSummaryReport(){
+		// $sd = $this->uri->segment(2);
+		$sd = date('Y-m-01', strtotime($this->uri->segment(3)));
+		$ed = date('Y-m-t', strtotime($this->uri->segment(3)));
+		$type = str_replace('%20', ' ', $this->uri->segment(4));
+
+		$params['cPData'] = $this->AdminMod->getContLoanPymnts($sd, $ed, $type);
+		$params['ed'] = date('F, Y', strtotime($ed));
+		$this->load->view('admin/reports/loan-summary-report', $params);
+	}
 
 	public function printOR(){
 		$or_id = $this->uri->segment(2);

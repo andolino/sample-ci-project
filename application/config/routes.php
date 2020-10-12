@@ -55,6 +55,7 @@ $route['settings'] 								 		= 'Admin/show_settings';
 $route['view-setting-page'] 			 		= 'Admin/view_settings_page';
 $route['view-coa'] 								 		= 'Admin/view_chart_of_accounts';
 $route['loan-by-member'] 					 		= 'Admin/loanByMember';
+$route['view-report'] 					 		= 'Admin/reportView';
 $route['loan-request']                = 'Admin/loan_request_by_member';
 $route['benefit-request']                = 'Admin/benefit_request_by_member';
 $route['loan-list'] 							 		= 'Admin/loanList';
@@ -278,6 +279,7 @@ $route['remove-benefit-claim'] = 'Admin/removeBenefitClaim';
 $route['get-payee-type'] = 'Admin/getPayeeType';
 $route['show-choose-date-post'] = 'Admin/showChooseDatePost';
 $route['show-choose-region-type'] = 'Admin/showChooseRegionType';
+$route['show-choose-loan-summary-field'] = 'Admin/showChooseLoanSummaryField';
 $route['post-acct-entry'] = 'Admin/postAcctEntry';
 $route['save-official-receipt'] = 'Admin/saveOfficialReceipt';
 
@@ -309,6 +311,7 @@ $route['print-official-receipt/(:any)'] = 'Reports/printOR';
 $route['print-pacs-report/(:any)/(:any)'] = 'Reports/pacsSummaryReport';
 $route['print-cdj-report/(:any)/(:any)'] = 'Reports/cdjSummaryReport';
 $route['print-gj-report/(:any)/(:any)'] = 'Reports/gjSummaryReport';
+$route['print-loan-summary-report/(:any)/(:any)'] = 'Reports/printLoanSummaryReport';
 
 
 

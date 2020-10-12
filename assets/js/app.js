@@ -726,6 +726,33 @@ $(document).ready(function() {
       });
     });
   });
+  
+  $(document).on('click', '#showBtnPrintLoanSummary', function(e) {
+    $.post("show-choose-loan-summary-field", {}, function (data) {
+      $('#custom-modal .modal-content').html(data);
+      $('#custom-modal .modal-dialog').removeClass('modal-lg modal-sm').addClass('modal-md');
+      $('#custom-modal .modal-title').html('<i class="fas fa-list-alt"></i> PRINT LOAN SUMMARY');
+      $('#custom-modal').modal('show', { backdrop: 'static' });
+      $('#posted-crj-search-date').daterangepicker({
+        "showDropdowns": true,
+        "singleDatePicker": true
+      }, function(start, end, label) {
+        var dd = new Date();
+        var sd = new Date(dd.getFullYear(), 0, 1);
+        $('#posted-crj-search-date').attr({
+          'data-sd' : formatDate(sd),
+          'data-ed' : end.format('YYYY-MM-DD')
+        }).html('<i class="fas fa-calendar-alt"></i> ' + start.format('MMM DD, YYYY'));
+      });
+    });
+  });
+
+  $(document).on('click', '#btnPrintLoanSummary', function (e) {
+    e.preventDefault();
+    var sd = $('#posted-crj-search-date').attr('data-sd');
+    var ed = $('#posted-crj-search-date').attr('data-ed');
+    window.open(baseURL+'print-loan-summary-report/'+sd+'/'+ed);
+  });
 
   $(document).on('click', '#printCntrbtnPymnts', function(e) {
     e.preventDefault();
@@ -2815,10 +2842,16 @@ function initMembersDataTables(){
         searchPlaceholder      : 'Search...',
         lengthMenu             : '_MENU_'       
     },
+    order: [[0, 'desc']],
     columnDefs                 : [
       { 
         orderable            : false, 
-        targets              : [0,1,2,3,4,5,6,7,8] 
+        // targets              : [0,1,2,3,4,5,6,7,8] 
+        targets              : [7] 
+      },
+      { 
+        visible              : false, 
+        targets              : [2,3] 
       }
     ],
     "serverSide"               : true,
