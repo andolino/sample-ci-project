@@ -280,6 +280,7 @@ $route['get-payee-type'] = 'Admin/getPayeeType';
 $route['show-choose-date-post'] = 'Admin/showChooseDatePost';
 $route['show-choose-region-type'] = 'Admin/showChooseRegionType';
 $route['show-choose-loan-summary-field'] = 'Admin/showChooseLoanSummaryField';
+$route['show-choose-contrib-summary-field'] = 'Admin/showChooseContribSummaryField';
 $route['post-acct-entry'] = 'Admin/postAcctEntry';
 $route['save-official-receipt'] = 'Admin/saveOfficialReceipt';
 
@@ -311,7 +312,8 @@ $route['print-official-receipt/(:any)'] = 'Reports/printOR';
 $route['print-pacs-report/(:any)/(:any)'] = 'Reports/pacsSummaryReport';
 $route['print-cdj-report/(:any)/(:any)'] = 'Reports/cdjSummaryReport';
 $route['print-gj-report/(:any)/(:any)'] = 'Reports/gjSummaryReport';
-$route['print-loan-summary-report/(:any)/(:any)'] = 'Reports/printLoanSummaryReport';
+$route['print-loan-summary-report/(:any)/(:any)/(:any)'] = 'Reports/printLoanSummaryReport';
+$route['print-contrib-summary-report/(:any)/(:any)/(:any)'] = 'Reports/printContribSummaryReport';
 
 
 

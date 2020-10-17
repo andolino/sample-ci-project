@@ -14,7 +14,7 @@
 				<div class="col-12 pb-3">
 					<!-- <button type="button" class="btn btn-purple btn-lg font-12 rounded-0 border" id="btn-add-loans" data-field="ADD"> Add</button> -->
 					<button type="button" class="btn btn-purple btn-md rounded-0 font-12" id="showBtnPrintLoanSummary"><i class="fas fa-print"></i> Print Loan Summary Docx</button>
-					<button type="button" class="btn btn-purple btn-md rounded-0 font-12" id=""><i class="fas fa-print"></i> Print Contribution Summary Docx</button>
+					<button type="button" class="btn btn-purple btn-md rounded-0 font-12" id="showBtnPrintContribSummary"><i class="fas fa-print"></i> Print Contribution Summary Docx</button>
 					<button type="button" class="btn btn-purple btn-md rounded-0 font-12" id="showBtnPrintByRegion"><i class="fas fa-print"></i> Print Loan Repayments And Contributions Docx</button>
 				</div>
 			</div>

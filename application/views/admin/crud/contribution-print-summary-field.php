@@ -15,9 +15,8 @@
         </label>
       </div>
     </div>
-
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-sm btn-custom-default rounded-0" id="btnPrintLoanSummary" data-id="<?php echo !empty($id) ? $id : ''; ?>"><i class="fas fa-calendar-check"></i> Print</button>
+  <button type="button" class="btn btn-sm btn-custom-default rounded-0" id="btnPrintContribSummary" data-id="<?php echo !empty($id) ? $id : ''; ?>"><i class="fas fa-calendar-check"></i> Print</button>
 </div>

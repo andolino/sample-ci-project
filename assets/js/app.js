@@ -747,11 +747,40 @@ $(document).ready(function() {
     });
   });
 
+  $(document).on('click', '#showBtnPrintContribSummary', function(e) {
+    $.post("show-choose-contrib-summary-field", {}, function (data) {
+      $('#custom-modal .modal-content').html(data);
+      $('#custom-modal .modal-dialog').removeClass('modal-lg modal-sm').addClass('modal-md');
+      $('#custom-modal .modal-title').html('<i class="fas fa-list-alt"></i> PRINT CONTRIBUTION SUMMARY');
+      $('#custom-modal').modal('show', { backdrop: 'static' });
+      $('#posted-crj-search-date').daterangepicker({
+        "showDropdowns": true,
+        "singleDatePicker": true
+      }, function(start, end, label) {
+        var dd = new Date();
+        var sd = new Date(dd.getFullYear(), 0, 1);
+        $('#posted-crj-search-date').attr({
+          'data-sd' : formatDate(sd),
+          'data-ed' : end.format('YYYY-MM-DD')
+        }).html('<i class="fas fa-calendar-alt"></i> ' + start.format('MMM DD, YYYY'));
+      });
+    });
+  });
+
   $(document).on('click', '#btnPrintLoanSummary', function (e) {
     e.preventDefault();
     var sd = $('#posted-crj-search-date').attr('data-sd');
     var ed = $('#posted-crj-search-date').attr('data-ed');
-    window.open(baseURL+'print-loan-summary-report/'+sd+'/'+ed);
+    var zero = $('#inc_zero').is(':checked') ? 1 : 0;
+    window.open(baseURL+'print-loan-summary-report/'+sd+'/'+ed+'/'+zero);
+  });
+  
+  $(document).on('click', '#btnPrintContribSummary', function (e) {
+    e.preventDefault();
+    var sd = $('#posted-crj-search-date').attr('data-sd');
+    var ed = $('#posted-crj-search-date').attr('data-ed');
+    var zero = $('#inc_zero').is(':checked') ? 1 : 0;
+    window.open(baseURL+'print-contrib-summary-report/'+sd+'/'+ed+'/'+zero);
   });
 
   $(document).on('click', '#printCntrbtnPymnts', function(e) {

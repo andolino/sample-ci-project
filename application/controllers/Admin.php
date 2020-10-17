@@ -1705,6 +1705,10 @@ class Admin extends MY_Controller {
 	public function showChooseLoanSummaryField(){
 		$this->load->view('admin/crud/loan-print-summary-field');
 	}
+	
+	public function showChooseContribSummaryField(){
+		$this->load->view('admin/crud/contribution-print-summary-field');
+	}
 
 
 	public function postAcctEntry(){

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Loan Summary Report</title>
+	<title>Contribution Summary Report</title>
 </head>
 <link 
 		rel="stylesheet" 
@@ -26,8 +26,8 @@
 			</div>
 			<div class="col-6 mt-3 pl-0" style="line-height: 1.6">
 				<h6 class="mb-0">CENSUS PROVIDENT FUND, INC.</h6>
-				<h4 class="mb-0">SUMMARY OF LOANS</h4>
-				<span>As of <?php echo $ed; ?></span	>
+				<h4 class="mb-0">SUMMARY OF CONTRIBUTION</h4>
+				<span>For the month of <?php echo $ed; ?></span	>
 			</div>
 			<div class="col-12 m-3">
 
@@ -39,15 +39,15 @@
 					<th>NAME OF MEMBER</th>
 					<th>STATION</th>
 					<th>MEMBERSHIP DATE</th>
-					<th>BALANCE AS OF <?php echo $ed; ?></th>
+					<th>MC AS OF <?php echo $ed; ?></th>
 				</tr>
 				<?php foreach($cPData as $row): ?>
 					<tr>
-						<td><?php echo date('F j, Y', strtotime($row->date_processed)); ?></td>
-						<td><?php echo strtoupper($row->fname); ?></td>
+						<td><?php echo date('F j, Y', strtotime($row->date_applied)); ?></td>
+						<td><?php echo strtoupper($row->last_name) . ', ' . strtoupper($row->first_name) . ' ' . strtoupper($row->middle_name); ?></td>
 						<td><?php echo strtoupper($row->office_name); ?></td>
 						<td><?php echo date('F j, Y', strtotime($row->date_of_effectivity)); ?></td>
-						<td><?php echo number_format($row->balance, 2); ?></td>
+						<td><?php echo number_format($row->accum, 2); ?></td>
 					</tr>
 				<?php endforeach; ?>
 

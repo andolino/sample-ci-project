@@ -1464,8 +1464,20 @@ class AdminMod extends CI_Model {
 		return $this->db->query("SELECT * FROM v_official_receipt where official_receipt_id = $id")->row();
 	}
 
-	public function getLoansPrintSummary($sd, $ed, $active){
-		return $this->db->query("SELECT * FROM v_loan_summary_report")->result();	
+	public function getLoansPrintSummary($sd, $ed, $active, $inc_zero){
+		$where = '';
+		if ($inc_zero == 0) {
+			$where .= "AND balance <> " . $inc_zero;
+		}
+		return $this->db->query("SELECT * FROM v_loan_summary_report WHERE date_processed between '$sd' and '$ed' $where")->result();	
+	}
+	
+	public function getContributionPrintSummary($sd, $ed, $active, $inc_zero){
+		$where = '';
+		if ($inc_zero == 0) {
+			$where .= "AND balance <> " . $inc_zero;
+		}
+		return $this->db->query("SELECT * FROM v_contribution_summary_report WHERE date_applied between '$sd' and '$ed' $where")->result();	
 	}
 
 
