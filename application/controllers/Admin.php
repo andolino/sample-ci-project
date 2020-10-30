@@ -283,16 +283,16 @@ class Admin extends MY_Controller {
 			$data['req_remarks'] 		 					= $remarks;
 		}
 		$subject  	 = "";
-		if ($this->input->post('loan_request_id')) {
+		// if ($this->input->post('loan_request_id')) {
 			$q = $this->db->update('loan_request', $data, array('loan_request_id'=>$id));
 			$requestData = $this->db->get_where('loan_request', array('loan_request_id' => $id))->row();
 			$subject  	 = "Loan Request";
-		} else {
-			$q = $this->db->update('benefit_request', $data, array('benefit_request_id'=>$id));
-			$requestData = $this->db->get_where('benefit_request', array('benefit_request_id' => $id))->row();
-			$subject  	 = "Benefit Request";
-		}
-		
+		// } else {
+		// 	$q = $this->db->update('benefit_request', $data, array('benefit_request_id'=>$id));
+		// 	$requestData = $this->db->get_where('benefit_request', array('benefit_request_id' => $id))->row();
+		// 	$subject  	 = "Benefit Request";
+		// }
+
 		$approver = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.loan_first_approver_users_id WHERE ra.type = 'loans'")->row();
 		$membersData = $this->db->get_where("members", array('members_id' => $requestData->members_id))->row();
 		$from    		 = "no-reply@cpfi-webapp.com";
@@ -2844,14 +2844,14 @@ class Admin extends MY_Controller {
 		$this->form_validation->set_rules('last_name', 'Last Name', 'required');
 		$this->form_validation->set_rules('first_name', 'First Name', 'required');
 		$this->form_validation->set_rules('dob', 'Date of Birth', 'required');
-		$this->form_validation->set_rules('address', 'Address', 'required');
+		// $this->form_validation->set_rules('address', 'Address', 'required');
 		$this->form_validation->set_rules('civil_status_id', 'Civil Status', 'required');
 		$this->form_validation->set_rules('monthly_salary', 'Monthly Salary', 'required');
 		$this->form_validation->set_rules('designation', 'Designation', 'required');
 		$this->form_validation->set_rules('office_management_id', 'Office', 'required');
 		$this->form_validation->set_rules('date_of_effectivity', 'Date of Effectivity', 'required');
 		$this->form_validation->set_rules('member_type_id', 'Member', 'required');
-		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+		$this->form_validation->set_rules('email', 'Email', 'valid_email');
 
 		// if (array_key_exists('pwd_id', $_POST)) {
 		// 	$this->form_validation->set_rules('pwd_id', 'PWD ID', 'trim|required');
@@ -2899,15 +2899,19 @@ class Admin extends MY_Controller {
 				$dataField['password'] 		 = $hashPw;
 				$dataField['password_txt'] = $genPw;
 
-				// $from    		 = "manage_account@cpfi-webapp.com";
-				$from    		 = "no-reply@cpfi-webapp.com";
-				$to    	 		 = strtolower($this->input->post('email'));
-				$title    	 = "CPFI | Account Created";
-				$subject  	 = "New Member Created";
-				$message     = "Dear " . strtoupper($this->input->post('first_name')) . ", <br><br> 
-												Congratulations you already created you account below is your login credentials <br><br> Usename: " .
-												$dataField['username'] . " <br> Password: " . $dataField['password_txt'] . " <br><br> Thank you!";
-				$this->sendEmail($from, $to, $subject, $message, $title);
+				if ($this->input->post('email')=='') {
+				
+				} else {
+					// $from    		 = "manage_account@cpfi-webapp.com";
+					$from    		 = "no-reply@cpfi-webapp.com";
+					$to    	 		 = strtolower($this->input->post('email'));
+					$title    	 = "CPFI | Account Created";
+					$subject  	 = "New Member Created";
+					$message     = "Dear " . strtoupper($this->input->post('first_name')) . ", <br><br> 
+													Congratulations you already created you account below is your login credentials <br><br> Usename: " .
+													$dataField['username'] . " <br> Password: " . $dataField['password_txt'] . " <br><br> Thank you!";
+					$this->sendEmail($from, $to, $subject, $message, $title);
+				}
 				
 				$this->db->insert('members', $dataField);
 				$errors['members_id'] 	 	 = $dataField['members_id'];

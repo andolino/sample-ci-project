@@ -57,8 +57,8 @@
 					<div class="col-3 mt-2 pl-0">
 						<label for="sex" class="font-12">Sex</label>
 						<select class="custom-select custom-select-sm font-12" id="sex" name="sex">
-						  <option value="MALE" <?php echo $membersData->sex == 'MALE' ? 'selected' : ''; ?>></option>
-						  <option value="FEMALE" <?php echo $membersData->sex == 'FEMALE' ? 'selected' : ''; ?>></option>
+						  <option value="MALE" <?php echo $membersData->sex == 'MALE' ? 'selected' : ''; ?>>MALE</option>
+						  <option value="FEMALE" <?php echo $membersData->sex == 'FEMALE' ? 'selected' : ''; ?>>FEMALE</option>
 						</select>
 					</div>
 					<!-- <div class="col-3 mt-2 pl-0">
