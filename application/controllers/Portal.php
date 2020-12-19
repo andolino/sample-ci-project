@@ -54,6 +54,16 @@ class Portal extends MY_Controller {
 		$params['benefit_type'] = $this->db->get_where('benefit_type', array('is_deleted' => 0))->result();
     $this->load->view('portal/request-a-benefit', $params);
 	}
+	
+	public function show_account_ledger(){
+		$members_id 			 		 	= $this->session->members_id;
+		$title 			 		 				= $this->input->post('title');
+		$params['members_id']   = $members_id;
+		$params['title']   			= $title;
+		$params['loanCode']  	  = $this->db->get_where('loan_code', array('is_deleted' => 0))->result();
+		$params['benefit_type'] = $this->db->get_where('benefit_type', array('is_deleted' => 0))->result();
+    $this->load->view('portal/account-ledger', $params);
+	}
 
 	public function getMembersPrintToPDF(){
 		$m_id = $this->uri->segment(2);
@@ -294,7 +304,7 @@ class Portal extends MY_Controller {
 					$res['param3']     = 'warning';
 				}
 				echo json_encode($res);
-		}else{ 
+		} else { 
 			$comaker_id_result = $this->input->post('co-maker-id');
 
 			$approver = $this->db->query("SELECT u.email, u.screen_name FROM request_approver ra LEFT JOIN users u ON u.users_id = ra.loan_first_approver_users_id WHERE ra.type = 'loans'")->row();

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 30, 2020 at 02:07 PM
+-- Generation Time: Dec 19, 2020 at 05:15 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.3.23
 
@@ -477,7 +477,17 @@ INSERT INTO `contributions` (`contributions_id`, `members_id`, `total`, `balance
 (31, '00000003', '0.00', '0.00', '600.00', NULL, 0, '2020-06-01', '2020-10-22', 'CASUAL', '0.00', 'TEST REMARKS'),
 (32, '00000001', '0.00', '0.00', '1802.64', '0283746482', 0, '2020-06-01', '2020-11-25', 'REGULAR', '2000.00', 'test remark2'),
 (33, '00000002', '0.00', '0.00', '1064.96', '0283746482', 0, '2020-06-01', '2020-11-25', 'REGULAR', '0.00', 'test remark2'),
-(34, '00000004', '0.00', '0.00', '600.00', '0283746482', 0, '2020-06-01', '2020-11-25', 'REGULAR', '0.00', 'test remark2');
+(34, '00000004', '0.00', '0.00', '600.00', '0283746482', 0, '2020-06-01', '2020-11-25', 'REGULAR', '0.00', 'test remark2'),
+(35, '00000003', '0.00', '0.00', '600.00', NULL, 0, '2020-12-17', '2020-12-29', 'CASUAL', '0.00', NULL),
+(36, '00000001', '0.00', '0.00', '1802.64', NULL, 0, '2020-12-19', '2020-12-30', NULL, '0.00', NULL),
+(37, '00000002', '0.00', '0.00', '1064.96', NULL, 0, '2020-12-19', '2020-12-30', NULL, '0.00', NULL),
+(38, '00000004', '0.00', '0.00', '600.00', NULL, 0, '2020-12-19', '2020-12-30', NULL, '0.00', NULL),
+(39, '00000005', '0.00', '0.00', '600.00', NULL, 0, '2020-12-19', '2020-12-30', NULL, '0.00', NULL),
+(40, '00000006', '0.00', '0.00', '500.00', NULL, 0, '2020-12-19', '2020-12-30', NULL, '0.00', NULL),
+(41, '00000008', '0.00', '0.00', '500.00', NULL, 0, '2020-12-19', '2020-12-30', NULL, '0.00', NULL),
+(42, '00000009', '0.00', '0.00', '500.00', NULL, 0, '2020-12-19', '2020-12-30', NULL, '0.00', NULL),
+(43, '00000003', '0.00', '0.00', '600.00', NULL, 0, '2020-12-19', '2020-12-31', NULL, '0.00', NULL),
+(44, '00000007', '0.00', '0.00', '0.00', NULL, 0, '2020-12-19', '2020-12-31', NULL, '0.00', NULL);
 
 -- --------------------------------------------------------
 
@@ -1512,6 +1522,52 @@ INSERT INTO `users` (`users_id`, `screen_name`, `username`, `password`, `txt_pas
 -- --------------------------------------------------------
 
 --
+-- Stand-in structure for view `v_accounting_ledger`
+-- (See below for the actual view)
+--
+CREATE TABLE `v_accounting_ledger` (
+`j_master_id` bigint(20)
+,`j_type_id` int(11)
+,`account_no` varchar(50)
+,`journal_ref` varchar(50)
+,`check_voucher_no` varchar(50)
+,`check_no` varchar(50)
+,`reference_no` varchar(50)
+,`payee_type` tinyint(1)
+,`payee_members_id` varchar(11)
+,`payee` varchar(255)
+,`particulars` longtext
+,`loan_computation_id` int(11)
+,`date_posted` date
+,`journal_date` date
+,`credits_cash_in_bank` decimal(12,2)
+,`credits_unearned_income` decimal(12,2)
+,`credits_interest_income` decimal(12,2)
+,`credits_deferred_credits` decimal(12,2)
+,`credits_lri` decimal(12,2)
+,`credits_loan_receivable` decimal(12,2)
+,`credits_interest` decimal(12,2)
+,`credits_service_charge` decimal(12,2)
+,`debits_loan_receivable` decimal(12,2)
+,`debits_interest_receivable` decimal(12,2)
+,`debits_deferred_credits` decimal(12,2)
+,`debits_benefit_claim` decimal(12,2)
+,`debits_members_contr` decimal(12,2)
+,`users_id` int(11)
+,`is_deleted` tinyint(1)
+,`entry_date` date
+,`acct_code` varchar(50)
+,`subsidiary` varchar(50)
+,`debit` decimal(12,2)
+,`credit` decimal(12,2)
+,`normal_bal` varchar(2)
+,`code` varchar(50)
+,`sub_code` varchar(50)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Stand-in structure for view `v_acct_chart`
 -- (See below for the actual view)
 --
@@ -2002,6 +2058,7 @@ CREATE TABLE `v_members` (
 ,`type_of_benefit` text
 ,`salary_grade` int(11)
 ,`email` text
+,`place` varchar(50)
 );
 
 -- --------------------------------------------------------
@@ -2128,6 +2185,15 @@ CREATE TABLE `v_trial_balance` (
 ,`credit` decimal(12,2)
 ,`journal_date` date
 );
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `v_accounting_ledger`
+--
+DROP TABLE IF EXISTS `v_accounting_ledger`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_accounting_ledger`  AS  select `jm`.`j_master_id` AS `j_master_id`,`jm`.`j_type_id` AS `j_type_id`,`jm`.`account_no` AS `account_no`,`jm`.`journal_ref` AS `journal_ref`,`jm`.`check_voucher_no` AS `check_voucher_no`,`jm`.`check_no` AS `check_no`,`jm`.`reference_no` AS `reference_no`,`jm`.`payee_type` AS `payee_type`,`jm`.`payee_members_id` AS `payee_members_id`,`jm`.`payee` AS `payee`,`jm`.`particulars` AS `particulars`,`jm`.`loan_computation_id` AS `loan_computation_id`,`jm`.`date_posted` AS `date_posted`,`jm`.`journal_date` AS `journal_date`,`jm`.`credits_cash_in_bank` AS `credits_cash_in_bank`,`jm`.`credits_unearned_income` AS `credits_unearned_income`,`jm`.`credits_interest_income` AS `credits_interest_income`,`jm`.`credits_deferred_credits` AS `credits_deferred_credits`,`jm`.`credits_lri` AS `credits_lri`,`jm`.`credits_loan_receivable` AS `credits_loan_receivable`,`jm`.`credits_interest` AS `credits_interest`,`jm`.`credits_service_charge` AS `credits_service_charge`,`jm`.`debits_loan_receivable` AS `debits_loan_receivable`,`jm`.`debits_interest_receivable` AS `debits_interest_receivable`,`jm`.`debits_deferred_credits` AS `debits_deferred_credits`,`jm`.`debits_benefit_claim` AS `debits_benefit_claim`,`jm`.`debits_members_contr` AS `debits_members_contr`,`jm`.`users_id` AS `users_id`,`jm`.`is_deleted` AS `is_deleted`,`jm`.`entry_date` AS `entry_date`,`jd`.`acct_code` AS `acct_code`,`jd`.`subsidiary` AS `subsidiary`,`jd`.`debit` AS `debit`,`jd`.`credit` AS `credit`,`am`.`normal_bal` AS `normal_bal`,`am`.`code` AS `code`,`as2`.`sub_code` AS `sub_code` from (((`j_master` `jm` left join `j_details` `jd` on(`jd`.`j_master_id` = `jm`.`j_master_id`)) left join `account_main` `am` on(`am`.`code` = `jd`.`acct_code`)) left join `account_subsidiary` `as2` on(`as2`.`code` = `am`.`code`)) ;
 
 -- --------------------------------------------------------
 
@@ -2316,7 +2382,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `v_members`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_members`  AS  select `m`.`members_id` AS `members_id`,`m`.`id_no` AS `id_no`,`m`.`last_name` AS `last_name`,`m`.`first_name` AS `first_name`,`m`.`middle_name` AS `middle_name`,`m`.`name_extension` AS `name_extension`,`m`.`dob` AS `dob`,`m`.`address` AS `address`,`cs`.`status` AS `status`,`m`.`date_of_effectivity` AS `date_of_effectivity`,`m`.`designation` AS `designation`,`mt`.`type` AS `type`,`m`.`monthly_salary` AS `monthly_salary`,`om`.`office_name` AS `office_name`,`m`.`entry_date` AS `entry_date`,`m`.`bank_account` AS `bank_account`,`m`.`contact_no` AS `contact_no`,`m`.`is_deleted` AS `is_deleted`,`m`.`retired_date` AS `retired_date`,`bt`.`type_of_benefit` AS `type_of_benefit`,`m`.`salary_grade` AS `salary_grade`,`m`.`email` AS `email` from ((((`members` `m` left join `civil_status` `cs` on(`cs`.`civil_status_id` = `m`.`civil_status_id`)) left join `office_management` `om` on(`m`.`office_management_id` = `om`.`office_management_id`)) left join `member_type` `mt` on(`m`.`member_type_id` = `mt`.`member_type_id`)) left join `benefit_type` `bt` on(`bt`.`benefit_type_id` = `m`.`benefit_type`)) where `m`.`is_deleted` = 0 ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_members`  AS  select `m`.`members_id` AS `members_id`,`m`.`id_no` AS `id_no`,`m`.`last_name` AS `last_name`,`m`.`first_name` AS `first_name`,`m`.`middle_name` AS `middle_name`,`m`.`name_extension` AS `name_extension`,`m`.`dob` AS `dob`,`m`.`address` AS `address`,`cs`.`status` AS `status`,`m`.`date_of_effectivity` AS `date_of_effectivity`,`m`.`designation` AS `designation`,`mt`.`type` AS `type`,`m`.`monthly_salary` AS `monthly_salary`,`om`.`office_name` AS `office_name`,`m`.`entry_date` AS `entry_date`,`m`.`bank_account` AS `bank_account`,`m`.`contact_no` AS `contact_no`,`m`.`is_deleted` AS `is_deleted`,`m`.`retired_date` AS `retired_date`,`bt`.`type_of_benefit` AS `type_of_benefit`,`m`.`salary_grade` AS `salary_grade`,`m`.`email` AS `email`,`d`.`place` AS `place` from (((((`members` `m` left join `civil_status` `cs` on(`cs`.`civil_status_id` = `m`.`civil_status_id`)) left join `office_management` `om` on(`m`.`office_management_id` = `om`.`office_management_id`)) left join `departments` `d` on(`d`.`departments_id` = `om`.`departments_id`)) left join `member_type` `mt` on(`m`.`member_type_id` = `mt`.`member_type_id`)) left join `benefit_type` `bt` on(`bt`.`benefit_type_id` = `m`.`benefit_type`)) where `m`.`is_deleted` = 0 ;
 
 -- --------------------------------------------------------
 
@@ -2693,7 +2759,7 @@ ALTER TABLE `claim_benefit`
 -- AUTO_INCREMENT for table `contributions`
 --
 ALTER TABLE `contributions`
-  MODIFY `contributions_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `contributions_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `contribution_rate`

@@ -400,39 +400,52 @@ class Admin extends MY_Controller {
 	}
 
 	public function saveContributionByType(){
-		$office_management_id=$this->input->post('office_management_id');
-		$result = $this->db->query("SELECT members_id, date_of_effectivity, monthly_salary FROM members where date_of_effectivity < date_add(now(), interval -1 month) AND office_management_id = $office_management_id")->result();
-		$rate = $this->db->get('contribution_rate')->row();
-		$data = array();
-		foreach ($result as $row) {
-			array_push($data, array(
-				'members_id'		=> $row->members_id,
-				'deduction'			=> (floatval(str_replace(',', '', $row->monthly_salary)) * (((int) $rate->rate)/100)),
-				'entry_date'		=>  date('Y-m-d'),
-				'date_applied'	=> date('Y-m-d', strtotime($this->input->post('date_applied'))),
-				'status'				=> $this->input->post('status'),
-				'remarks'				=> $this->input->post('remarks'),
-				'orno'					=> $this->input->post('orno')
-			));
+		// $office_management_id = $this->input->post('office_management_id');
+		$department_id 				= $this->input->post('department_id');
+		$om     							= $this->db->get_where('office_management', array('departments_id' => $department_id))->result();
+		$office_management_id	= [];
+		foreach ($om as $row) {
+			array_push($office_management_id, $row->office_management_id);
 		}
-		if (count($data)>0) {
-			$q = $this->db->insert_batch('contributions', $data);
-			$res = array();
-			if ($q) {
-				$res['param1'] = 'Success!';
-				$res['param2'] = 'Loans Successfully Saved!';
-				$res['param3'] = 'success';
+		if (count($office_management_id) > 0) {
+			$result 							= $this->db->query("SELECT members_id, date_of_effectivity, monthly_salary FROM members 
+																								WHERE date_of_effectivity < date_add(now(), interval -1 month) AND 
+																								office_management_id IN (" . implode(',', $office_management_id) . ")")->result();
+			$rate 								= $this->db->get('contribution_rate')->row();
+			$data 								= array();
+			foreach ($result as $row) {
+				array_push($data, array(
+					'members_id'			=> $row->members_id,
+					'deduction'				=> (floatval(str_replace(',', '', $row->monthly_salary)) * (((int) $rate->rate)/100)),
+					'entry_date'			=>  date('Y-m-d'),
+					'date_applied'		=> date('Y-m-d', strtotime($this->input->post('date_applied'))),
+					'status'					=> $this->input->post('status'),
+					'remarks'					=> $this->input->post('remarks'),
+					'orno'						=> $this->input->post('orno')
+				));
+			}
+			if (count($data)>0) {
+				$q = $this->db->insert_batch('contributions', $data);
+				$res = array();
+				if ($q) {
+					$res['param1'] = 'Success!';
+					$res['param2'] = 'Loans Successfully Saved!';
+					$res['param3'] = 'success';
+				} else {
+					$res['param1'] = 'Opps!';
+					$res['param2'] = 'Error Encountered Saved';
+					$res['param3'] = 'warning';
+				}
 			} else {
-				$res['param1'] = 'Opps!';
-				$res['param2'] = 'Error Encountered Saved';
-				$res['param3'] = 'warning';
+				$res['param1'] = 'Oops!';
+				$res['param2'] = 'There is no member for this department!';
+				$res['param3'] = 'danger';
 			}
 		} else {
 			$res['param1'] = 'Oops!';
-			$res['param2'] = 'There is no member for this office!';
+			$res['param2'] = 'There is no member for this department!';
 			$res['param3'] = 'danger';
 		}
-
 		echo json_encode($res);
 	}
 	
@@ -497,7 +510,8 @@ class Admin extends MY_Controller {
 	}
 
 	public function frmAddContributionByType(){
-		$params['officeManagement']	= $this->db->get_where('office_management')->result();
+		$params['officeManagement']	= $this->db->get_where('office_management', array('is_deleted' => 0))->result();
+		$params['departments']			= $this->db->get_where('departments', array('is_deleted' => 0))->result();
 		$params['membersData'] 		 	= $this->db->get_where('v_members')->result();
 		$this->load->view('admin/crud/frm-add-contribution-by-type', $params);	
 	}
@@ -566,6 +580,12 @@ class Admin extends MY_Controller {
 	public function officialReceipt(){	
 		$params['heading'] 			 = 'OFFICIAL RECEIPT';
 		$params['officialReceipt'] = $this->load->view('admin/crud/official-receipt-page', $params, TRUE);	
+		$this->adminContainer('admin/official-receipt', $params);
+	}
+	
+	public function processContribution(){	
+		$params['heading'] 			 	 = 'PROCESS CONTRIBUTION';
+		$params['officialReceipt'] = $this->load->view('admin/crud/process-contribution-page', $params, TRUE);	
 		$this->adminContainer('admin/official-receipt', $params);
 	}
 
@@ -1326,6 +1346,7 @@ class Admin extends MY_Controller {
 
 	public function server_tbl_members(){
 		$result 	= $this->AdminMod->get_output_members();
+		
 		$res 			= array();
 		$no 			= isset($_POST['start']) ? $_POST['start'] : 0;
 		$viewPage = $this->input->post('page');
@@ -1338,9 +1359,10 @@ class Admin extends MY_Controller {
    		$data[] = $row->id_no;
    		$data[] = strtoupper($row->last_name) . ', ' . strtoupper($row->first_name) . ' ' . strtoupper($row->middle_name) . ' ' . strtoupper($row->name_extension);
    		$data[] = strtoupper($row->first_name);
-   		$data[] = strtoupper($row->middle_name);
-   		$data[] =	date('Y-m-d', strtotime($row->dob));
+			$data[] = strtoupper($row->middle_name);
+			$data[] =	$row->dob == '0000-00-00' || $row->dob == '' ? '' : date('Y-m-d', strtotime($row->dob));
    		$data[] = $row->office_name; //$row->address;
+   		$data[] = $row->place; //$row->address;
    		$data[] = $row->type;//$row->status;
    		$data[] = date('Y-m-d', strtotime($row->date_of_effectivity));
    		
@@ -1356,13 +1378,12 @@ class Admin extends MY_Controller {
    								<i class="fas fa-user"></i></a>';
    		} else {
    			$data[] = '<a href="javascript:void(0);" id="loadPage" data-link="view-member" data-ind="'.$row->members_id.'" 
-   								data-badge-head="'.strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name).'" data-cls="cont-view-member" data-placement="top" data-toggle="tooltip" title="View" data-id="'.$row->members_id.'">
-   								<i class="fas fa-search"></i></a> | 
-   		 					<a href="javascript:void(0);" id="loadPage" data-placement="top" data-toggle="tooltip" title="Edit" data-link="edit-member" 
-   		 						data-ind="'.$row->members_id.'" data-cls="cont-edit-member" data-badge-head="EDIT '.strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name).'"><i class="fas fa-edit"></i></a> | 
-   		 					<a href="javascript:void(0);" id="loadPage" data-placement="top" data-toggle="tooltip" title="Add Contribution" data-link="view-contribution" 
-   		 						data-ind="'.$row->members_id.'" data-cls="cont-tbl-contribution" data-badge-head="CONTRIBUTION - '.strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name).'"><i class="fas fa-hand-holding-usd"></i></a> |
-   		 					<a href="javascript:void(0);" id="remove-lgu-const-list" data-placement="top" data-toggle="tooltip" title="Remove" data-id="'.$row->members_id.'"><i class="fas fa-trash"></i></a> ';
+										data-badge-head="'.strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name).'" data-cls="cont-view-member" data-placement="top" data-toggle="tooltip" title="View" data-id="'.$row->members_id.'">
+										<i class="fas fa-search"></i></a> | <a href="javascript:void(0);" id="loadPage" data-placement="top" data-toggle="tooltip" title="Edit" data-link="edit-member" 
+										data-ind="'.$row->members_id.'" data-cls="cont-edit-member" data-badge-head="EDIT '.strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name).'">
+										<i class="fas fa-edit"></i></a>' . ($this->session->level == 0 ? '| <a href="javascript:void(0);" id="remove-lgu-const-list" data-placement="top" data-toggle="tooltip" title="Remove" data-id="'.$row->members_id.'"><i class="fas fa-trash"></i></a>' : '');
+							// <a href="javascript:void(0);" id="loadPage" data-placement="top" data-toggle="tooltip" title="Add Contribution" data-link="view-contribution" 
+							// data-ind="'.$row->members_id.'" data-cls="cont-tbl-contribution" data-badge-head="CONTRIBUTION - '.strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name).'"><i class="fas fa-hand-holding-usd"></i></a>
    		}
 
    		
@@ -2176,6 +2197,40 @@ class Admin extends MY_Controller {
 								<a href="javascript:void(0);" class="btn btn-success btn-sm" id="btn-view-comment" data-field="benefit_request" 
 											 data-id="'.$row->benefit_request_id.'" data-placement="top" data-toggle="tooltip" 
 											 title="View Comment" data-id="'.$row->benefit_request_id.'"><i class="fas fa-comments"></i></a>';
+			$res[] = $data;
+		}
+
+		$output = array (
+			'draw' 						=> isset($_POST['draw']) ? $_POST['draw'] : null,
+			'recordsTotal' 		=> $this->AdminMod->count_all_benefit_by_request(),
+			'recordsFiltered' => $this->AdminMod->count_filter_benefit_by_request(),
+			'data' 						=> $res
+		);
+
+		echo json_encode($output);
+	}
+	
+	public function server_portal_accounting_ledger(){
+		$result 	= $this->AdminMod->get_output_accounting_ledger();
+		// $this->output->enable_profiler(true);
+		$res 			= array();
+		$no 			= isset($_POST['start']) ? $_POST['start'] : 0;
+		$status = array('<span class="badge badge-warning">Pending</span>', '<span class="badge badge-success">Approved</span>', '<span class="badge badge-danger">Disapproved</span>');
+		foreach ($result as $row) {
+			$data = array();
+			$no++;
+
+   		$data[] = str_pad($row->journal_date, 5, '0', STR_PAD_LEFT);
+   		$data[] = $row->particulars;
+   		$data[] = $row->debit > 0 ? number_format($row->debit, 2) : '';
+   		$data[] = $row->credit > 0 ? number_format($row->credit, 2) : '';
+   		$data[] = $row->normal_bal == 'Dr' ? number_format($row->debit - $row->credit , 2) : number_format($row->credit - $row->debit, 2);
+			// $data[] = '<a href="javascript:void(0);" class="btn btn-info btn-sm" id="btn-view-attachment" data-field="benefit_request" data-field="ADD" 
+			// 								 data-id="'.$row->j_master_id.'" data-placement="top" data-toggle="tooltip" 
+			// 								 title="View Attachment" data-id="'.$row->j_master_id.'"><i class="fas fa-paperclip"></i></a> |
+			// 					<a href="javascript:void(0);" class="btn btn-success btn-sm" id="btn-view-comment" data-field="benefit_request" 
+			// 								 data-id="'.$row->j_master_id.'" data-placement="top" data-toggle="tooltip" 
+			// 								 title="View Comment" data-id="'.$row->j_master_id.'"><i class="fas fa-comments"></i></a>';
 			$res[] = $data;
 		}
 

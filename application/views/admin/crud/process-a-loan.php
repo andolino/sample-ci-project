@@ -7,7 +7,6 @@
 				<a href="javascript:void(0);" id="loadPage" data-link="view-loan-app-page" data-badge-head="LOAN APPLICATION"
 	   								data-cls="cont-tbl-constituent" data-placement="top" data-toggle="tooltip" title="Back to List"><i class="fas fa-times"></i></a>
 			</div>
-
 			<div class="navbar mb-3">
 			  <div class="row">
 			    <div class="col pr-0">
@@ -72,9 +71,9 @@
 					    </div>
 					  </div>
 					  <div class="form-group row">
-					    <label for="address" class="col-sm-5 pr-0 col-form-label col-form-label-sm font-12">Address:</label>
+					    <label for="address" class="col-sm-5 pr-0 col-form-label col-form-label-sm font-12">Departments:</label>
 					    <div class="col-sm-7">
-					      <input type="text" class="form-control form-control-sm font-12" id="address" value="<?php echo !empty($membersData) ? strtoupper($membersData->address) : ''; ?>" name="address">
+					      <input type="text" class="form-control form-control-sm font-12" id="place" value="<?php echo !empty($membersData) ? strtoupper($membersData->place) : ''; ?>" name="place">
 					    </div>
 					  </div>
 					  <div class="form-group row">

@@ -1183,6 +1183,54 @@ function initContributionRateDataTables(){
   });
 }
 
+function initProcessContributionDataTables(){
+  var myObjKeyLguConst = {};
+  tbl_process_contribution  = $("#tbl-processs-contribution").DataTable({
+    searchHighlight : true,
+    lengthMenu      : [[5, 10, 20, 30, 50, -1], [5, 10, 20, 30, 50, 'All']],
+    language: {
+        search                 : '_INPUT_',
+        searchPlaceholder      : 'Search...',
+        lengthMenu             : '_MENU_'       
+    },
+    columnDefs                 : [
+      { 
+        orderable            : false, 
+        targets              : [0,1,2,3,4,5] 
+      },
+      { 
+        className            : 'text-right', 
+        targets              : [1,2,3,4,5] 
+      },
+      { 
+        className            : 'text-center', 
+        targets              : [0] 
+      }
+      // { 
+      //   className            : 'text-center', 
+      //   targets              : [6] 
+      // }
+    ],
+    "serverSide"               : true,
+    "processing"               : true,
+    "ajax"                     : {
+        "url"                  : 'server-process-contribution',
+        "type"                 : 'POST',
+        "data"                 : { 
+                                // "id" : $("#tbl-loans-by-member").attr('data-id')
+                              }
+    },
+    'createdRow'            : function(row, data, dataIndex) {
+      var dataRowAttrIndex = ['data-loan-settings'];
+      var dataRowAttrValue = [0];
+        for (var i = 0; i < dataRowAttrIndex.length; i++) {
+          myObjKeyLguConst[dataRowAttrIndex[i]] = data[dataRowAttrValue[i]];
+        }
+        $(row).attr(myObjKeyLguConst);
+    }
+  });
+}
+
 function removeData(d){
   var id  = d.getAttribute('data-id');
   var tbl = d.getAttribute('data-tbl');

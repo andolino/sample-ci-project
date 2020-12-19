@@ -15,6 +15,7 @@
       <th scope="col">FIRST NAME</th>
       <th scope="col">MIDDLE NAME</th>
       <th scope="col">DATE OF BIRTH</th>
+      <th scope="col">OFFICE</th>
       <th scope="col">DEPARTMENT</th>
       <th scope="col">MEMBER TYPE</th>
       <th scope="col">DATE OF EFFECTIVITY</th>

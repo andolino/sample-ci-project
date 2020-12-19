@@ -8,11 +8,18 @@
     <form id="frm-add-contribution-by-type">
       <div class="row">
         <div class="col-6 mt-2">
-          <label for="status" class="font-12">OFFICE MANAGEMENT</label>
+          <!-- <label for="status" class="font-12">OFFICE MANAGEMENT</label>
           <select class="custom-select custom-select-sm mb-2 font-12 rounded-0" id="office_management_id" name="office_management_id" required>
             <option value="" hidden>--</option>
-            <?php foreach ($officeManagement as $row): ?>
-              <option value="<?php echo $row->office_management_id; ?>"><?php echo $row->office_name ?></option>
+            <?php //foreach ($officeManagement as $row): ?>
+              <option value="<?php //echo $row->office_management_id; ?>"><?php //echo $row->office_name ?></option>
+            <?php //endforeach; ?>
+          </select> -->
+          <label for="department_id" class="font-12">DEPARTMENTS</label>
+          <select class="custom-select custom-select-sm mb-2 font-12 rounded-0" id="department_id" name="department_id" required>
+            <option value="" hidden>--</option>
+            <?php foreach ($departments as $row): ?>
+              <option value="<?php echo $row->departments_id; ?>"><?php echo $row->region; ?></option>
             <?php endforeach; ?>
           </select>
         </div>
@@ -28,7 +35,7 @@
           <label for="orno" class="font-12">OR NUMBER</label>
           <input type="text" class="form-control form-control-sm font-12 rounded-0" id="orno" value="" name="orno" placeholder="...">
         </div> -->
-        <div class="col-6 mt-2">
+        <!-- <div class="col-6 mt-2">
           <label for="status" class="font-12">STATUS</label>
           <select class="custom-select custom-select-sm mb-2 font-12 rounded-0" id="status" name="status" required>
             <option value="" hidden>--</option>
@@ -36,7 +43,7 @@
             <option value="CASUAL">CASUAL</option>
             <option value="FIELD OFFICE">FIELD OFFICE</option>
           </select>
-        </div>
+        </div> -->
 
       </div>
       <input type="hidden" name="has_update" value="<?php echo $has_update ?? ''; ?>">

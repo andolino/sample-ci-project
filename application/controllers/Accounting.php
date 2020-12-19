@@ -27,8 +27,6 @@ class Accounting extends MY_Controller {
 		$debit 						= $this->input->post('debit');
 		$credit 					= $this->input->post('credit');
 
-		
-		
 		if ($this->input->post('has_update')=='') {
 
 			$master = array(

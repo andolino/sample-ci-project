@@ -124,6 +124,45 @@ $(document).ready(function () {
     });
   });
 
+  $(document).on("click", "#btnAccountLedger", function (e) {
+    var title = $(this).attr('data-title');
+    $.ajax({
+      type: "POST",
+      url: "view-account-ledger-frm",
+      data: { 'title': title },
+      // dataType: "JSON",
+      success: function (res) {
+        $('.custom-container').html(res);
+        var today = new Date(); 
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+        today = mm + '/' + dd + '/' + yyyy;
+        // $( "div.picture-cont" )
+        // .mouseenter(function() {
+        //   $('.upload-ctrl').removeClass('none');
+        // })
+        // .mouseleave(function() {
+        //   $('.upload-ctrl').addClass('none');
+        // });
+        initAccountLedgerDataTables();
+        $('#date_effectivity').daterangepicker({
+          "showDropdowns" : true,
+          "singleDatePicker" : true,
+          "minDate": today
+        }, function(start, end, label) {
+          var dd = new Date();
+          var sd = new Date(dd.getFullYear(), 0, 1);
+          console.log(dd, sd);
+      });
+        // $('.co-maker').select2({
+        //   width: '100%',
+        //   maximumSelectionLength: 2
+        // });
+      }
+    });
+  });
+
   $(document).on('click', '#membersOfContributionPortalPdf', function(e) {
     e.preventDefault();
     var m_id          = $(this).attr('data-id');
@@ -396,6 +435,97 @@ function initBenefitRequestDataTables(){
     }
   });
   new $.fn.dataTable.FixedHeader( tbl_portal_benefit_req_attmnt );
+
+}
+
+function initAccountLedgerDataTables(){
+  var myObjKeyLguConst = {};
+  tbl_portal_benefit_req_attmnt  = $("#tbl-portal-account-ledger-list").DataTable({
+    searchHighlight : true,
+    lengthMenu      : [[5, 10, 20, 30, 50, -1], [5, 10, 20, 30, 50, 'All']],
+    language: {
+        search                 : '_INPUT_',
+        searchPlaceholder      : 'Search...',
+        lengthMenu             : '_MENU_'       
+    },
+    order: [[2, 'desc']],
+    columnDefs                 : [
+      { 
+        orderable            : false, 
+        targets              : [0,1,2,3,4] 
+      },
+      { 
+        className            : 'text-right', 
+        targets              : [3,4] 
+      }
+    ],
+    "serverSide"               : true,
+    "processing"               : true,
+    "responsive"               : true,
+    "ajax"                     : {
+        "url"                  : 'server-portal-accounting-ledger',
+        "type"                 : 'POST',
+        // "data"                 : { 
+        //                         "id" : $("#tbl-portal-account-ledger-list").attr('data-id')
+        //                       }
+    },
+    'createdRow'            : function(row, data, dataIndex) {
+      var dataRowAttrIndex = ['data-loan-settings'];
+      var dataRowAttrValue = [0];
+        for (var i = 0; i < dataRowAttrIndex.length; i++) {
+          myObjKeyLguConst[dataRowAttrIndex[i]] = data[dataRowAttrValue[i]];
+        }
+        $(row).attr(myObjKeyLguConst);
+    },
+    "footerCallback": function ( row, data, start, end, display ) {
+      var api        = this.api(), data;
+      var columns    = api.columns().header().length;
+      var cont_total = [];
+      // Remove the formatting to get integer data for summation
+      var intVal = function ( i ) {
+          return typeof i === 'string' ?
+              i.replace(/[\$,]/g, '')*1 :
+              typeof i === 'number' ?
+                  i : 0;
+      };
+      // Total over all pages
+      col = 2;
+      for (var i = 2; i < columns; i++) {
+          total = api
+              .column(i)
+              .data()
+              .reduce( function (a, b) {
+                  return intVal(a) + intVal(b);
+              }, 0 );
+          cont_total.push(total);
+      }
+
+      var tmp = 0;
+      for (var i = 2; i < cont_total.length + 2; i++) {
+          $( api.column(i).footer() ).html(
+              // '$'+pageTotal +' ( $'+ total +' total)'
+              number_format(cont_total[tmp])
+          );
+          tmp++;
+      }
+      // ttt = api
+      //     .column($('.amt_pd'))
+      //     .data()
+      //     .reduce( function (a, b) {
+      //         return intVal(a) + intVal(b);
+      //     }, 0 );
+
+      // Total over this page
+      // pageTotal = api
+      //     .column(col, { page: 'current'} )
+      //     .data()
+      //     .reduce( function (a, b) {
+      //         return intVal(a) + intVal(b);
+      //     }, 0 );
+      // Update footer
+    }
+  });
+  // new $.fn.dataTable.FixedHeader( tbl_portal_benefit_req_attmnt );
 
 }
 

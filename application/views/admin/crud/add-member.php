@@ -42,7 +42,7 @@
 					</div>
 					<div class="col-3 mt-2">
 						<label for="name_extension" class="font-12">Extension Name</label>
-						<input type="text" class="form-control form-control-sm font-12" id="name_extension" name="+" placeholder="...">
+						<input type="text" class="form-control form-control-sm font-12" id="name_extension" name="name_extension" placeholder="...">
 					</div>
 					<div class="col-3 mt-2 pl-0">
 						<label for="dob" class="font-12">Date of birth</label>

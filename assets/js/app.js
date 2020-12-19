@@ -39,19 +39,21 @@ var tbl_official_receipt = [];
 var tbl_benefit_by_request_pending = [];
 var tbl_benefit_by_request_approved = [];
 var tbl_benefit_by_request_disapproved = [];
+var tbl_process_contribution = [];
 $(document).ready(function() {
   //init plugin
   $("body").tooltip({ selector: '[data-toggle=tooltip]' });
   initDateDefault();
 
   //for numeric values input
-  $(document).on("focusout", '.isNum', function(e){
-    $(this).val(isNaN(parseFloat($(this).val().replace(',',''))) ? '0' : number_format($(this).val().replace(',', '')));
-  });
+  // $(document).on("focusout", '.isNum', function(e){
+  //   $(this).val(isNaN(parseFloat($(this).val().replace(',',''))) ? '0' : number_format($(this).val().replace(',', '')));
+  // });
   $(document).on("change, keyup", '.isNum', function(e){
     var currentInput = $(this).val();
     var fixedInput = currentInput.replace(/[A-Za-z!@#$%^&*()]/g, '');
-    $(this).val(fixedInput);
+    $(this).val(fixedInput).toFixed(2).toString();
+    // $(this).val(isNaN(parseFloat($(this).val().replace(',',''))) ? '0' : number_format($(this).val().replace(',', '')));
   });
 
 
@@ -345,6 +347,7 @@ $(document).ready(function() {
       initPacsEntry();
       initGjEntry();
       initCrjEntry();
+      initProcessContributionDataTables();
 
       
 
@@ -367,6 +370,7 @@ $(document).ready(function() {
   initPacsEntry();
   initGjEntry();
   initCrjEntry();
+  initProcessContributionDataTables();
 
   //form submit
   $(document).on('submit', '#frm-accounting-entry', function(e) {
@@ -1490,6 +1494,7 @@ $(document).ready(function() {
                 if (res.param3 == 'success') {
                   $('#custom-modal').modal('hide');
                 }
+                tbl_process_contribution.ajax.reload();
               }
             });
           }, function(){
@@ -4199,6 +4204,7 @@ function computeDebitCredit(){
   });
   $('.total_debit').html(number_format(debit));
   $('.total_credit').html(number_format(credit));
+  console.log(debit, credit);
 }
 
 function removeJournal(d){

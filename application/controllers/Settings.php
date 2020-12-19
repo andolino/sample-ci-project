@@ -275,6 +275,32 @@ class Settings extends MY_Controller {
 
 		echo json_encode($output);
 	}
+	
+	public function server_process_contribution(){
+		$result 	= $this->Table->getOutput('contributions', 
+																						['contributions_id', 'members_id', 'total', 'balance', 'deduction', 'orno', 'entry_date', 'is_deleted', 'date_applied', 'status', 'adjusted_amnt', 'remarks'], 
+																								['contributions_id' => 'desc']);
+		$res 			= array();
+		$no 			= isset($_POST['start']) ? $_POST['start'] : 0;
+		foreach ($result as $row) {
+			$data = array();
+			$no++;
+   		$data[] = $row->total;
+   		$data[] = $row->balance;
+   		$data[] = $row->deduction;
+   		$data[] = $row->adjusted_amnt;
+   		$data[] = $row->entry_date;
+   		$data[] = $row->date_applied;
+			$res[] = $data;
+		}
+		$output = array (
+			'draw' 						=> isset($_POST['draw']) ? $_POST['draw'] : null,
+			'recordsTotal' 		=> $this->Table->countAllTbl(),
+			'recordsFiltered' => $this->Table->countFilterTbl(),
+			'data' 						=> $res
+		);
+		echo json_encode($output);
+	}
 
 	public function server_relationship_type(){
 		$result 	= $this->Table->getOutput('relationship_type', ['relationship_type_id', 'rel_type', 'entry_date', 'is_deleted'], ['relationship_type_id' => 'desc']);

@@ -54,7 +54,7 @@
 <table border="0.4" cellpadding="2">
 	<tr>
 		<td rowspan="2" style="font-size: 10px;line-height: 2.5;height: 10px; text-align: center;width: 25%;"><span><i><strong>TYPE OF LOAN</strong></i></span></td>
-		<td style="font-size: 9px;font-weight: bold;width: 75%;"><?php echo $loan_code->loan_type_name; ?> (<?php echo $loan_code->loan_code; ?>) </td>
+		<td style="font-size: 9px;font-weight: bold;width: 75%;"><?php echo !empty($loan_code) ? $loan_code->loan_type_name : ''; ?> (<?php echo !empty($loan_code) ? $loan_code->loan_code : ''; ?>) </td>
 	</tr>
 	<tr>
 		<td style="font-size: 8px;">Ref. No. 20</td>
@@ -63,20 +63,20 @@
 
 <table border="0.4" cellpadding="3" style="font-size: 8px;">
 	<tr>
-		<td style="width:57%;">Applicant: (Print Name): <strong><?php echo strtoupper($members->last_name . ', ' . $members->first_name . ' ' . $members->middle_name); ?></strong></td>
-		<td style="width:43%;">PSA Employee ID No.: <strong><?php echo $members->id_no; ?></strong></td>
+		<td style="width:57%;">Applicant: (Print Name): <strong><?php echo !empty($members) ? strtoupper(($members->last_name ?? '') . ', ' . ($members->first_name ?? '') . ' ' . ($members->middle_name ?? '')) : ''; ?></strong></td>
+		<td style="width:43%;">PSA Employee ID No.: <strong><?php echo !empty($members) ? $members->id_no : ''; ?></strong></td>
 	</tr>
 	<tr>
 		<td>Official Station: <strong><?php echo $result->office; ?></strong></td>
-		<td>Basic Salary/Mo.: <strong><?php echo number_format($members->monthly_salary, 2); ?></strong></td>
+		<td>Basic Salary/Mo.: <strong><?php echo !empty($members) ? number_format($members->monthly_salary, 2) : ''; ?></strong></td>
 	</tr>
 	<tr>
-		<td>Residence: <strong><?php echo strtoupper($members->address); ?></strong></td>
-		<td>Contact No.: <strong><?php echo $members->contact_no; ?></strong></td>
+		<td>Residence: <strong><?php echo !empty($members) ? strtoupper($members->address) : ''; ?></strong></td>
+		<td>Contact No.: <strong><?php echo !empty($members) ? $members->contact_no : ''; ?></strong></td>
 	</tr>
 	<tr>
-		<td>Purpose of Loan: <strong><?php echo strtoupper($result->purpose_of_loan); ?></strong></td>
-		<td>LBP ACCOUNT No.: <strong><?php echo strtoupper($result->bank_account_no); ?></strong></td>
+		<td>Purpose of Loan: <strong><?php echo !empty($result) ? strtoupper($result->purpose_of_loan) : ''; ?></strong></td>
+		<td>LBP ACCOUNT No.: <strong><?php echo !empty($result) ? strtoupper($result->bank_account_no) : ''; ?></strong></td>
 	</tr>
 </table>
 <table border="0.4" cellpadding="5">
@@ -96,8 +96,8 @@
 					<td style="font-size: 8px;">
 						<span>______________________________</span><br>
 						<span>Signature of Applicant</span><br>
-						<span>Position: <u><strong><?php echo $members->designation; ?></strong></u></span><br>
-						<span>SG_______Basic Salary <u><strong><?php echo number_format($members->monthly_salary, 2); ?></strong></u></span>
+						<span>Position: <u><strong><?php echo !empty($members) ? $members->designation : ''; ?></strong></u></span><br>
+						<span>SG_______Basic Salary <u><strong><?php echo !empty($members) ? number_format($members->monthly_salary, 2) : ''; ?></strong></u></span>
 					</td>
 					<td style="font-size: 8px;text-align: right;">
 						<span><strong>Conforme: (Co-maker/s)</strong></span><br>

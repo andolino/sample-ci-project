@@ -8,7 +8,7 @@ class AdminMod extends CI_Model {
 	var $tblMembers = 'v_members';
 	var $tblMembersCollumn = array('members_id', 'id_no', 'last_name', 'first_name', 
 																				'middle_name', 'dob', 'address', 'status', 'date_of_effectivity', 
-																				'designation', 'type', 'monthly_salary', 'office_name', 'entry_date', 'is_deleted', 'retired_date', 'type_of_benefit');
+																				'designation', 'type', 'monthly_salary', 'office_name', 'entry_date', 'is_deleted', 'retired_date', 'type_of_benefit', 'place');
 	var $tblMembersOrder = array('members_id' => 'desc');
 
 	//LOAN SETTINGS
@@ -44,6 +44,16 @@ class AdminMod extends CI_Model {
 																						'first_name', 'last_name', 'middle_name', 'status', 'approved_by', 'approved_date', 'disapproved_by', 
 																						'disapproved_date', 'type_of_benefit', 'total_claim', 'req_remarks');
 	var $tblBenefitByRequestOrder = array('benefit_request_id' => 'desc');
+
+	//BENEFIT BY REQUEST
+	var $tblAccountingLedger = 'v_accounting_ledger';
+	var $tblAccountingLedgerCollumn = array('j_master_id', 'j_type_id', 'account_no', 'journal_ref', 'check_voucher_no', 'check_no', 
+																						'reference_no', 'payee_type', 'payee_members_id', 'payee', 'particulars', 'loan_computation_id', 
+																						'date_posted', 'journal_date', 'credits_cash_in_bank', 'credits_unearned_income', 'credits_interest_income', 
+																						'credits_deferred_credits', 'credits_lri', 'credits_loan_receivable', 'credits_interest', 'credits_service_charge', 
+																						'debits_loan_receivable', 'debits_interest_receivable', 'debits_deferred_credits', 'debits_benefit_claim', 
+																						'debits_members_contr', 'users_id', 'is_deleted', 'entry_date', 'acct_code', 'subsidiary', 'debit', 'credit');
+	var $tblAccountingLedgerOrder = array('j_master_id' => 'desc', 'debit' => 'asc');
 	
 	//LOAN REQUEST ATTCHMNT
 	var $tblLoanAttchmntRequest = 'portal_uploads';
@@ -499,6 +509,64 @@ class AdminMod extends CI_Model {
 
 	public function count_filter_benefit_by_request(){
 		$this->_que_tbl_benefit_by_request();
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
+
+
+	//ACCOUNT LEDGER PORTAL
+	private function _que_tbl_account_ledger(){
+		$this->db->from($this->tblAccountingLedger);
+		$this->db->where('is_deleted', '0');
+		if ($this->input->post('id')) {
+			$this->db->where('payee_members_id', $this->input->post('id'));
+		}
+		$i = 0;
+		foreach ($this->tblAccountingLedgerCollumn as $item) {
+			if (!empty($_POST['search']['value'])) {
+				if ($i === 0) {
+					$this->db->like($item, strtolower($_POST['search']['value']));
+					if ($this->input->post('id')) {
+						$this->db->where('payee_members_id', $this->input->post('id'));
+					}
+				} else {
+					$this->db->or_like($item, strtolower($_POST['search']['value']));
+					if ($this->input->post('id')) {
+						$this->db->where('payee_members_id', $this->input->post('id'));
+					}
+				}
+			}
+			$column[$i] = $item;
+			$i++;
+		}
+
+		if (isset($_POST['order'])) {
+			$this->db->where('is_deleted', '0');
+			$this->db->order_by($column[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+		}elseif($this->tblAccountingLedgerOrder){
+			$this->db->where('is_deleted', '0');
+			$order = $this->tblAccountingLedgerOrder;
+			$this->db->order_by(key($order), $order[key($order)]);
+		}
+		$this->db->order_by('j_master_id', 'DESC');
+	}
+
+	public function get_output_accounting_ledger(){
+		$this->_que_tbl_account_ledger();
+		if (!empty($_POST['length']))
+		$this->db->limit(($_POST['length'] < 0 ? 0 : $_POST['length']), $_POST['start']);
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+	public function count_all_accounting_ledger(){
+		$this->db->where('is_deleted', '0');
+		$this->db->from($this->tblAccountingLedger);
+		return $this->db->count_all_results();
+	}
+
+	public function count_filter_accounting_ledger(){
+		$this->_que_tbl_account_ledger();
 		$query = $this->db->get();
 		return $query->num_rows();
 	}
