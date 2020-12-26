@@ -16,7 +16,7 @@
             <?php //endforeach; ?>
           </select> -->
           <label for="department_id" class="font-12">DEPARTMENTS</label>
-          <select class="custom-select custom-select-sm mb-2 font-12 rounded-0" id="department_id" name="department_id" required>
+          <select class="custom-select custom-select-sm mb-2 font-12 rounded-0 deptContributionByType" id="department_id" name="department_id" required>
             <option value="" hidden>--</option>
             <?php foreach ($departments as $row): ?>
               <option value="<?php echo $row->departments_id; ?>"><?php echo $row->region; ?></option>

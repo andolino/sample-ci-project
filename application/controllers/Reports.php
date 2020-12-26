@@ -46,7 +46,7 @@ class Reports extends MY_Controller {
 
 	public function contributionAndPayments(){
 		// $sd = $this->uri->segment(2);
-		$sd = date('Y-m-01', strtotime($this->uri->segment(3)));
+		$sd = date('Y-m-01', strtotime($this->uri->segment(2)));
 		$ed = date('Y-m-t', strtotime($this->uri->segment(3)));
 		$type = str_replace('%20', ' ', $this->uri->segment(4));
 

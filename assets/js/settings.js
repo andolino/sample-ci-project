@@ -1196,14 +1196,14 @@ function initProcessContributionDataTables(){
     columnDefs                 : [
       { 
         orderable            : false, 
-        targets              : [0,1,2,3,4,5] 
+        targets              : [0,1,2,3,4,5,6] 
       },
       { 
         className            : 'text-right', 
-        targets              : [1,2,3,4,5] 
+        targets              : [3,4] 
       },
       { 
-        className            : 'text-center', 
+        className            : 'text-left', 
         targets              : [0] 
       }
       // { 
@@ -1215,6 +1215,55 @@ function initProcessContributionDataTables(){
     "processing"               : true,
     "ajax"                     : {
         "url"                  : 'server-process-contribution',
+        "type"                 : 'POST',
+        "data"                 : { 
+                                // "id" : $("#tbl-loans-by-member").attr('data-id')
+                              }
+    },
+    'createdRow'            : function(row, data, dataIndex) {
+      var dataRowAttrIndex = ['data-loan-settings'];
+      var dataRowAttrValue = [0];
+        for (var i = 0; i < dataRowAttrIndex.length; i++) {
+          myObjKeyLguConst[dataRowAttrIndex[i]] = data[dataRowAttrValue[i]];
+        }
+        $(row).attr(myObjKeyLguConst);
+    }
+  });
+}
+
+
+function initProcessLoanPaymentsDataTables(){
+  var myObjKeyLguConst = {};
+  tbl_process_loan_payments  = $("#tbl-processs-loan-payments").DataTable({
+    searchHighlight : true,
+    lengthMenu      : [[5, 10, 20, 30, 50, -1], [5, 10, 20, 30, 50, 'All']],
+    language: {
+        search                 : '_INPUT_',
+        searchPlaceholder      : 'Search...',
+        lengthMenu             : '_MENU_'       
+    },
+    columnDefs                 : [
+      { 
+        orderable            : false, 
+        targets              : [0,1,2,3,4,5,6] 
+      },
+      { 
+        className            : 'text-right', 
+        targets              : [3,4,5] 
+      },
+      { 
+        className            : 'text-left', 
+        targets              : [0] 
+      }
+      // { 
+      //   className            : 'text-center', 
+      //   targets              : [6] 
+      // }
+    ],
+    "serverSide"               : true,
+    "processing"               : true,
+    "ajax"                     : {
+        "url"                  : 'server-process-loan-payments',
         "type"                 : 'POST',
         "data"                 : { 
                                 // "id" : $("#tbl-loans-by-member").attr('data-id')

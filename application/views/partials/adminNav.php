@@ -56,7 +56,8 @@
           <li>
             <!-- <a href="javascript:void(0);" id="add-contribution-by-type">PROCESS CONTRIBUTION</a> -->
             <a href="<?php echo base_url(); ?>process-contribution" id="">PROCESS CONTRIBUTION</a>
-            <a href="javascript:void(0);" id="add-payments-by-type">PROCESS LOAN PAYMENTS</a>
+            <!-- <a href="javascript:void(0);" id="add-payments-by-type">PROCESS LOAN PAYMENTS</a> -->
+            <a href="<?php echo base_url(); ?>process-loan-payments" id="">PROCESS LOAN PAYMENTS</a>
             <a href="<?php echo base_url(); ?>official-receipt">PROCESS OFFICIAL RECEIPT</a>
             <a href="<?php echo base_url(); ?>view-report">COLLECTION REPORTS</a>
             <!-- add-contribution-by-type -->

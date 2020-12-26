@@ -7,7 +7,7 @@ class AdminMod extends CI_Model {
 	//MEMBERS
 	var $tblMembers = 'v_members';
 	var $tblMembersCollumn = array('members_id', 'id_no', 'last_name', 'first_name', 
-																				'middle_name', 'dob', 'address', 'status', 'date_of_effectivity', 
+																				'middle_name', 'dob', 'status', 'date_of_effectivity', 
 																				'designation', 'type', 'monthly_salary', 'office_name', 'entry_date', 'is_deleted', 'retired_date', 'type_of_benefit', 'place');
 	var $tblMembersOrder = array('members_id' => 'desc');
 
@@ -151,6 +151,7 @@ class AdminMod extends CI_Model {
 	//REPAYMENT OBJECT
 	private function _que_tbl_repayments(){
 		$office_management_id = $this->input->post('office_management_id');
+		$department_id = $this->input->post('department_id');
 		$date_applied 				= date('Y-m', strtotime($this->input->post('date_applied')));
 
 		$this->db->from($this->tblRepayments);
@@ -162,8 +163,10 @@ class AdminMod extends CI_Model {
 		// 	AND ls.loan_schedule_id NOT IN (SELECT lr.loan_schedule_id from loan_receipt lr)"
 		$this->db->join('loan_computation lc', 'm.members_id = lc.members_id', 'left');
 		$this->db->join('loan_schedule ls', 'ls.loan_computation_id = lc.loan_computation_id', 'left');
+		$this->db->join('office_management om', 'om.office_management_id = m.office_management_id', 'left');
+		$this->db->join('departments d', 'om.departments_id = d.departments_id', 'left');
 		$this->db->where('m.is_deleted', '0');
-		$this->db->where('m.office_management_id', $office_management_id);
+		$this->db->where('d.departments_id', $department_id);
 		$this->db->where('ls.payment_schedule', $date_applied);
 		$this->db->where('ls.loan_schedule_id NOT IN (SELECT lr.loan_schedule_id from loan_receipt lr)');
 		
@@ -173,12 +176,12 @@ class AdminMod extends CI_Model {
 				if ($i === 0) {
 					$this->db->where('m.is_deleted', '0');
 					$this->db->like($item, strtolower($_POST['search']['value']));
-					$this->db->where('m.office_management_id', $office_management_id);
+					$this->db->where('d.departments_id', $department_id);
 					$this->db->where('ls.payment_schedule', $date_applied);
 				} else {
 					$this->db->where('m.is_deleted', '0');
 					$this->db->or_like($item, strtolower($_POST['search']['value']));
-					$this->db->where('m.office_management_id', $office_management_id);
+					$this->db->where('d.departments_id', $department_id);
 					$this->db->where('ls.payment_schedule', $date_applied);
 				}
 			}
@@ -1251,7 +1254,7 @@ class AdminMod extends CI_Model {
 															left join cpfidb.v_balance vb on vb.loan_computation_id = lc.loan_computation_id
 															left join cpfidb.departments d on d.departments_id = om.departments_id
 															WHERE cont.date_applied between '$sd' AND '$ed'
-															group by lc.ref_no
+															group by m.members_id-- lc.ref_no
 															union
 															select
 																om.office_management_id as ofc_id,
@@ -1290,7 +1293,7 @@ class AdminMod extends CI_Model {
 															left join cpfidb.v_balance vb on vb.loan_computation_id = lc.loan_computation_id
 															left join cpfidb.departments d on d.departments_id = om.departments_id
 															WHERE cont.date_applied between '$sd' AND '$ed'
-															group by lc.ref_no
+															group by m.members_id -- lc.ref_no
 															union
 															select
 																om.office_management_id as ofc_id,
@@ -1379,13 +1382,13 @@ class AdminMod extends CI_Model {
 															left join cpfidb.v_balance vb on vb.loan_computation_id = lc.loan_computation_id
 															left join cpfidb.departments d on d.departments_id = om.departments_id
 															WHERE cont.date_applied between '$sd' AND '$ed'
-															group by lc.ref_no
+															group by m.members_id -- lc.ref_no
 															union
 															select
 																om.office_management_id as ofc_id,
 																null as parent_ofc,
 																'TOTAL' as office_name,
-																null as parent_mem,
+																'group_total' as parent_mem,
 																null as members_name,
 																null as designation,
 																null as sg,
@@ -1525,7 +1528,7 @@ class AdminMod extends CI_Model {
 															order by
 																	1,
 																	3,
-																	4) x WHERE x.place = '$type' OR x.date_applied is null")->result();
+																	4) x WHERE x.place = '$type' OR x.date_applied is not null")->result();
 	}
 
 	public function getOfficialReceipt($id){
@@ -1548,5 +1551,44 @@ class AdminMod extends CI_Model {
 		return $this->db->query("SELECT * FROM v_contribution_summary_report WHERE date_applied between '$sd' and '$ed' $where")->result();	
 	}
 
+
+	public function view_portal_account_ledger($members_id){
+		$q=$this->db->query("SELECT 
+													t.full_name,
+													t.principal,
+													t.payment_schedule,
+													t.debit,
+													t.credit,
+													@running_total := @running_total + COALESCE(t.debit, 0) - COALESCE(t.credit, 0) AS balance,
+													t.members_id
+												FROM
+													(select 
+														concat(m.last_name, ', ', m.first_name, ' ', m.middle_name) as full_name,
+														null as principal,
+														null as payment_schedule,
+														lc.amnt_of_loan as debit,
+														null as credit,
+														lc.gross_amnt as balance,
+														m.members_id
+														from loan_schedule ls
+														left join loan_receipt lr2 on ls.loan_schedule_id = lr2.loan_schedule_id
+														left join loan_computation lc on lc.loan_computation_id = ls.loan_computation_id
+														left join members m on m.members_id = lc.members_id where m.is_deleted = 0 and m.members_id = '$members_id'
+													union
+													select 
+														concat(m.last_name, ', ', m.first_name, ' ', m.middle_name) as full_name,
+														ls.principal,
+														ls.payment_schedule,
+														null as debit,
+														lr2.amnt_paid as credit,
+														null as balance,
+														m.members_id
+														from loan_schedule ls
+														left join loan_receipt lr2 on ls.loan_schedule_id = lr2.loan_schedule_id
+														left join loan_computation lc on lc.loan_computation_id = ls.loan_computation_id
+														left join members m on m.members_id = lc.members_id where m.is_deleted = 0 and m.members_id = '$members_id' group by ls.loan_schedule_id) t
+														JOIN (SELECT @running_total:=0) r");
+			return $q->result();
+	}
 
 }

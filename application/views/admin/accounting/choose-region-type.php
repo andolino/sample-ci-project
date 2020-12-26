@@ -19,5 +19,5 @@
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-sm btn-custom-default rounded-0" id="btnPickDatePosted" data-id="<?php echo !empty($id) ? $id : ''; ?>"><i class="fas fa-calendar-check"></i> Post</button>
+  <!-- <button type="button" class="btn btn-sm btn-custom-default rounded-0" id="btnPickDatePosted" data-id="<?php echo !empty($id) ? $id : ''; ?>"><i class="fas fa-calendar-check"></i> Post</button> -->
 </div>

@@ -189,11 +189,24 @@ a.article:hover {
         display: none;
     }
     
+    
 }
 
 @media only screen and (max-width: 1400px) {
   #loadPage {
     font-size: 12px !important;
+  }
+}
+
+@media only screen and (max-width: 130  0px) {
+  #tbl-cdj-entry-form tbody tr td:nth-child(5) {
+    width: 14% !important;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  #tbl-cdj-entry-form tbody tr td:nth-child(5) {
+    width: 14% !important;
   }
 }
 

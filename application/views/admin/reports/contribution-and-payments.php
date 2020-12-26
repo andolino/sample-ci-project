@@ -89,9 +89,9 @@
 				<?php $mem=''; ?>
 				<?php foreach ($cPData as $row): ?>
 					<tr>
-						<td><?php echo $row->parent_ofc; ?></td>
-						<td><?php echo $row->parent_mem!=''?($row->parent_ofc==$mem?$ctr:$ctr=1):''; ?></td>
-						<th><?php echo strtoupper($row->parent_mem); ?></th>
+						<td><?php echo $row->office_name; ?></td>
+						<td><?php echo $row->parent_mem == 'group_total' ? 'TOTAL' : ($row->parent_mem!=''?($row->parent_ofc==$mem?$ctr:$ctr=1):''); ?></td>
+						<th><?php echo $row->parent_mem  == 'group_total' ? '' : strtoupper($row->parent_mem); ?></th>
 						<th><?php echo $row->designation; ?></th>
 						<th class="text-center"><?php echo $row->sg; ?></th>
 						<td class="text-center"><?php echo $row->monthly_salary!='' ? number_format($row->monthly_salary, 2) : ''; ?></td>

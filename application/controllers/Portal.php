@@ -62,6 +62,7 @@ class Portal extends MY_Controller {
 		$params['title']   			= $title;
 		$params['loanCode']  	  = $this->db->get_where('loan_code', array('is_deleted' => 0))->result();
 		$params['benefit_type'] = $this->db->get_where('benefit_type', array('is_deleted' => 0))->result();
+		$params['ledger'] 			= $this->AdminMod->view_portal_account_ledger($members_id);
     $this->load->view('portal/account-ledger', $params);
 	}
 
@@ -501,5 +502,7 @@ class Portal extends MY_Controller {
 		}
 		$this->load->view('portal/loan-req-msg', $params);
 	}
+
+	
 
 }

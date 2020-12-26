@@ -13,17 +13,17 @@
 				<!-- <button type="button" class="btn btn-default btn-lg font-12 rounded-0 border" id="btn-cash-gift" data-field="ADD"><i class="fas fa-plus"></i> Add Per Member</button> -->
 				<!-- <button type="button" class="btn btn-default btn-lg font-12 rounded-0 border" id="btn-or-per-region" data-field="GENERATE"><i class="fas fa-plus"></i> Add Per Region</button> -->
 				
-				<button type="button" class="btn btn-default btn-lg font-12 rounded-0 border" id="add-contribution-by-type"><i class="fas fa-plus"></i> Add Contribution</button>
+				<button type="button" class="btn btn-default btn-lg font-12 rounded-0 border" id="add-payments-by-type"><i class="fas fa-plus"></i> Add Payments</button>
 				
 				<!-- <button type="button" class="btn btn-default btn-md rounded-0 font-12" id="add-contribution-by-type"><i class="fas fa-user-plus"></i> Add Contribution</button>
 				<button type="button" class="btn btn-default btn-md rounded-0 font-12" id="add-payments-by-type"><i class="fas fa-user-plus"></i> Add Loan Payments</button>
         <a href="javascript:void(0);" class="btn btn-default btn-lg font-12 rounded-0 border" id="showBtnPrintByRegion"><i class="fas fa-print"></i> Print Contribution And Payments</a> -->
 
 				<!-- <button type="button" class="btn btn-purple btn-md rounded-0 font-12" id="printCashGiftDocs"><i class="fas fa-print"></i> Print Docx</button> -->
-				<button type="button" class="btn btn-purple btn-md rounded-0 font-12" id="printMemberDocs"><i class="fas fa-print"></i> Print Docx</button>
+				<!-- <button type="button" class="btn btn-purple btn-md rounded-0 font-12" id="printMemberDocs"><i class="fas fa-print"></i> Print Docx</button> -->
 			</div>
 		</div>
- 		<table class="table table-sm font-12" id="tbl-processs-contribution">
+ 		<table class="table table-sm font-12" id="tbl-processs-loan-payments">
 			<thead>
 				<tr>
 					<!-- <th>TOTAL</th> -->
@@ -31,11 +31,12 @@
 					<!-- <th>DEDUCTION</th> -->
 					<th>FULLNAME</th>
 					<th>REGION</th>
-					<th>CONTRIBUTION</th>
-					<th>ADJUSTED AMOUNT</th>
-					<th>DATE PROCESS</th>
-					<th>REMARKS</th>
-					<th>ACTION</th>
+					<th>LOAN TYPE</th>
+					<th>REF NO</th>
+					<th>AMOUNT TO PAY</th>
+					<th>MONTHLY INTEREST</th>
+					<th>OR NO.</th>
+					<th>DATE PAID</th>
 				</tr>
 			</thead>
 			<tbody></tbody>

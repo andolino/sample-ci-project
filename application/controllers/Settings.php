@@ -277,20 +277,58 @@ class Settings extends MY_Controller {
 	}
 	
 	public function server_process_contribution(){
-		$result 	= $this->Table->getOutput('contributions', 
-																						['contributions_id', 'members_id', 'total', 'balance', 'deduction', 'orno', 'entry_date', 'is_deleted', 'date_applied', 'status', 'adjusted_amnt', 'remarks'], 
+		$result 	= $this->Table->getOutput('v_processed_contrib', 
+																						['contributions_id', 'members_id', 'total', 'balance', 'deduction', 'orno', 'entry_date', 'is_deleted', 'date_applied', 'status', 'adjusted_amnt', 'remarks', 'full_name', 'region'], 
 																								['contributions_id' => 'desc']);
 		$res 			= array();
 		$no 			= isset($_POST['start']) ? $_POST['start'] : 0;
 		foreach ($result as $row) {
 			$data = array();
 			$no++;
-   		$data[] = $row->total;
-   		$data[] = $row->balance;
-   		$data[] = $row->deduction;
+   		// $data[] = $row->total;
+			 // $data[] = $row->balance;
+			$data[] = strtoupper($row->full_name);
+   		$data[] = $row->region;
+   		$data[] = number_format($row->deduction, 2);
    		$data[] = $row->adjusted_amnt;
    		$data[] = $row->entry_date;
-   		$data[] = $row->date_applied;
+   		// $data[] = $row->date_applied;
+   		$data[] = 'MONTHLY CONTRIBUTION FOR ' . date('F', strtotime($row->date_applied)) . ', ' . date('Y', strtotime($row->date_applied));//$row->remarks
+   		$data[] = '<a href="javascript:void(0);" id="add-contribution" data-placement="top" data-cont-id="'.$row->contributions_id.'" data-toggle="tooltip" title="EDIT" data-m-id="'.$row->members_id.'">
+			 <i class="fas fa-edit"></i></a>';
+			$res[] = $data;
+		}
+		$output = array (
+			'draw' 						=> isset($_POST['draw']) ? $_POST['draw'] : null,
+			'recordsTotal' 		=> $this->Table->countAllTbl(),
+			'recordsFiltered' => $this->Table->countFilterTbl(),
+			'data' 						=> $res
+		);
+		echo json_encode($output);
+	}
+	
+	public function server_process_loan_payments(){
+		$result 	= $this->Table->getOutput('v_processed_loan_payments', 
+																						['full_name', 'region', 'loan_type_name', 'ref_no', 'gross_amnt', 'current_orno', 'monthly_interest', 'amnt_paid', 'monthly_amortization', 'date_paid'], 
+																								['date_paid' => 'desc']);
+		$res 			= array();
+		$no 			= isset($_POST['start']) ? $_POST['start'] : 0;
+		foreach ($result as $row) {
+			$data = array();
+			$no++;
+   		// $data[] = $row->total;
+			 // $data[] = $row->balance;
+			$data[] = strtoupper($row->full_name);
+   		$data[] = $row->region;
+   		$data[] = $row->loan_type_name;
+   		$data[] = $row->ref_no;
+   		$data[] = $row->monthly_amortization;
+   		$data[] = $row->monthly_interest;
+   		$data[] = $row->current_orno;
+   		$data[] = $row->date_paid;
+   		// $data[] = $row->date_applied;
+   		// $data[] = '<a href="javascript:void(0);" id="add-contribution" data-placement="top" data-cont-id="'.$row->contributions_id.'" data-toggle="tooltip" title="EDIT" data-m-id="'.$row->members_id.'">
+			//  <i class="fas fa-edit"></i></a>';
 			$res[] = $data;
 		}
 		$output = array (

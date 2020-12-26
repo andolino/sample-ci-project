@@ -40,6 +40,7 @@ var tbl_benefit_by_request_pending = [];
 var tbl_benefit_by_request_approved = [];
 var tbl_benefit_by_request_disapproved = [];
 var tbl_process_contribution = [];
+var tbl_process_loan_payments = [];
 $(document).ready(function() {
   //init plugin
   $("body").tooltip({ selector: '[data-toggle=tooltip]' });
@@ -348,6 +349,7 @@ $(document).ready(function() {
       initGjEntry();
       initCrjEntry();
       initProcessContributionDataTables();
+      initProcessLoanPaymentsDataTables();
 
       
 
@@ -371,6 +373,7 @@ $(document).ready(function() {
   initGjEntry();
   initCrjEntry();
   initProcessContributionDataTables();
+  initProcessLoanPaymentsDataTables();
 
   //form submit
   $(document).on('submit', '#frm-accounting-entry', function(e) {
@@ -1280,7 +1283,7 @@ $(document).ready(function() {
     $.post('add-contribution', {'id': m_id, 'c_id' : id}, function(data) {
       $('#custom-modal .modal-content').html(data);
       $('#custom-modal .modal-dialog').removeClass('modal-sm modal-lg').addClass('modal-md');
-      $('#custom-modal .modal-title').html('<i class="fas fa-list-alt"></i> ADD CONTRIBUTION');
+      $('#custom-modal .modal-title').html(id == '' ? '<i class="fas fa-list-alt"></i> ADD CONTRIBUTION' : '<i class="fas fa-list-alt"></i> EDIT CONTRIBUTION');
       $('#custom-modal').modal('show', { backdrop: 'static' });
     });
   });
@@ -1307,7 +1310,7 @@ $(document).ready(function() {
         // console.log(formatDate(nextMo));
         $('#date_applied').daterangepicker({
           "singleDatePicker": true,
-          // "minDate": formatDateOthFormat(nextMo)
+          "minDate": formatDateOthFormat(nextMo)
         }, function(start, end, label) {
           $('#date_applied').html('<i class="fas fa-calendar-alt"></i> ' + start.format('MMM DD, YYYY') + ' - ' + end.format('MMM DD, YYYY'));
           // getGeneralLedger(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
@@ -1317,6 +1320,26 @@ $(document).ready(function() {
 
     });
   });
+
+  $(document).on('change', '.deptContributionByType', function () {
+    var departments_id = $(this).val();
+    $.post('get-last-date-applied-cont', { 'departments_id' : departments_id }, function(data, textStatus, xhr) {
+      var r = $.parseJSON(data);
+      // console.log(r.data);
+      var today = new Date(r.data);
+      var nextMo = today.getMonth() == 11 ? new Date(today.getFullYear()+1, 0 , 1) : new Date(today.getFullYear(), today.getMonth() + 1, 1);
+      // console.log(formatDate(nextMo));
+      $('#date_applied').daterangepicker({
+        "singleDatePicker": true,
+        "minDate": formatDateOthFormat(nextMo)
+      }, function(start, end, label) {
+        $('#date_applied').html('<i class="fas fa-calendar-alt"></i> ' + start.format('MMM DD, YYYY') + ' - ' + end.format('MMM DD, YYYY'));
+        // getGeneralLedger(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+      });
+    });
+  });
+
+  
   
   $(document).on('click', '#add-payments-by-type', function(e) {
     e.preventDefault();
@@ -1375,6 +1398,7 @@ $(document).ready(function() {
                 "type"                 : 'POST',
                 "data"                 : {
                                         'office_management_id': $('select[name="office_management_id"]').val(), 
+                                        'department_id' : $('select[name="department_id"]').val(), 
                                         'date_applied': start.format('YYYY-MM-DD')
                                       }
             },
@@ -1446,15 +1470,16 @@ $(document).ready(function() {
               data: frm, 
               context: this,
               success: function (res){
+                if (res.param3 == 'success') {
+                  tbl_process_contribution.ajax.reload();
+                  $('#custom-modal').modal('hide');
+                }
                 Swal.fire(
                   res.param1,
                   res.param2,
                   res.param3
                 );
-                if (res.param3 == 'success') {
-                  tbl_contribution.ajax.reload();
-                  $('#custom-modal').modal('hide');
-                }
+                
               }
             });
           }, function(){
@@ -1533,6 +1558,7 @@ $(document).ready(function() {
                 );
                 if (res.param3 == 'success') {
                   $('#custom-modal').modal('hide');
+                  tbl_process_loan_payments.ajax.reload();
                 }
               }
             });
@@ -2881,7 +2907,7 @@ function initMembersDataTables(){
       { 
         orderable            : false, 
         // targets              : [0,1,2,3,4,5,6,7,8] 
-        targets              : [7] 
+        targets              : [6] 
       },
       { 
         visible              : false, 
@@ -3998,16 +4024,30 @@ function initDateDefault(){
   });
 }
 
-function strToFloat(stringValue) {
-  if (typeof stringValue !== 'undefined') {
-    stringValue = stringValue.trim();
-    var result = stringValue.replace(/[^0-9]/g, '');
-    if (/[,\.]\d{2}$/.test(stringValue)) {
-        result = result.replace(/(\d{2})$/, '.$1');
-    }
-    return parseFloat(result);  
-  }
+function strToFloat(val) {
+  // if (val != '') {
+  //   val.toString().replace('/,/g','')
+  //   if (val.indexOf(',') !== -1)
+  //       val.replace(',', '');
+  //   val = parseFloat(val);
+  //   while (/(\d+)(\d{3})/.test(val.toString())) {
+  //       val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+  //   }
+  // }
+  return parseFloat(val.toString().replace(/,/g, ''));
 }
+
+// function strToFloat(stringValue) {
+//   if (typeof stringValue !== 'undefined') {
+//     stringValue = stringValue.trim();
+//     // var result = stringValue.replace(/[^0-9]/g, '');
+//     // if (/[,\.]\d{2}$/.test(stringValue)) {
+//     //     result = result.replace(/(\d{2})$/, '.$1');
+//     // }
+//     stringValue.replace(/-?[0-9]+(\.[0-9]+)?/g,'');
+//     return parseFloat(result);  
+//   }
+// }
 
 function editGroupCodeCoa(d){
   var groupCode = d.getAttribute('data-gcode');
@@ -4197,9 +4237,11 @@ function computeDebitCredit(){
   var debit=0;
   var credit=0;
   $.each($('.debit'), function(index, el) {
+    console.log(strToFloat($(el).val()==''?'0':$(el).val()) + ' debit');
     debit+=strToFloat($(el).val()==''?'0':$(el).val())
   }); 
   $.each($('.credit'), function(index, el) {
+    console.log(strToFloat($(el).val()==''?'0':$(el).val()) + ' credit');
     credit+=strToFloat($(el).val()==''?'0':$(el).val())
   });
   $('.total_debit').html(number_format(debit));

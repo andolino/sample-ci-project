@@ -450,13 +450,15 @@ class Admin extends MY_Controller {
 	}
 	
 	public function saveLoanPaymentsByType(){
-		$office_management_id = $this->input->post('office_management_id');
+		$department_id = $this->input->post('department_id');
 		$date_applied 				= date('Y-m', strtotime($this->input->post('date_applied')));
 		$date_paid 						= date('Y-m-d', strtotime($this->input->post('date_applied')));
 		$sched_data 					= $this->db->query("SELECT ls.* from members m 
 																								LEFT JOIN loan_computation lc ON lc.members_id = m.members_id
 																								LEFT JOIN loan_schedule ls ON ls.loan_computation_id = lc.loan_computation_id
-																								WHERE m.office_management_id = $office_management_id 
+																								LEFT JOIN office_management om ON om.office_management_id = m.office_management_id
+																								LEFT JOIN departments d ON d.departments_id = om.departments_id
+																								WHERE d.departments_id = $department_id 
 																								AND ls.payment_schedule = '$date_applied' 
 																								AND ls.loan_schedule_id NOT IN (SELECT lr.loan_schedule_id from loan_receipt lr)")->result();
 		// $rate 								= $this->db->get('contribution_rate')->row();
@@ -492,8 +494,14 @@ class Admin extends MY_Controller {
 	}
 
 	public function getLastdateApCont(){
-		$maxDate = $this->db->query("SELECT max(date_applied) as date_applied from contributions")->row();
-		echo json_encode(array('data'=>$maxDate->date_applied));
+		$departments_id = $this->input->post('departments_id');
+		if ($departments_id) {
+			$maxDate = $this->db->query("SELECT max(c.date_applied) as date_applied from contributions c
+																LEFT JOIN members m on m.members_id = c.members_id
+																LEFT JOIN office_management om on om.office_management_id = m.office_management_id
+																LEFT JOIN departments d on d.departments_id = om.departments_id WHERE d.departments_id = $departments_id")->row();
+		}
+		echo json_encode(array('data' => !empty($maxDate) ? $maxDate->date_applied : ''));
 	}
 
 	public function getLastdateApCashGift(){
@@ -504,7 +512,7 @@ class Admin extends MY_Controller {
 	public function frmAddContribution(){
 		$id=$this->input->post('id');
 		$params['has_update']=$this->input->post('c_id');
-		$params['contributionData']=$this->db->get_where('contributions', array('contributions_id'=>$this->input->post('c_id')))->row();
+		$params['contributionData']=$this->db->get_where('v_processed_contrib', array('contributions_id'=>$this->input->post('c_id')))->row();
 		$params['membersData'] = $this->db->get_where('v_members', array('members_id'=>$id))->row();
 		$this->load->view('admin/crud/frm-add-contribution', $params);	
 	}
@@ -517,7 +525,8 @@ class Admin extends MY_Controller {
 	}
 	
 	public function frmAddLoanPaymentsByType(){
-		$params['officeManagement']	= $this->db->get_where('office_management')->result();
+		$params['officeManagement']	= $this->db->get_where('office_management', array('is_deleted' => 0))->result();
+		$params['departments']	= $this->db->get_where('departments', array('is_deleted' => 0))->result();
 		$params['membersData'] 		 	= $this->db->get_where('v_members')->result();
 		$this->load->view('admin/crud/frm-add-loan-payments-by-type', $params);	
 	}
@@ -586,6 +595,12 @@ class Admin extends MY_Controller {
 	public function processContribution(){	
 		$params['heading'] 			 	 = 'PROCESS CONTRIBUTION';
 		$params['officialReceipt'] = $this->load->view('admin/crud/process-contribution-page', $params, TRUE);	
+		$this->adminContainer('admin/official-receipt', $params);
+	}
+	
+	public function processLoanPayments(){	
+		$params['heading'] 			 	 = 'PROCESS LOAN PAYMENTS';
+		$params['officialReceipt'] = $this->load->view('admin/crud/process-loan-payments-page', $params, TRUE);	
 		$this->adminContainer('admin/official-receipt', $params);
 	}
 
@@ -1360,9 +1375,9 @@ class Admin extends MY_Controller {
    		$data[] = strtoupper($row->last_name) . ', ' . strtoupper($row->first_name) . ' ' . strtoupper($row->middle_name) . ' ' . strtoupper($row->name_extension);
    		$data[] = strtoupper($row->first_name);
 			$data[] = strtoupper($row->middle_name);
-			$data[] =	$row->dob == '0000-00-00' || $row->dob == '' ? '' : date('Y-m-d', strtotime($row->dob));
+			// $data[] =	$row->dob == '0000-00-00' || $row->dob == '' ? '' : date('Y-m-d', strtotime($row->dob));
    		$data[] = $row->office_name; //$row->address;
-   		$data[] = $row->place; //$row->address;
+   		$data[] = $row->region; //$row->address;
    		$data[] = $row->type;//$row->status;
    		$data[] = date('Y-m-d', strtotime($row->date_of_effectivity));
    		
@@ -1381,9 +1396,8 @@ class Admin extends MY_Controller {
 										data-badge-head="'.strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name).'" data-cls="cont-view-member" data-placement="top" data-toggle="tooltip" title="View" data-id="'.$row->members_id.'">
 										<i class="fas fa-search"></i></a> | <a href="javascript:void(0);" id="loadPage" data-placement="top" data-toggle="tooltip" title="Edit" data-link="edit-member" 
 										data-ind="'.$row->members_id.'" data-cls="cont-edit-member" data-badge-head="EDIT '.strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name).'">
-										<i class="fas fa-edit"></i></a>' . ($this->session->level == 0 ? '| <a href="javascript:void(0);" id="remove-lgu-const-list" data-placement="top" data-toggle="tooltip" title="Remove" data-id="'.$row->members_id.'"><i class="fas fa-trash"></i></a>' : '');
-							// <a href="javascript:void(0);" id="loadPage" data-placement="top" data-toggle="tooltip" title="Add Contribution" data-link="view-contribution" 
-							// data-ind="'.$row->members_id.'" data-cls="cont-tbl-contribution" data-badge-head="CONTRIBUTION - '.strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name).'"><i class="fas fa-hand-holding-usd"></i></a>
+										<i class="fas fa-edit"></i></a>' . ($this->session->level == 0 ? ' | <a href="javascript:void(0);" id="remove-lgu-const-list" data-placement="top" data-toggle="tooltip" title="Remove" data-id="'.$row->members_id.'"><i class="fas fa-trash"></i></a>' : '');
+										// . ' | <a href="javascript:void(0);" id="loadPage" data-placement="top" data-toggle="tooltip" title="Add Contribution" data-link="view-contribution" data-ind="'.$row->members_id.'" data-cls="cont-tbl-contribution" data-badge-head="CONTRIBUTION - '.strtoupper($row->last_name . ', ' . $row->first_name . ' ' . $row->middle_name).'"><i class="fas fa-hand-holding-usd"></i></a>';
    		}
 
    		

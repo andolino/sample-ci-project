@@ -94,6 +94,7 @@ $route['get-last-date-applied-cg'] 	= 'Admin/getLastdateApCashGift';
 $route['cash-gift'] 									= 'Admin/getCashGift';
 $route['official-receipt'] 	= 'Admin/officialReceipt';
 $route['process-contribution'] 	= 'Admin/processContribution';
+$route['process-loan-payments'] 	= 'Admin/processLoanPayments';
 $route['get-total-contribution-per-region'] 	= 'Admin/getTotalContributionPerRegion';
 $route['get-msg-frm'] 	= 'Admin/get_message_form';
 $route['get-disapproved-frm'] 	= 'Admin/get_disapproved_frm';
@@ -147,6 +148,7 @@ $route['server-immediate-family'] 	= 'Settings/server_immediate_family';
 $route['server-departments'] 	= 'Settings/server_departments';
 $route['server-contribution-rate'] 	= 'Settings/server_contribution_rate';
 $route['server-process-contribution'] 	= 'Settings/server_process_contribution';
+$route['server-process-loan-payments'] 	= 'Settings/server_process_loan_payments';
 
 $route['get-beneficiaries-members'] 	= 'Settings/getBeneficiariesMembers';
 $route['get-immediate-family'] 	= 'Settings/getImmediateFamilyMembers';

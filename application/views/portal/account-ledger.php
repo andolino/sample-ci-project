@@ -8,28 +8,41 @@
 					setTimeout(function(){ animateSingleIn('.req-ln-frm', 'fadeIn'); },1000)"><i class="fas fa-save"></i> ACCOUNTING LEDGER</button> -->
 			</div>
 		</div>
-		<table class="table font-12 w-100" id="tbl-portal-account-ledger-list">
+		<table class="table font-12 w-100 condensed" id="">
 			<thead>
 				<tr>
 					<!-- <th scope="col"><input type="checkbox" id="chk-const-list-tbl-all" name="chk-const-list-tbl-all"></th> -->
 					<th scope="col">DATE</th>
-					<th scope="col">TRANSACTIONS</th>
-					<th scope="col">DEBIT</th>
-					<th scope="col">CREDIT</th>
-					<th scope="col">BALANCE</th>
+					<th class="text-right" scope="col">DEBIT</th>
+					<th class="text-right" scope="col">CREDIT</th>
+					<th class="text-right" scope="col">BALANCE</th>
 				</tr>
 			</thead>
 			<tbody>
-				
+				<?php $totDeb  = 0; ?>
+				<?php $totCred = 0; ?>
+				<?php $totBal  = 0; ?>
+				<?php foreach($ledger as $row): ?>
+				<tr>
+					<td><?php echo $row->payment_schedule == '' ? '' : date('F j', strtotime($row->payment_schedule)); ?></td>
+					<td class="text-right"><?php echo $row->debit == '' ? '' : number_format($row->debit, 2); ?></td>
+					<td class="text-right"><?php echo $row->credit == '' ? '' : number_format($row->credit, 2); ?></td>
+					<td class="text-right"><?php echo $row->balance == '' ? '' : number_format($row->balance, 2); ?></td>
+				</tr>
+				<?php 
+					$totDeb += $row->debit;
+					$totCred += $row->credit;
+				 	$totBal = $row->balance;
+				?>
+				<?php endforeach; ?>
 			</tbody>
 			<tfoot>
 				<tr>
 					<!-- <th scope="col"><input type="checkbox" id="chk-const-list-tbl-all" name="chk-const-list-tbl-all"></th> -->
 					<th scope="col">DATE</th>
-					<th scope="col">TRANSACTIONS</th>
-					<th scope="col"></th>
-					<th scope="col"></th>
-					<th scope="col"></th>
+					<th class="text-right" scope="col"><?php echo $totDeb > 0 ? number_format($totDeb, 2) : ''; ?></th>
+					<th class="text-right" scope="col"><?php echo $totCred > 0 ? number_format($totCred, 2) : ''; ?></th>
+					<th class="text-right" scope="col"><?php echo $totBal > 0 ? number_format($totBal, 2) : ''; ?></th>
 				</tr>
 			</tfoot>
 		</table>

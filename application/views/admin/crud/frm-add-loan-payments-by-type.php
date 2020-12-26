@@ -9,12 +9,21 @@
       <div class="row">
         <div class="col-4 mt-2">
           <div class="row">
-            <div class="col-12">
+            <!-- <div class="col-12">
               <label for="status" class="font-12">OFFICE MANAGEMENT</label>
               <select class="custom-select custom-select-sm mb-2 font-12 rounded-0" id="office_management_id" name="office_management_id" required>
                 <option value="" hidden>--</option>
-                <?php foreach ($officeManagement as $row): ?>
-                  <option value="<?php echo $row->office_management_id; ?>"><?php echo $row->office_name ?></option>
+                <?php //foreach ($officeManagement as $row): ?>
+                  <option value="<?php //echo $row->office_management_id; ?>"><?php echo $row->office_name ?></option>
+                <?php //endforeach; ?>
+              </select>
+            </div> -->
+            <div class="col-12">
+              <label for="department_id" class="font-12">DEPARTMENTS</label>
+              <select class="custom-select custom-select-sm mb-2 font-12 rounded-0" id="department_id" name="department_id" required>
+                <option value="" hidden>--</option>
+                <?php foreach ($departments as $row): ?>
+                  <option value="<?php echo $row->departments_id; ?>"><?php echo $row->region; ?></option>
                 <?php endforeach; ?>
               </select>
             </div>
